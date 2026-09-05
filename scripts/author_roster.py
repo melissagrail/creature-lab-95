@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Authored alpha roster. Integer units/ticks; run to emit canonical content/roster.json."""
+raise SystemExit("Archived v2 bootstrap. Edit content/roster.json and run make content; v3 locomotion must not be discarded.")
 import json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]

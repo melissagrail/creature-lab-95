@@ -10,7 +10,7 @@ import gymnasium as gym
 from gymnasium import spaces
 from creature import Batch, SLICES, quantize
 
-SHAPES = dict(self=(56,), entities=(53,32), moves=(5,40), announced=(40,),
+SHAPES = dict(self=(64,), entities=(53,40), moves=(5,40), announced=(40,),
               history=(24,8), global_=(16,), mask=(6,))
 
 class CreatureEnv(gym.Env):

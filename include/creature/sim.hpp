@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32, ZoneCount = 16,
               HistoryCount = 64;
-constexpr uint32_t RulesVersion = 2, ObservationVersion = 2;
+constexpr uint32_t RulesVersion = 3, ObservationVersion = 3;
 struct Vec {
     int32_t x = 0, y = 0;
 };
@@ -86,6 +86,7 @@ struct Move {
             silence = 0, poison = 0, wound = 0, mark = 0, shield = 0, heal = 0, guard = 0,
             cleanse = 0, drain = 0, bonus_mark = 0, execute = 0, health_cost = 0, bounces = 0,
             returning = 0, pierce = 0;
+    int32_t move_start = 0, move_active = 0, move_recovery = 30;
 };
 struct Species {
     const char *name;
@@ -94,6 +95,7 @@ struct Species {
     int32_t hp, speed, radius, regen, mass, passive, preferred_range;
     std::array<int32_t, 4> moves;
     std::array<int32_t, 8> axes;
+    int32_t turn_degrees, strafe, backward, acceleration, braking, dodge_speed;
 };
 extern const std::array<Move, MoveCount> Moves;
 extern const std::array<Species, SpeciesCount> Roster;
@@ -159,7 +161,7 @@ void command(World &, int, int);
 std::array<int32_t, 6> action_mask(const World &, int);
 StepResult step(World &, const std::array<Action, 2> &, int ticks = DecisionTicks);
 Action scripted(const World &, int, int style = 0);
-constexpr int SelfSize = 56, EntityCount = 53, EntitySize = 32, MoveSize = 40, EventSize = 8,
+constexpr int SelfSize = 64, EntityCount = 53, EntitySize = 40, MoveSize = 40, EventSize = 8,
               EventCount = 24, GlobalSize = 16;
 constexpr int ObservationSize =
     SelfSize + EntityCount * EntitySize + 6 * MoveSize + EventCount * EventSize + GlobalSize + 6;

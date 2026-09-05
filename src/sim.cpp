@@ -202,6 +202,25 @@ static void add_result(StepResult &a, const StepResult &b) {
         x.spent += y.spent;
     }
 }
+// Integer rotation table: authored degrees per tick, no runtime floating-point trig.
+static Vec turn_toward(Vec current, Vec target, int degrees) {
+    if (!target.x && !target.y)
+        return current;
+    target = unit(target);
+    static constexpr Vec rotations[] = {
+        {1024, 0},   {1024, 18},  {1023, 36},  {1023, 54},  {1022, 71},  {1020, 89},  {1018, 107},
+        {1016, 125}, {1014, 143}, {1011, 160}, {1008, 178}, {1005, 195}, {1002, 213}, {998, 230},
+        {994, 248},  {989, 265},  {984, 282},  {979, 299},  {974, 316},  {968, 333},  {962, 350}};
+    Vec r = rotations[std::clamp(degrees, 1, 20)];
+    int64_t cross = int64_t(current.x) * target.y - int64_t(current.y) * target.x;
+    const int64_t projection = dot(current, target);
+    // Compare angular ratios, not assumed vector length: integer unit vectors are approximate.
+    if (projection > 0 && std::abs(cross) * r.x <= projection * r.y)
+        return target;
+    int sign = cross < 0 ? -1 : 1; // Exact opposite chooses positive rotation deterministically.
+    return unit({int32_t((int64_t(current.x) * r.x - int64_t(current.y) * r.y * sign) / Q),
+                 int32_t((int64_t(current.y) * r.x + int64_t(current.x) * r.y * sign) / Q)});
+}
 static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trigger) {
     StepResult result;
     if (w.terminal || w.truncated)
@@ -247,10 +266,10 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         auto mask = action_mask(w, i);
         int slot = actions[i].ability >= 1 && actions[i].ability <= 5 ? actions[i].ability - 1 : -1;
         Vec aim{std::clamp(actions[i].ax, -Q, Q), std::clamp(actions[i].ay, -Q, Q)};
-        if (b.move < 0) {
+        if ((b.move < 0 || phase(b) == Recovery) && !b.stun) {
             b.aim_scale = std::min(Q, length(aim));
             if (aim.x || aim.y)
-                b.aim = unit(aim);
+                b.aim = turn_toward(b.aim, aim, s.turn_degrees);
         }
         if (trigger && slot >= 0 && mask[slot + 1]) {
             int id = move_id(b, slot);
@@ -260,6 +279,10 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             b.age = 0;
             b.hit_mask = 0;
             b.locked = b.aim;
+            if (m.kind == Evade) {
+                Vec dodge{std::clamp(actions[i].mx, -Q, Q), std::clamp(actions[i].my, -Q, Q)};
+                b.locked = dodge.x || dodge.y ? unit(dodge) : Vec{-b.aim.y, b.aim.x};
+            }
             b.hp -= m.health_cost;
             b.energy -= m.cost;
             result.features[i].spent += m.cost;
@@ -300,17 +323,35 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             speed = speed * 135 / 100;
         if (s.passive == Overheat)
             speed = speed * (100 - b.meter / 3) / 100;
-        if (phase(b) == Startup)
-            speed = speed * 2 / 3;
+        // Travel is world-space input, but its speed budget depends on physical facing.
+        if (input.x || input.y) {
+            int alignment = int(dot(unit(input), b.aim) / Q);
+            int ratio = alignment >= 0 ? s.strafe + (100 - s.strafe) * alignment / Q
+                                       : s.strafe + (s.strafe - s.backward) * alignment / Q;
+            speed = speed * std::clamp(ratio, 1, 100) / 100;
+        }
+        int mobility = 100;
+        if (b.move >= 0) {
+            const auto &m = Moves[b.move];
+            mobility = phase(b) == Startup  ? m.move_start
+                       : phase(b) == Active ? m.move_active
+                                            : m.move_recovery;
+        }
+        speed = speed * mobility / 100;
         if (b.stun || b.root)
             speed = 0;
-        int traction = w.wetness > 400 ? 5 : 3;
+        int traction = (input.x || input.y) ? s.acceleration : s.braking;
+        if (w.wetness > 400)
+            traction += 2;
         b.vel = b.vel + scale(scale(input, speed) - b.vel, 1, traction);
-        if (b.stun || b.root)
+        if (b.stun || b.root || mobility == 0)
+            b.vel = {};
+        if (!input.x && !input.y && length(b.vel) < 8)
             b.vel = {};
         if (b.move >= 0 && phase(b) == Active &&
             (Moves[b.move].kind == Lunge || Moves[b.move].kind == Evade) && !b.root)
-            b.vel = scale(b.locked, Moves[b.move].speed);
+            b.vel = scale(b.locked, Moves[b.move].speed *
+                                        (Moves[b.move].kind == Evade ? s.dodge_speed : 100) / 100);
         Vec old = b.pos;
         b.pos = travel(w, b.pos, b.vel, b.radius);
         b.vel = b.pos - old;
@@ -1010,8 +1051,12 @@ Action scripted(const World &w, int i, int style) {
         }
     if (danger && mask[5] && (best < 65 || b.hp * 2 < s.hp)) {
         ability = 5;
-        chosen = unit(Vec{-d.y, d.x});
+        movement = unit(Vec{-d.y, d.x});
+        chosen = dir;
     }
+    // Orient before committing; the core still permits deliberate off-angle casts.
+    if (ability >= 1 && ability <= 4 && dot(unit(chosen), b.aim) < Q * Q * 97 / 100)
+        ability = 0;
     return {movement.x, movement.y, chosen.x, chosen.y, ability};
 }
 Observation observe(const World &w, int i) {
@@ -1073,6 +1118,14 @@ Observation observe(const World &w, int i) {
     o.self[53] = float(b.shield_timer) / 90;
     o.self[54] = float(b.slot + 1) / 5;
     o.self[55] = float(b.passive_timer) / 90;
+    o.self[56] = float(s.turn_degrees * 30) / 600;
+    o.self[57] = float(s.strafe) / 100;
+    o.self[58] = float(s.backward) / 100;
+    o.self[59] = float(s.acceleration) / 6;
+    o.self[60] = float(s.braking) / 6;
+    o.self[61] = float(s.dodge_speed) / 150;
+    o.self[62] = float(b.locked.x) / Q;
+    o.self[63] = float(b.locked.y) / Q;
     auto entity = [&](int row, int kind, Vec pos, Vec vel, int radius, int team, int life, int move,
                       int ph, int age, float hp) {
         float *p = o.entities.data() + row * EntitySize;
@@ -1089,10 +1142,10 @@ Observation observe(const World &w, int i) {
         p[9] = float(ph) / 3;
         p[10] = float(age) / 90;
         p[11] = hp;
-        Vec facing = kind == 1 ? (e.move >= 0 ? e.locked : e.aim) : kind == 3 ? unit(vel) : Vec{};
+        Vec facing = kind == 1 ? e.aim : kind == 3 ? unit(vel) : Vec{};
         p[12] = float(dot(facing, b.aim)) / (Q * Q);
         p[13] = float(int64_t(facing.y) * b.aim.x - int64_t(facing.x) * b.aim.y) / (Q * Q);
-        p[31] = 1;
+        p[39] = 1;
     };
     entity(0, 1, e.pos, e.vel, e.radius, -1, 0, e.move, phase(e), e.age,
            float(e.hp) / Roster[e.species].hp);
@@ -1114,6 +1167,15 @@ Observation observe(const World &w, int i) {
     p[28] = float(e.poison) / 150;
     p[29] = float(e.stun) / 30;
     p[30] = float(e.aim_scale) / Q;
+    const auto &es = Roster[e.species];
+    p[31] = float(es.turn_degrees * 30) / 600;
+    p[32] = float(es.strafe) / 100;
+    p[33] = float(es.backward) / 100;
+    p[34] = float(es.acceleration) / 6;
+    p[35] = float(es.braking) / 6;
+    p[36] = float(es.dodge_speed) / 150;
+    p[37] = float(dot(e.locked, b.aim)) / (Q * Q);
+    p[38] = float(int64_t(e.locked.y) * b.aim.x - int64_t(e.locked.x) * b.aim.y) / (Q * Q);
     for (int j = 0; j < 4; j++)
         if (w.obstacles[j].radius)
             entity(1 + j, 2, w.obstacles[j].pos, {}, w.obstacles[j].radius, 0, 0, -1, 0, 0, 0);
@@ -1176,9 +1238,9 @@ Observation observe(const World &w, int i) {
                           float(m.returning),
                           float(m.pierce),
                           1,
-                          0,
-                          0,
-                          0};
+                          float(m.move_start) / 100,
+                          float(m.move_active) / 100,
+                          float(m.move_recovery) / 100};
         std::copy(std::begin(values), std::end(values), mp);
     }
     int visible = 0;

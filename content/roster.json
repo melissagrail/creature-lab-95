@@ -1,6 +1,6 @@
 {
-  "rules_version": 2,
-  "observation_version": 2,
+  "rules_version": 3,
+  "observation_version": 3,
   "axes": [
     "reach",
     "commitment",
@@ -75,7 +75,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 55,
+          "move_active": 55,
+          "move_recovery": 60
         },
         {
           "name": "Wickshot",
@@ -114,7 +117,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Flare Step",
@@ -153,7 +159,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Ash Circle",
@@ -192,9 +201,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 12,
+      "strafe": 82,
+      "backward": 60,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 1,
@@ -259,7 +277,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Rootfurrow",
@@ -298,7 +319,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Bramble Garden",
@@ -337,7 +361,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Barkskin",
@@ -376,9 +403,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 4,
+      "strafe": 48,
+      "backward": 35,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 80
     },
     {
       "id": 2,
@@ -443,7 +479,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Glass Shards",
@@ -482,7 +521,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Wing Slip",
@@ -521,7 +563,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Repulsion",
@@ -560,9 +605,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 5,
+      "strafe": 55,
+      "backward": 40,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 85
     },
     {
       "id": 3,
@@ -627,7 +681,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Arc Fang",
@@ -666,7 +723,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Discharge",
@@ -705,7 +765,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Static Screen",
@@ -744,9 +807,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 14,
+      "strafe": 78,
+      "backward": 52,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 4,
@@ -811,7 +883,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Spitball",
@@ -850,7 +925,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Mire Pool",
@@ -889,7 +967,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Digest",
@@ -928,9 +1009,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 7,
+      "strafe": 66,
+      "backward": 48,
+      "acceleration": 3,
+      "braking": 2,
+      "dodge_speed": 90
     },
     {
       "id": 5,
@@ -995,7 +1085,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Fault Ram",
@@ -1034,7 +1127,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Quarry Hook",
@@ -1073,7 +1169,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Bedrock",
@@ -1112,9 +1211,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 3,
+      "strafe": 42,
+      "backward": 28,
+      "acceleration": 5,
+      "braking": 2,
+      "dodge_speed": 80
     },
     {
       "id": 6,
@@ -1179,7 +1287,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 100,
+          "move_active": 100,
+          "move_recovery": 60
         },
         {
           "name": "Snowshoe",
@@ -1218,7 +1329,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Frost Lace",
@@ -1257,7 +1371,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 65,
+          "move_active": 65,
+          "move_recovery": 60
         },
         {
           "name": "Whiteout",
@@ -1296,9 +1413,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 16,
+      "strafe": 95,
+      "backward": 72,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 115
     },
     {
       "id": 7,
@@ -1363,7 +1489,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 70,
+          "move_active": 70,
+          "move_recovery": 60
         },
         {
           "name": "Dusk Needle",
@@ -1402,7 +1531,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Night Pounce",
@@ -1441,7 +1573,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Crossfade",
@@ -1480,9 +1615,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 18,
+      "strafe": 88,
+      "backward": 65,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 115
     },
     {
       "id": 8,
@@ -1547,7 +1691,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Mirror Carapace",
@@ -1586,7 +1733,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Shear Wing",
@@ -1625,7 +1775,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 50,
+          "move_active": 50,
+          "move_recovery": 60
         },
         {
           "name": "Magnet Wake",
@@ -1664,9 +1817,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 8,
+      "strafe": 80,
+      "backward": 60,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 95
     },
     {
       "id": 9,
@@ -1731,7 +1893,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 60,
+          "move_active": 60,
+          "move_recovery": 60
         },
         {
           "name": "Tidal Bite",
@@ -1770,7 +1935,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Rain Basin",
@@ -1809,7 +1977,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Surge",
@@ -1848,9 +2019,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 9,
+      "strafe": 85,
+      "backward": 62,
+      "acceleration": 3,
+      "braking": 2,
+      "dodge_speed": 100
     },
     {
       "id": 10,
@@ -1915,7 +2095,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 60,
+          "move_active": 60,
+          "move_recovery": 60
         },
         {
           "name": "Caltrop",
@@ -1954,7 +2137,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Needle Fence",
@@ -1993,7 +2179,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Panic Quills",
@@ -2032,9 +2221,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 12,
+      "strafe": 85,
+      "backward": 68,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 105
     },
     {
       "id": 11,
@@ -2099,7 +2297,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Daybreak",
@@ -2138,7 +2339,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Golden Bound",
@@ -2177,7 +2381,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Renew",
@@ -2216,9 +2423,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 8,
+      "strafe": 70,
+      "backward": 50,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 95
     },
     {
       "id": 12,
@@ -2283,7 +2499,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Burrow",
@@ -2322,7 +2541,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Upheaval",
@@ -2361,7 +2583,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Tunnel Rush",
@@ -2400,9 +2625,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 6,
+      "strafe": 58,
+      "backward": 40,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 90
     },
     {
       "id": 13,
@@ -2467,7 +2701,10 @@
           "health_cost": 0,
           "bounces": 1,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Split Spectrum",
@@ -2506,7 +2743,10 @@
           "health_cost": 0,
           "bounces": 1,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Refraction",
@@ -2545,7 +2785,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Prism Fold",
@@ -2584,9 +2827,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 7,
+      "strafe": 78,
+      "backward": 50,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 95
     },
     {
       "id": 14,
@@ -2651,7 +2903,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 60,
+          "move_active": 60,
+          "move_recovery": 60
         },
         {
           "name": "Harvest Cut",
@@ -2690,7 +2945,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Thorn Leap",
@@ -2729,7 +2987,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Razor Guard",
@@ -2768,9 +3029,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 15,
+      "strafe": 85,
+      "backward": 55,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 15,
@@ -2835,7 +3105,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Seed Bomb",
@@ -2874,7 +3147,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Shelter Grove",
@@ -2913,7 +3189,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Living Wall",
@@ -2952,9 +3231,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 4,
+      "strafe": 50,
+      "backward": 35,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 80
     },
     {
       "id": 16,
@@ -3019,7 +3307,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 100,
+          "move_active": 100,
+          "move_recovery": 60
         },
         {
           "name": "Gust Lance",
@@ -3058,7 +3349,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Jetstream",
@@ -3097,7 +3391,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Updraft",
@@ -3136,9 +3433,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 15,
+      "strafe": 95,
+      "backward": 65,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 115
     },
     {
       "id": 17,
@@ -3203,7 +3509,10 @@
           "health_cost": 4,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Cinder Charge",
@@ -3242,7 +3551,10 @@
           "health_cost": 6,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Fury",
@@ -3281,7 +3593,10 @@
           "health_cost": 5,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Last Ember",
@@ -3320,9 +3635,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 5,
+      "strafe": 50,
+      "backward": 32,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 90
     },
     {
       "id": 18,
@@ -3387,7 +3711,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 65,
+          "move_active": 65,
+          "move_recovery": 60
         },
         {
           "name": "Tock",
@@ -3426,7 +3753,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Second Hand",
@@ -3465,7 +3795,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Windup Key",
@@ -3504,9 +3837,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 11,
+      "strafe": 85,
+      "backward": 65,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 100
     },
     {
       "id": 19,
@@ -3571,7 +3913,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Mute Line",
@@ -3610,7 +3955,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Deadwater",
@@ -3649,7 +3997,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Void Shell",
@@ -3688,9 +4039,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 6,
+      "strafe": 72,
+      "backward": 55,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 90
     },
     {
       "id": 20,
@@ -3755,7 +4115,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Candle Sentry",
@@ -3794,7 +4157,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Hot Seal",
@@ -3833,7 +4199,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Wax Jacket",
@@ -3872,9 +4241,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 5,
+      "strafe": 55,
+      "backward": 40,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 85
     },
     {
       "id": 21,
@@ -3939,7 +4317,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 1,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 100,
+          "move_active": 100,
+          "move_recovery": 60
         },
         {
           "name": "Tail Snap",
@@ -3978,7 +4359,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 75,
+          "move_active": 75,
+          "move_recovery": 60
         },
         {
           "name": "Acrobat",
@@ -4017,7 +4401,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Silk Whorl",
@@ -4056,9 +4443,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 17,
+      "strafe": 100,
+      "backward": 80,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 115
     },
     {
       "id": 22,
@@ -4123,7 +4519,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 50,
+          "move_active": 50,
+          "move_recovery": 60
         },
         {
           "name": "Brine Cannon",
@@ -4162,7 +4561,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Closed Shell",
@@ -4201,7 +4603,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Scuttle",
@@ -4240,9 +4645,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 4,
+      "strafe": 90,
+      "backward": 40,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 85
     },
     {
       "id": 23,
@@ -4307,7 +4721,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 100,
+          "move_active": 100,
+          "move_recovery": 60
         },
         {
           "name": "Nectar Needle",
@@ -4346,7 +4763,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Swoop",
@@ -4385,7 +4805,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Night Bloom",
@@ -4424,9 +4847,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 16,
+      "strafe": 100,
+      "backward": 75,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 24,
@@ -4491,7 +4923,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Bell Wave",
@@ -4530,7 +4965,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Peal Rush",
@@ -4569,7 +5007,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Resonant Shell",
@@ -4608,9 +5049,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 5,
+      "strafe": 52,
+      "backward": 35,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 85
     },
     {
       "id": 25,
@@ -4675,7 +5125,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Forged Bolt",
@@ -4714,7 +5167,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Temper",
@@ -4753,7 +5209,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Anvil Fall",
@@ -4792,9 +5251,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 3,
+      "strafe": 45,
+      "backward": 30,
+      "acceleration": 5,
+      "braking": 2,
+      "dodge_speed": 80
     },
     {
       "id": 26,
@@ -4859,7 +5327,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 80,
+          "move_active": 80,
+          "move_recovery": 60
         },
         {
           "name": "Dune Dart",
@@ -4898,7 +5369,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Sand Sprint",
@@ -4937,7 +5411,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Dust Kick",
@@ -4976,9 +5453,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 14,
+      "strafe": 90,
+      "backward": 75,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 27,
@@ -5043,7 +5529,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Reel In",
@@ -5082,7 +5571,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Tangle Bed",
@@ -5121,7 +5613,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Leg Sweep",
@@ -5160,9 +5655,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 7,
+      "strafe": 75,
+      "backward": 55,
+      "acceleration": 3,
+      "braking": 2,
+      "dodge_speed": 95
     },
     {
       "id": 28,
@@ -5227,7 +5731,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Coal Fan",
@@ -5266,7 +5773,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Furnace",
@@ -5305,7 +5815,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Vent",
@@ -5344,9 +5857,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 6,
+      "strafe": 58,
+      "backward": 38,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 90
     },
     {
       "id": 29,
@@ -5411,7 +5933,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Lunar Shield",
@@ -5450,7 +5975,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Moonbeam",
@@ -5489,7 +6017,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Orbit",
@@ -5528,9 +6059,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 7,
+      "strafe": 70,
+      "backward": 55,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 90
     },
     {
       "id": 30,
@@ -5595,7 +6135,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 80,
+          "move_active": 80,
+          "move_recovery": 60
         },
         {
           "name": "Coil Cannon",
@@ -5634,7 +6177,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Springwire",
@@ -5673,7 +6219,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Capacitor",
@@ -5712,9 +6261,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 13,
+      "strafe": 95,
+      "backward": 75,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 31,
@@ -5779,7 +6337,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Falling Fruit",
@@ -5818,7 +6379,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Orchard",
@@ -5857,7 +6421,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Harvest Run",
@@ -5896,9 +6463,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 5,
+      "strafe": 52,
+      "backward": 35,
+      "acceleration": 4,
+      "braking": 2,
+      "dodge_speed": 85
     },
     {
       "id": 32,
@@ -5963,7 +6539,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 60,
+          "move_active": 60,
+          "move_recovery": 60
         },
         {
           "name": "Ink Cloud",
@@ -6002,7 +6581,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Brushstroke",
@@ -6041,7 +6623,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Takeoff",
@@ -6080,9 +6665,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 9,
+      "strafe": 85,
+      "backward": 65,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 100
     },
     {
       "id": 33,
@@ -6147,7 +6741,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 65,
+          "move_active": 65,
+          "move_recovery": 60
         },
         {
           "name": "Hookline",
@@ -6186,7 +6783,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Claim Claw",
@@ -6225,7 +6825,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Hunting Bound",
@@ -6264,9 +6867,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 15,
+      "strafe": 85,
+      "backward": 55,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 34,
@@ -6331,7 +6943,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Acid Spit",
@@ -6370,7 +6985,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Slag Trail",
@@ -6409,7 +7027,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Jawbreaker",
@@ -6448,9 +7069,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 4,
+      "strafe": 45,
+      "backward": 30,
+      "acceleration": 5,
+      "braking": 2,
+      "dodge_speed": 80
     },
     {
       "id": 35,
@@ -6515,7 +7145,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 75,
+          "move_active": 75,
+          "move_recovery": 60
         },
         {
           "name": "River Cut",
@@ -6554,7 +7187,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 35,
+          "move_active": 35,
+          "move_recovery": 60
         },
         {
           "name": "Waterwheel",
@@ -6593,7 +7229,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Fresh Spring",
@@ -6632,9 +7271,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 14,
+      "strafe": 90,
+      "backward": 75,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 110
     },
     {
       "id": 36,
@@ -6699,7 +7347,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 65,
+          "move_active": 65,
+          "move_recovery": 60
         },
         {
           "name": "Echo Fan",
@@ -6738,7 +7389,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Bass Ring",
@@ -6777,7 +7431,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Silent Beat",
@@ -6816,9 +7473,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 11,
+      "strafe": 85,
+      "backward": 65,
+      "acceleration": 2,
+      "braking": 1,
+      "dodge_speed": 105
     },
     {
       "id": 37,
@@ -6883,7 +7549,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 65,
+          "move_active": 65,
+          "move_recovery": 60
         },
         {
           "name": "Webway",
@@ -6922,7 +7591,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Latch",
@@ -6961,7 +7633,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Skitter",
@@ -7000,9 +7675,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 10,
+      "strafe": 90,
+      "backward": 65,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 105
     },
     {
       "id": 38,
@@ -7067,7 +7751,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Stone Scatter",
@@ -7106,7 +7793,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Backdraft",
@@ -7145,7 +7835,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Ridge Hop",
@@ -7184,9 +7877,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         }
-      ]
+      ],
+      "turn_degrees": 4,
+      "strafe": 45,
+      "backward": 30,
+      "acceleration": 4,
+      "braking": 1,
+      "dodge_speed": 80
     },
     {
       "id": 39,
@@ -7251,7 +7953,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 45,
+          "move_active": 45,
+          "move_recovery": 60
         },
         {
           "name": "Sworn Guard",
@@ -7290,7 +7995,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         },
         {
           "name": "Intercept",
@@ -7329,7 +8037,10 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 25
         },
         {
           "name": "Judgment",
@@ -7368,9 +8079,18 @@
           "health_cost": 0,
           "bounces": 0,
           "returning": 0,
-          "pierce": 0
+          "pierce": 0,
+          "move_start": 0,
+          "move_active": 0,
+          "move_recovery": 30
         }
-      ]
+      ],
+      "turn_degrees": 8,
+      "strafe": 70,
+      "backward": 50,
+      "acceleration": 3,
+      "braking": 1,
+      "dodge_speed": 95
     }
   ],
   "dodge": {
@@ -7410,6 +8130,9 @@
     "health_cost": 0,
     "bounces": 0,
     "returning": 0,
-    "pierce": 0
+    "pierce": 0,
+    "move_start": 0,
+    "move_active": 0,
+    "move_recovery": 60
   }
 }

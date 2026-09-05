@@ -1,6 +1,6 @@
-# Engine alpha v2
+# Engine alpha v3
 
-See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. The v1 prototype remains in Git history; its content, snapshots and observation shape are incompatible.
+See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. Earlier v1/v2 builds remains in Git history; their content, snapshots and observation shape are incompatible.
 
 The core uses signed integer coordinates at 1,024 units per game unit. Products/dot products use 64-bit intermediates; integer square root and explicit normalization avoid floating-point physics. A world has no renderer, wall clock, model or shared RNG dependency. The xorshift state is per world. Rendering and observation conversion can use floats without changing physics.
 
@@ -12,6 +12,8 @@ There are 32 projectile slots, 16 zone slots and 64 public-history entries. Allo
 
 Snapshots encode every field explicitly in little-endian order, preceded by magic, rules version and a content fingerprint, followed by a 64-bit FNV checksum. No pointers, object padding, enum ABI or host endianness enter the format. The decoder checks length, identity, checksum and bounded state before atomic restore. Content fingerprinting covers the exact canonical JSON bytes, making even an unversioned table edit fail closed on old saves. The checksum/fingerprint provide compatibility and corruption checks, not cryptographic anti-cheat authentication.
 
-Content is authored in `content/roster.json`. `scripts/compile_content.py` validates and generates `src/content.cpp` plus the human-readable roster. Compiled games do not parse JSON or run Python. `make content` updates generated outputs; `make test` rejects stale content. `scripts/author_roster.py --replace-canonical` is a deliberate bootstrap reset to the initial design and discards tuning, not an ordinary build step. Numeric interventions are saved under `reports/*-changes.json`.
+Content is authored in `content/roster.json`. `scripts/compile_content.py` validates and generates `src/content.cpp` plus the human-readable roster. Compiled games do not parse JSON or run Python. `make content` updates generated outputs; `make test` rejects stale content. `scripts/author_roster.py` is an archived v2 bootstrap and intentionally refuses to overwrite the v3 canonical roster. Numeric interventions are saved under `reports/*-changes.json`.
 
 RulesVersion must change with future behavior/schema breaks; content changes already invalidate the fingerprint. Model manifests should retain rules, observation version, content fingerprint, quantizer version and source revision. Integer state is designed to reproduce across targets, but neural inference/training need not be bit-identical across devices. Replays record actual actions so they do not depend on rerunning a neural policy.
+
+Locomotion uses an integer sine/cosine lookup for authored yaw steps (degrees per tick), shortest-turn steering with a deterministic positive tie at 180 degrees, and integer normalization. Directional speed interpolates forward/side/reverse ratios using the movement-to-facing dot product. Acceleration/braking are first-order integer velocity convergence; zero-mobility casts hard-stop voluntary motion even in rain. Displacement and body separation may still move a planted body. [Movement contracts and validation](alpha/movement.md).

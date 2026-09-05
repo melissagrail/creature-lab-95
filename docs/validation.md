@@ -1,3 +1,5 @@
+> **Historical v2 verification.** These balance and performance figures describe release 0.2, before directional locomotion and planted casts. See [movement v3 validation](alpha/movement.md#validation) for the current build.
+
 # Combat alpha verification
 
 Tested September 5, 2026. Rules/observations v2; content fingerprint `7def5f00`.

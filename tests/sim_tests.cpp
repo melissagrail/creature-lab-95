@@ -42,6 +42,95 @@ static void cast(World &w, int slot) {
 int main() {
     const int D = Moves[1].damage;
     CHECK(Roster.size() == 40 && Moves.size() == 161);
+    // Locomotion contracts across the roster: real yaw, directional speed, and braking.
+    auto locomotion_world = [](int species) {
+        World w;
+        reset(w, 7, 0, species, 0, 2);
+        w.objective = 0;
+        w.bodies[0].pos = {12 * Q, 9 * Q};
+        w.bodies[1].pos = {22 * Q, 16 * Q};
+        return w;
+    };
+    for (int sp = 0; sp < SpeciesCount; sp++) {
+        auto &spec = Roster[sp];
+        World turn = locomotion_world(sp);
+        step(turn, {{{0, 0, -Q, 0, 0}, {}}}, 1);
+        CHECK(turn.bodies[0].aim.x > 0 && turn.bodies[0].aim.y > 0);
+        for (int t = 0; t < 180 / spec.turn_degrees + 4; t++)
+            step(turn, {{{0, 0, -Q, 0, 0}, {}}}, 1);
+        CHECK(turn.bodies[0].aim.x < -Q + 4 && std::abs(turn.bodies[0].aim.y) < 4);
+        // Non-cardinal headings must settle exactly instead of oscillating from normalization loss.
+        Vec target = unit({371, 833});
+        turn = locomotion_world(sp);
+        turn.bodies[0].aim = unit({-492, 762});
+        for (int t = 0; t < 120; t++) {
+            Vec before = turn.bodies[0].aim;
+            step(turn, {{{0, 0, 371, 833, 0}, {}}}, 1);
+            Vec after = turn.bodies[0].aim;
+            double angle =
+                std::atan2(double(int64_t(before.x) * after.y - int64_t(before.y) * after.x),
+                           double(int64_t(before.x) * after.x + int64_t(before.y) * after.y));
+            CHECK(std::abs(angle) * 180 / 3.141592653589793 < spec.turn_degrees + .3);
+        }
+        CHECK(turn.bodies[0].aim.x == target.x && turn.bodies[0].aim.y == target.y);
+        int speeds[3] = {};
+        for (int direction = 0; direction < 3; direction++) {
+            World w = locomotion_world(sp);
+            Action action{direction == 0   ? Q
+                          : direction == 2 ? -Q
+                                           : 0,
+                          direction == 1 ? Q : 0, Q, 0, 0};
+            for (int t = 0; t < 25; t++)
+                step(w, {action, {}}, 1);
+            speeds[direction] = length(w.bodies[0].vel);
+            CHECK(w.bodies[0].aim.x == Q && w.bodies[0].aim.y == 0);
+            for (int t = 0; t < 20; t++)
+                step(w, {}, 1);
+            CHECK(length(w.bodies[0].vel) == 0);
+        }
+        CHECK(speeds[0] >= speeds[1] && speeds[1] > speeds[2]);
+        CHECK(std::abs(speeds[1] - spec.speed * spec.strafe / 100) < 8);
+        CHECK(std::abs(speeds[2] - spec.speed * spec.backward / 100) < 8);
+        for (int slot = 0; slot < 4; slot++) {
+            const auto &m = Moves[sp * 4 + slot];
+            World w = locomotion_world(sp);
+            w.bodies[0].vel = {100, 0};
+            Vec start = w.bodies[0].pos;
+            step(w, {{{Q, 0, Q, 0, slot + 1}, {}}}, 1);
+            if (m.move_start == 0)
+                CHECK(length(w.bodies[0].pos - start) == 0);
+            else
+                CHECK(w.bodies[0].pos.x > start.x);
+            Vec facing = w.bodies[0].aim;
+            step(w, {{{0, 0, 0, Q, 0}, {}}}, 1);
+            CHECK(w.bodies[0].aim.x == facing.x && w.bodies[0].aim.y == facing.y);
+            auto o = observe(w, 0);
+            CHECK(o.moves[slot * MoveSize + 37] == float(m.move_start) / 100);
+            CHECK(o.self[56] == float(spec.turn_degrees * 30) / 600);
+            CHECK(o.entities[39] == 1);
+        }
+        // Dodge direction comes from travel input, independent of facing and cast aim.
+        World dodge = locomotion_world(sp);
+        step(dodge, {{{0, -Q, Q, 0, 5}, {}}}, 1);
+        CHECK(dodge.bodies[0].locked.y == -Q && dodge.bodies[0].aim.x == Q);
+        Vec before = dodge.bodies[0].pos;
+        step(dodge, {{{Q, 0, Q, 0, 0}, {}}}, 1);
+        CHECK(dodge.bodies[0].pos.y < before.y && dodge.bodies[0].pos.x == before.x);
+        CHECK(length(dodge.bodies[0].vel) == Moves[160].speed * spec.dodge_speed / 100);
+        World fallback = locomotion_world(sp);
+        step(fallback, {{{0, 0, Q, 0, 5}, {}}}, 1);
+        CHECK(fallback.bodies[0].locked.y == Q && fallback.bodies[0].aim.x == Q);
+        // Neither water traction nor held movement permits a planted cast to slide.
+        for (int slot = 0; slot < 4; slot++)
+            if (Moves[sp * 4 + slot].move_start == 0) {
+                World wet = locomotion_world(sp);
+                wet.wetness = 700;
+                wet.bodies[0].vel = {180, 0};
+                Vec origin = wet.bodies[0].pos;
+                step(wet, {{{Q, 0, Q, 0, slot + 1}, {}}}, 1);
+                CHECK(length(wet.bodies[0].pos - origin) == 0);
+            }
+    }
     // Every authored move: request, resource cost, telegraph, release, cooldown, snapshot.
     for (int species = 0; species < 40; species++)
         for (int slot = 0; slot < 5; slot++) {
@@ -444,6 +533,6 @@ int main() {
     reset(a, 77, 2, 12, 27, 1);
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
-    CHECK(hash(a) == 0xeed14e993de79fb7ull);
+    CHECK(hash(a) == 0x1247c68eb6a064e7ull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

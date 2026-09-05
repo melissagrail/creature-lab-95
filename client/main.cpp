@@ -63,6 +63,25 @@ int sy(int y) {
 void worldcircle(Vec p, int radius, SDL_Color c, bool fill = false) {
     circle(sx(p.x), sy(p.y), std::max(1, radius * S / Q), c, fill);
 }
+void worldline(Vec a, Vec b, SDL_Color c) {
+    line(sx(a.x), sy(a.y), sx(b.x), sy(b.y), c);
+}
+void corridor(Vec a, Vec b, int radius, SDL_Color c) {
+    Vec side = scale(unit(Vec{a.y - b.y, b.x - a.x}), radius);
+    worldline(a + side, b + side, c);
+    worldline(a - side, b - side, c);
+    worldcircle(b, radius, c);
+}
+void arc(Vec pos, Vec facing, int radius, double half_angle, SDL_Color c) {
+    double heading = std::atan2(double(facing.y), double(facing.x));
+    int x = sx(pos.x), y = sy(pos.y), rad = radius * S / Q;
+    for (int n = 0; n < 40; n++) {
+        double a = heading - half_angle + 2 * half_angle * n / 40;
+        double b = heading - half_angle + 2 * half_angle * (n + 1) / 40;
+        line(x + int(std::cos(a) * rad), y + int(std::sin(a) * rad), x + int(std::cos(b) * rad),
+             y + int(std::sin(b) * rad), c);
+    }
+}
 const char *phase_name(Phase p) {
     return p == Idle ? "READY" : p == Startup ? "WINDUP" : p == Active ? "ACTIVE" : "RECOVERY";
 }
@@ -116,7 +135,7 @@ int main(int argc, char **argv) {
     reset(w, seed, weather, species_a, species_b, arena);
     Replay tape{w, {}};
     std::vector<uint8_t> saved;
-    std::string note = "SCRIPTED BRAINS. NO TRAINING OR XP YET.";
+    std::string note = "NOSE: FACING / YELLOW: WINDUP / ORANGE: ACTIVE / GRAY: RECOVERY";
     std::string captures = "captures";
     if (std::string(argv[0]).find(".app/Contents/MacOS/") != std::string::npos)
         captures = (std::filesystem::path(argv[0])
@@ -127,11 +146,13 @@ int main(int argc, char **argv) {
                         .parent_path() /
                     "captures")
                        .string();
-    int frames_limit = 0;
+    int frames_limit = 0, preview_ticks = 0;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
         if (a == "--frames" && i + 1 < argc)
             frames_limit = std::stoi(argv[++i]);
+        else if (a == "--preview-ticks" && i + 1 < argc)
+            preview_ticks = std::clamp(std::stoi(argv[++i]), 0, MaxTicks);
         else if (a == "--species-a" && i + 1 < argc)
             species_a = std::clamp(std::stoi(argv[++i]), 0, 39);
         else if (a == "--species-b" && i + 1 < argc)
@@ -145,6 +166,10 @@ int main(int argc, char **argv) {
             captures = argv[++i];
     }
     reset(w, seed, weather, species_a, species_b, arena);
+    for (int t = 0; t < preview_ticks; t += DecisionTicks)
+        step(w, {scripted(w, 0), scripted(w, 1)}, std::min(DecisionTicks, preview_ticks - t));
+    if (preview_ticks)
+        paused = true;
     tape = {w, {}};
     std::error_code file_error;
     std::filesystem::create_directories(captures, file_error);
@@ -202,7 +227,7 @@ int main(int argc, char **argv) {
         case 4:
             manual = !manual;
             ability = 0;
-            note = manual ? "WASD MOVE / MOUSE AIM / 1-4 MOVES / SPACE DODGE"
+            note = manual ? "WASD MOVE / MOUSE AIM / 1-4 MOVES / SPACE + WASD DODGE"
                           : "BOTH CREATURES USE SCRIPTED POLICIES";
             break;
         case 5:
@@ -446,7 +471,7 @@ int main(int argc, char **argv) {
         panel(10, 10, 1080, 760);
         rect(14, 14, 1072, 26, {0, 0, 128, 255});
         label(22, 20, "CREATURE LAB 95", white, 2);
-        label(720, 23, "40 SPECIES / COMBAT ALPHA 0.2", white, 1);
+        label(720, 23, "40 SPECIES / MOVEMENT ALPHA 0.3", white, 1);
         panel(1058, 18, 22, 18);
         buttons.push_back({{1058, 18, 22, 18}, "X", 0});
         label(1064, 22, "X", black, 1);
@@ -528,26 +553,46 @@ int main(int argc, char **argv) {
                 Vec end = b.pos + scale(b.locked, m.range);
                 if (m.kind == Melee || m.kind == Lunge) {
                     Vec center = b.pos + scale(b.locked, m.range / 2);
-                    worldcircle(center, m.radius, {c.r, c.g, c.b, 70}, true);
+                    worldcircle(center, m.radius, {c.r, c.g, c.b, 50}, true);
                     worldcircle(center, m.radius, c);
-                } else if (m.kind == Bolt || m.kind == Beam || m.kind == Blink) {
-                    line(sx(b.pos.x), sy(b.pos.y), sx(end.x), sy(end.y), c);
-                    worldcircle(end, m.radius, c);
+                    if (m.kind == Lunge) {
+                        int remaining =
+                            ph == Startup ? m.active : std::max(0, m.startup + m.active - b.age);
+                        corridor(center, center + scale(b.locked, m.speed * remaining), m.radius,
+                                 c);
+                    }
+                } else if (m.kind == Evade || m.kind == Blink) {
+                    int distance = m.kind == Evade
+                                       ? m.speed * Roster[b.species].dodge_speed / 100 * m.active
+                                       : m.range;
+                    corridor(b.pos, b.pos + scale(b.locked, distance), b.radius, green);
+                    worldline(b.pos, b.pos + scale(b.locked, distance), green);
+                } else if (m.kind == Bolt || m.kind == Beam) {
+                    for (int shot = 0; shot < m.shots; shot++) {
+                        Vec dir =
+                            unit(b.locked + scale(Vec{-b.locked.y, b.locked.x},
+                                                  (2 * shot - (m.shots - 1)) * m.spread, 2 * Q));
+                        Vec begin = b.pos + scale(dir, m.min_range),
+                            finish = b.pos + scale(dir, m.range);
+                        corridor(begin, finish, m.radius, c);
+                        worldline(begin, finish, {c.r, c.g, c.b, 100});
+                    }
                 } else if (m.kind == Nova) {
                     worldcircle(b.pos, m.radius, c);
                     if (m.min_range)
                         worldcircle(b.pos, m.min_range, dark);
                 } else if (m.kind == Field || m.kind == Trap || m.kind == Turret) {
                     end = target_point(w, i, b.move);
+                    worldcircle(end, m.radius, {c.r, c.g, c.b, 35}, true);
                     worldcircle(end, m.radius, c);
-                } else {
+                    worldline(b.pos, end, {c.r, c.g, c.b, 100});
+                } else
                     worldcircle(b.pos, b.radius + 180, c);
-                }
             }
             if (b.shield)
                 worldcircle(b.pos, b.radius + 100, blue);
             if (b.guard)
-                worldcircle(b.pos, b.radius + 200, white);
+                arc(b.pos, b.aim, b.radius + 240, std::acos(1. / 3.), white);
             if (b.haste)
                 worldcircle(b.pos, b.radius + 240, green);
             if (b.burn)
@@ -555,12 +600,55 @@ int main(int argc, char **argv) {
             worldcircle(b.pos + Vec{80, 120}, b.radius, {110, 110, 100, 120}, true);
             worldcircle(b.pos, b.radius, team, true);
             worldcircle(b.pos, b.radius, black);
-            Vec nose = b.pos + scale(b.aim, b.radius + 200);
-            line(sx(b.pos.x), sy(b.pos.y), sx(nose.x), sy(nose.y), white);
-            label(sx(b.pos.x) - 3, sy(b.pos.y) - 3, i ? "B" : "A", white, 1);
-            meter(sx(b.pos.x) - 24, sy(b.pos.y) - 27, 48, b.hp, Roster[b.species].hp, green);
-            label(sx(b.pos.x) - int(std::string(phase_name(ph)).size()) * 3, sy(b.pos.y) + 20,
-                  phase_name(ph), ph == Startup ? orange : dark, 1);
+            // A broad nose and rear shoulder make orientation legible at normal zoom.
+            Vec nose = b.pos + scale(b.aim, b.radius + 280);
+            Vec shoulder = b.pos - scale(b.aim, b.radius / 3);
+            Vec side = scale(Vec{-b.aim.y, b.aim.x}, b.radius * 3 / 4);
+            worldline(shoulder + side, nose, white);
+            worldline(shoulder - side, nose, white);
+            worldline(shoulder + side, shoulder - side, black);
+            arc(b.pos, b.aim, b.radius + 100, .65, white);
+            label(sx(b.pos.x) - 3, sy(b.pos.y) - 3, i ? "B" : "A", black, 1);
+            meter(sx(b.pos.x) - 24, sy(b.pos.y) - 34, 48, b.hp, Roster[b.species].hp, green);
+            std::string state = phase_name(ph);
+            if (b.move >= 0) {
+                const auto &m = Moves[b.move];
+                int mobility = ph == Startup  ? m.move_start
+                               : ph == Active ? m.move_active
+                                              : m.move_recovery;
+                if (mobility == 0 && ph != Recovery && m.kind != Evade && m.kind != Lunge &&
+                    m.kind != Blink) {
+                    // Ground braces stay fixed while a planted attack commits.
+                    worldline(b.pos + side - scale(b.aim, 300), b.pos + side + scale(b.aim, 300),
+                              black);
+                    worldline(b.pos - side - scale(b.aim, 300), b.pos - side + scale(b.aim, 300),
+                              black);
+                    state = "PLANTED " + state;
+                }
+                if (m.kind == Evade)
+                    state = ph == Active ? "SIDESTEP" : state;
+                int total = ph == Startup ? m.startup : ph == Active ? m.active : m.recovery;
+                int elapsed = ph == Startup  ? b.age
+                              : ph == Active ? b.age - m.startup
+                                             : b.age - m.startup - m.active;
+                meter(sx(b.pos.x) - 24, sy(b.pos.y) - 20, 48, total - elapsed, total,
+                      ph == Startup  ? yellow
+                      : ph == Active ? orange
+                                     : dark);
+            }
+            label(sx(b.pos.x) - int(state.size()) * 3, sy(b.pos.y) + 27, state,
+                  ph == Startup ? orange : dark, 1);
+        }
+        // The cursor indicates requested aim; the creature's nose is authoritative facing.
+        if (manual && !catalog) {
+            int mx, my;
+            SDL_GetMouseState(&mx, &my);
+            float lx, ly;
+            SDL_RenderWindowToLogical(r, mx, my, &lx, &ly);
+            if (lx >= AX && lx < AX + 24 * S && ly >= AY && ly < AY + 18 * S) {
+                line(int(lx) - 6, int(ly), int(lx) + 6, int(ly), blue);
+                line(int(lx), int(ly) - 6, int(lx), int(ly) + 6, blue);
+            }
         }
         for (auto &p : w.projectiles)
             if (p.life) {
@@ -606,6 +694,11 @@ int main(int argc, char **argv) {
             label(958, y + 19, "HP " + num(b.hp), black, 1);
             meter(752, y + 34, 196, b.energy, 1000, blue);
             label(958, y + 36, "EN " + num(b.energy / 10), black, 1);
+            label(752, y + 67,
+                  "TURN " + num(Roster[b.species].turn_degrees * 30) + "  SIDE " +
+                      num(Roster[b.species].strafe) + "%  BACK " + num(Roster[b.species].backward) +
+                      "%",
+                  dark, 1);
             label(752, y + 53,
                   b.move < 0 ? "READY"
                              : std::string(Moves[b.move].name) + " / " + phase_name(phase(b)),
@@ -624,7 +717,10 @@ int main(int argc, char **argv) {
             label(752, y, (j == 4 ? "SPC " : num(j + 1) + "   ") + move_for(w.bodies[0], j).name,
                   mask[j + 1] ? black : dark, 1);
             label(942, y,
-                  w.bodies[0].cooldown[j] ? "CD " + num(w.bodies[0].cooldown[j]) + "T" : "READY",
+                  w.bodies[0].cooldown[j] ? "CD " + num(w.bodies[0].cooldown[j]) + "T"
+                                          : (j == 4                                ? "MOVE DODGE"
+                                             : move_for(w.bodies[0], j).move_start ? "MOBILE"
+                                                                                   : "PLANT"),
                   mask[j + 1] ? green : dark, 1);
         }
         panel(738, 496, 330, 100);
@@ -667,8 +763,8 @@ int main(int argc, char **argv) {
                 button(100 + id, 98, y, 196, num(id + 1) + " " + sp.name);
                 label(314, y + 3, sp.role, blue, 1);
                 label(314, y + 18,
-                      "HP " + num(sp.hp) + "  SPEED " + num(sp.speed) + "  " +
-                          std::string(sp.identity).substr(0, 76),
+                      "HP " + num(sp.hp) + "  TURN " + num(sp.turn_degrees * 30) + "  SIDE " +
+                          num(sp.strafe) + "%  BACK " + num(sp.backward) + "%",
                       dark, 1);
             }
             label(

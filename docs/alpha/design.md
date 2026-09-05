@@ -35,7 +35,7 @@ Three layouts stress different choices: two central pillars, a four-rock grove, 
 
 ## Shared rules that preserve counterplay
 
-- Movement, aim and action selection are independent inputs. Direction locks when a cast begins. Startup slows ordinary movement; active lunges/dodges provide their own motion. Blink follows collision-constrained travel and cannot teleport through rocks.
+- Movement, aim and action selection are independent inputs. Physical facing turns at the authored yaw rate and locks when a cast begins. Forward, sideways and reverse movement have separate budgets; most casts hard-stop voluntary movement through startup/active. Selected mobile attacks retain an explicit fraction. Active lunges/dodges provide their own motion. [Movement v3](movement.md) defines the exact contracts. Blink follows collision-constrained travel and cannot teleport through rocks.
 - Each action has startup, active and recovery. There is no animation authority, random crit, chance-to-dodge statistic, or hidden hit roll. Narrow geometry and timing create misses.
 - Ground-targeted fields/traps/turrets use aim-vector magnitude for distance, bounded by cast range. A zero-length aim places at self while retaining facing. Other directional moves use normalized aim. Blinks currently travel their defined full distance.
 - Guard reduces frontal contact damage by 40%; it does not protect from the rear. Shields absorb post-guard damage and refresh to the larger remaining amount, not additive stacks. They expire. Barrier numbers are an intentionally scarce budget.
