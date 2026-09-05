@@ -8,7 +8,7 @@ All passive state is in the deterministic world and snapshots. Public meters/cou
 | Brambleback | After 30 stationary ticks, each global 60-tick cadence refreshes shield to at least 18 for 90 ticks | Make the anchor relocate between refreshes |
 | Glasswing | +1 damage per 6 stationary ticks, capped at +12 | Interrupt safe firing residency |
 | Voltjack | +15% direct damage against a target in water/charged water, or above 300 global wetness | Respect wet burst; exploit dry baseline |
-| Miretoad | Its poison stacks cap at 5 instead of 3 | Break contact before the stack count matters |
+| Miretoad | Its poison stacks cap at 5 instead of 3; mud travel multiplier is 90% instead of 50% | Break contact before the stack count matters |
 | Basaltusk | 20% reduction to frontal contact damage | Rear/flank access defeats the reduction |
 | Rimehare | Every third slow-applying contact roots for 15 ticks if resistance permits | Track chill rhythm and CC resistance |
 | Gloamcat | +9 direct damage when positioned behind the target's facing | Turn to face it, don't just run away |

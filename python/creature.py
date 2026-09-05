@@ -40,7 +40,7 @@ def library():
     for name, (args, result) in signatures.items():
         fn = getattr(lib, name)
         fn.argtypes, fn.restype = args, result
-    if lib.cr_version() != 4 or lib.cr_observation_version() != 4 or lib.cr_observation_size() != OBS_SIZE:
+    if lib.cr_version() != 5 or lib.cr_observation_version() != 5 or lib.cr_observation_size() != OBS_SIZE:
         raise RuntimeError('Incompatible simulation / observation schema')
     return lib
 

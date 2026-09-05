@@ -1,6 +1,6 @@
 {
-  "rules_version": 4,
-  "observation_version": 4,
+  "rules_version": 5,
+  "observation_version": 5,
   "axes": [
     "reach",
     "commitment",
@@ -84,7 +84,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Wickshot",
@@ -132,7 +133,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Flare Step",
@@ -180,7 +182,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Ash Circle",
@@ -228,7 +231,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 12,
@@ -311,7 +315,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Rootfurrow",
@@ -359,7 +364,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Bramble Garden",
@@ -407,7 +413,8 @@
           "surface_life": 240,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Barkskin",
@@ -455,7 +462,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 4,
@@ -538,7 +546,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Glass Shards",
@@ -586,7 +595,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Wing Slip",
@@ -634,7 +644,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Repulsion",
@@ -682,7 +693,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 5,
@@ -765,7 +777,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Arc Fang",
@@ -813,7 +826,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Discharge",
@@ -861,7 +875,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Static Screen",
@@ -909,7 +924,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 14,
@@ -992,7 +1008,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Spitball",
@@ -1040,7 +1057,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Mire Pool",
@@ -1083,12 +1101,13 @@
           "move_start": 0,
           "move_active": 0,
           "move_recovery": 30,
-          "surface": 1,
+          "surface": 7,
           "surface_radius": 1900,
           "surface_life": 240,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Digest",
@@ -1136,7 +1155,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 7,
@@ -1219,7 +1239,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Fault Ram",
@@ -1267,7 +1288,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Quarry Hook",
@@ -1315,7 +1337,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Bedrock",
@@ -1363,7 +1386,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 3,
@@ -1446,7 +1470,8 @@
           "surface_life": 0,
           "element": 2,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Snowshoe",
@@ -1494,7 +1519,8 @@
           "surface_life": 0,
           "element": 2,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Frost Lace",
@@ -1542,7 +1568,8 @@
           "surface_life": 270,
           "element": 2,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Whiteout",
@@ -1590,7 +1617,8 @@
           "surface_life": 0,
           "element": 2,
           "wind_strength": 10,
-          "wind_duration": 120
+          "wind_duration": 120,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 16,
@@ -1673,7 +1701,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Dusk Needle",
@@ -1721,7 +1750,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Night Pounce",
@@ -1769,7 +1799,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Crossfade",
@@ -1817,7 +1848,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 18,
@@ -1900,7 +1932,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Mirror Carapace",
@@ -1948,7 +1981,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Shear Wing",
@@ -1996,7 +2030,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Magnet Wake",
@@ -2044,7 +2079,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 8,
@@ -2127,7 +2163,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Tidal Bite",
@@ -2175,7 +2212,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Rain Basin",
@@ -2223,7 +2261,8 @@
           "surface_life": 300,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 24
         },
         {
           "name": "Surge",
@@ -2271,7 +2310,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 9,
@@ -2354,7 +2394,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Caltrop",
@@ -2402,7 +2443,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Needle Fence",
@@ -2450,7 +2492,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Panic Quills",
@@ -2498,7 +2541,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 12,
@@ -2581,7 +2625,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Daybreak",
@@ -2629,7 +2674,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Golden Bound",
@@ -2677,7 +2723,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Renew",
@@ -2725,7 +2772,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 8,
@@ -2808,7 +2856,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Burrow",
@@ -2856,7 +2905,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Upheaval",
@@ -2899,12 +2949,13 @@
           "move_start": 0,
           "move_active": 0,
           "move_recovery": 30,
-          "surface": 0,
-          "surface_radius": 0,
-          "surface_life": 0,
+          "surface": 7,
+          "surface_radius": 1500,
+          "surface_life": 210,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Tunnel Rush",
@@ -2952,7 +3003,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 6,
@@ -3035,7 +3087,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Split Spectrum",
@@ -3083,7 +3136,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Refraction",
@@ -3131,7 +3185,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Prism Fold",
@@ -3179,7 +3234,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 7,
@@ -3262,7 +3318,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Harvest Cut",
@@ -3310,7 +3367,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Thorn Leap",
@@ -3358,7 +3416,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Razor Guard",
@@ -3406,7 +3465,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 15,
@@ -3489,7 +3549,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Seed Bomb",
@@ -3537,7 +3598,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Shelter Grove",
@@ -3585,7 +3647,8 @@
           "surface_life": 270,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Living Wall",
@@ -3633,7 +3696,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 4,
@@ -3716,7 +3780,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Gust Lance",
@@ -3764,7 +3829,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 12,
-          "wind_duration": 90
+          "wind_duration": 90,
+          "surface_flow": 0
         },
         {
           "name": "Jetstream",
@@ -3812,7 +3878,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Windwright",
@@ -3860,7 +3927,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 24,
-          "wind_duration": 180
+          "wind_duration": 180,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 15,
@@ -3943,7 +4011,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Cinder Charge",
@@ -3991,7 +4060,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Fury",
@@ -4039,7 +4109,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Last Ember",
@@ -4087,7 +4158,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 5,
@@ -4170,7 +4242,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Tock",
@@ -4218,7 +4291,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Second Hand",
@@ -4266,7 +4340,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Windup Key",
@@ -4314,7 +4389,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 11,
@@ -4397,7 +4473,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Mute Line",
@@ -4445,7 +4522,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Deadwater",
@@ -4493,7 +4571,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Void Shell",
@@ -4541,7 +4620,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 6,
@@ -4619,12 +4699,13 @@
           "move_start": 0,
           "move_active": 0,
           "move_recovery": 30,
-          "surface": 0,
-          "surface_radius": 0,
-          "surface_life": 0,
+          "surface": 8,
+          "surface_radius": 1400,
+          "surface_life": 180,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Candle Sentry",
@@ -4672,7 +4753,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Hot Seal",
@@ -4720,7 +4802,8 @@
           "surface_life": 180,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Wax Jacket",
@@ -4768,7 +4851,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 5,
@@ -4851,7 +4935,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Tail Snap",
@@ -4899,7 +4984,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Acrobat",
@@ -4947,7 +5033,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 8,
-          "wind_duration": 75
+          "wind_duration": 75,
+          "surface_flow": 0
         },
         {
           "name": "Silk Whorl",
@@ -4995,7 +5082,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 17,
@@ -5078,7 +5166,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Brine Cannon",
@@ -5126,7 +5215,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Closed Shell",
@@ -5174,7 +5264,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Scuttle",
@@ -5222,7 +5313,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 4,
@@ -5305,7 +5397,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Nectar Needle",
@@ -5353,7 +5446,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Swoop",
@@ -5401,7 +5495,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Night Bloom",
@@ -5449,7 +5544,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 16,
@@ -5532,7 +5628,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Bell Wave",
@@ -5580,7 +5677,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Peal Rush",
@@ -5628,7 +5726,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Resonant Shell",
@@ -5676,7 +5775,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 5,
@@ -5759,7 +5859,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Forged Bolt",
@@ -5807,7 +5908,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Temper",
@@ -5855,7 +5957,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Anvil Fall",
@@ -5903,7 +6006,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 3,
@@ -5986,7 +6090,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Dune Dart",
@@ -6034,7 +6139,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Sand Sprint",
@@ -6082,7 +6188,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Dust Kick",
@@ -6130,7 +6237,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 14,
@@ -6213,7 +6321,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Reel In",
@@ -6261,7 +6370,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Tangle Bed",
@@ -6309,7 +6419,8 @@
           "surface_life": 240,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 14
         },
         {
           "name": "Leg Sweep",
@@ -6357,7 +6468,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 7,
@@ -6440,7 +6552,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Coal Fan",
@@ -6488,7 +6601,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Furnace",
@@ -6536,7 +6650,8 @@
           "surface_life": 180,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Vent",
@@ -6584,7 +6699,8 @@
           "surface_life": 0,
           "element": 1,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 6,
@@ -6667,7 +6783,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Lunar Shield",
@@ -6715,7 +6832,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Moonbeam",
@@ -6763,7 +6881,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Orbit",
@@ -6811,7 +6930,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 7,
@@ -6894,7 +7014,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Coil Cannon",
@@ -6942,7 +7063,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Springwire",
@@ -6990,7 +7112,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Capacitor",
@@ -7038,7 +7161,8 @@
           "surface_life": 0,
           "element": 3,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 13,
@@ -7121,7 +7245,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Falling Fruit",
@@ -7169,7 +7294,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Orchard",
@@ -7217,7 +7343,8 @@
           "surface_life": 270,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Harvest Run",
@@ -7265,7 +7392,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 5,
@@ -7348,7 +7476,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Ink Cloud",
@@ -7396,7 +7525,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Brushstroke",
@@ -7444,7 +7574,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Takeoff",
@@ -7492,7 +7623,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 12,
-          "wind_duration": 120
+          "wind_duration": 120,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 9,
@@ -7575,7 +7707,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Hookline",
@@ -7623,7 +7756,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Claim Claw",
@@ -7671,7 +7805,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Hunting Bound",
@@ -7719,7 +7854,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 15,
@@ -7802,7 +7938,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Acid Spit",
@@ -7850,7 +7987,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Slag Trail",
@@ -7893,12 +8031,13 @@
           "move_start": 0,
           "move_active": 0,
           "move_recovery": 30,
-          "surface": 0,
-          "surface_radius": 0,
-          "surface_life": 0,
+          "surface": 8,
+          "surface_radius": 1900,
+          "surface_life": 240,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Jawbreaker",
@@ -7946,7 +8085,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 4,
@@ -8029,7 +8169,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "River Cut",
@@ -8077,7 +8218,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Waterwheel",
@@ -8125,7 +8267,8 @@
           "surface_life": 0,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Fresh Spring",
@@ -8173,7 +8316,8 @@
           "surface_life": 210,
           "element": 4,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 12
         }
       ],
       "turn_degrees": 14,
@@ -8256,7 +8400,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Echo Fan",
@@ -8304,7 +8449,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Bass Ring",
@@ -8352,7 +8498,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Silent Beat",
@@ -8400,7 +8547,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 11,
@@ -8483,7 +8631,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Webway",
@@ -8531,7 +8680,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Latch",
@@ -8579,7 +8729,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Skitter",
@@ -8627,7 +8778,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 10,
@@ -8710,7 +8862,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Stone Scatter",
@@ -8758,7 +8911,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Backdraft",
@@ -8806,7 +8960,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Ridge Hop",
@@ -8854,7 +9009,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 4,
@@ -8937,7 +9093,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Sworn Guard",
@@ -8985,7 +9142,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Intercept",
@@ -9033,7 +9191,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         },
         {
           "name": "Judgment",
@@ -9081,7 +9240,8 @@
           "surface_life": 0,
           "element": 0,
           "wind_strength": 0,
-          "wind_duration": 0
+          "wind_duration": 0,
+          "surface_flow": 0
         }
       ],
       "turn_degrees": 8,
@@ -9139,6 +9299,7 @@
     "surface_life": 0,
     "element": 0,
     "wind_strength": 0,
-    "wind_duration": 0
+    "wind_duration": 0,
+    "surface_flow": 0
   }
 }

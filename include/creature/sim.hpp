@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32, ZoneCount = 16,
               HistoryCount = 64;
-constexpr uint32_t RulesVersion = 4, ObservationVersion = 4;
+constexpr uint32_t RulesVersion = 5, ObservationVersion = 5;
 struct Vec {
     int32_t x = 0, y = 0;
 };
@@ -18,7 +18,7 @@ int length(Vec);
 Vec unit(Vec);
 enum MoveKind { Melee, Bolt, Lunge, Field, Evade, Beam, Nova, Trap, Ward, Blink, Turret };
 constexpr int SurfaceCount = 16;
-enum SurfaceKind { Bare, Water, Ice, Brush, Fire, Steam, ChargedWater };
+enum SurfaceKind { Bare, Water, Ice, Brush, Fire, Steam, ChargedWater, Mud, Oil };
 enum Element { Neutral, Heat, Chill, Shock, Splash };
 enum Phase { Idle, Startup, Active, Recovery };
 enum Guidance { Free, Attack, Retreat, Conserve };
@@ -93,7 +93,7 @@ struct Move {
             returning = 0, pierce = 0;
     int32_t move_start = 0, move_active = 0, move_recovery = 30;
     int32_t surface = 0, surface_radius = 0, surface_life = 0, element = 0, wind_strength = 0,
-            wind_duration = 0;
+            wind_duration = 0, surface_flow = 0;
 };
 struct Species {
     const char *name;
@@ -135,6 +135,7 @@ struct Zone {
 struct Surface {
     Vec pos{};
     int32_t radius = 0, kind = Bare, life = 0, owner = -1, base = Bare, effect_timer = 0;
+    Vec flow{};
 };
 struct WindCast {
     Vec force{};

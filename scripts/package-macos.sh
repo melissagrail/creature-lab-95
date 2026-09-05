@@ -13,8 +13,8 @@ cat > "$bundle/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIdentifier</key><string>org.creaturelab.workbench</string>
 <key>CFBundleName</key><string>Creature Lab</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>4</string>
-<key>CFBundleShortVersionString</key><string>0.4.0</string>
+<key>CFBundleVersion</key><string>5</string>
+<key>CFBundleShortVersionString</key><string>0.5.0</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 PLIST

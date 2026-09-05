@@ -50,6 +50,8 @@ int main() {
             if (m.surface) {
                 World w = scene(sp);
                 release(w, slot);
+                if (m.kind == Bolt)
+                    idle(w, 90);
                 bool found = false;
                 for (auto &g : w.surfaces)
                     if (g.life && g.kind == m.surface) {
@@ -194,6 +196,68 @@ int main() {
         g = {{12 * Q, 9 * Q}, 300, Brush, 600, -1, Brush, 0};
     release(w, 3);
     CHECK(w.overflow == 1);
+    // Currents move planted bodies; freezing stops flow without discarding its vector.
+    w = scene(2);
+    w.surfaces[0] = {w.bodies[0].pos, 1800, Water, 600, 1, Water, 0, {20, 0}};
+    auto start = w.bodies[0].pos;
+    step(w, {{{0, 0, Q, 0, 1}, {}}}, 1);
+    CHECK(w.bodies[0].pos.x > start.x && w.bodies[0].move == 8);
+    w = scene(2);
+    w.surfaces[0] = {w.bodies[0].pos, 1800, Ice, 600, 1, Water, 1, {20, 0}};
+    start = w.bodies[0].pos;
+    step(w, {}, 1);
+    CHECK(w.bodies[0].pos.x == start.x && w.surfaces[0].kind == Water);
+    step(w, {}, 1);
+    CHECK(w.bodies[0].pos.x > start.x);
+    auto current_save = snapshot(w);
+    World current_fork;
+    CHECK(restore(current_fork, current_save.data(), current_save.size()));
+    CHECK(current_fork.surfaces[0].flow.x == 20);
+    // Heavy melee shatters ice; mud can freeze, thaw, wash away or dry.
+    w = scene(5);
+    w.surfaces[0] = {w.bodies[0].pos + Vec{500, 0}, 1200, Ice, 600, 1, Water, 180};
+    release(w, 0);
+    CHECK(w.surfaces[0].kind == Water);
+    for (auto r : {Reaction{Mud, 24, Ice}, Reaction{Mud, 140, Water}, Reaction{Mud, 1, Bare},
+                   Reaction{Oil, 1, Fire}}) {
+        w = scene();
+        w.surfaces[0] = {{12 * Q, 9 * Q}, 900, r.from, 600, -1, r.from, 0};
+        w.projectiles[0] = {{12 * Q, 9 * Q}, {100, 0}, {12 * Q, 9 * Q}, 20, 0, r.move};
+        step(w, {}, 1);
+        CHECK(w.surfaces[0].kind == r.to);
+        if (r.from == Mud && r.to == Ice) {
+            w.projectiles = {};
+            idle(w, w.surfaces[0].effect_timer);
+            CHECK(w.surfaces[0].kind == Mud);
+        }
+        if (r.to == Bare)
+            CHECK(w.surfaces[0].life == 0);
+    }
+    // Fire spreads one graph edge per pulse, not through an entire chain in one tick.
+    w = scene();
+    w.surfaces[0] = {{10 * Q, 5 * Q}, 700, Fire, 300, 0, Bare, 120};
+    w.surfaces[1] = {{11 * Q, 5 * Q}, 700, Oil, 600, -1, Oil, 0};
+    w.surfaces[2] = {{12 * Q, 5 * Q}, 700, Brush, 600, -1, Brush, 0};
+    step(w, {}, 1);
+    CHECK(w.surfaces[1].kind == Fire && w.surfaces[2].kind == Brush);
+    idle(w, 30);
+    CHECK(w.surfaces[2].kind == Fire);
+    w = scene();
+    for (int j = 0; j < 3; j++)
+        w.surfaces[j] = {w.bodies[0].pos, 1000, Fire, 200, 1, Bare, 120};
+    int initial_hp = w.bodies[0].hp;
+    step(w, {}, 1);
+    CHECK(w.bodies[0].hp == initial_hp - 4);
+    // Five owned patches form the creation budget; new creation replaces shortest remaining life.
+    w = scene(35);
+    for (int j = 0; j < 5; j++)
+        w.surfaces[j] = {{12 * Q, 9 * Q}, 900, Oil, 600 - j, 0, Oil, 0};
+    release(w, 3);
+    int owned = 0;
+    for (auto &g : w.surfaces)
+        if (g.life && g.owner == 0)
+            ++owned;
+    CHECK(owned == 5 && w.overflow == 0 && w.surfaces[4].kind == Water);
     // New persisted fields reject malformed state atomically.
     World valid_world = scene(), destination = valid_world;
     auto original_hash = hash(destination);

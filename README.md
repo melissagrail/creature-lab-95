@@ -1,18 +1,19 @@
-# Creature Lab 95 — terrain alpha 0.4
+# Creature Lab 95 — elements alpha 0.5
 
 A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and a deliberately simple native Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
 
-![Terrain and controllable wind](docs/alpha/terrain.png)
+![Water currents and ice](docs/alpha/elements.png)
 
 ## Start here
 
-- **[Terrain and wind systems](docs/alpha/terrain.md)** — reactive surfaces, timed vector fields, move interactions and the neutral wind vane.
+- **[Water, ice, mud and oil](docs/alpha/elements.md)** — currents, brittle ice, fuel propagation and terrain-creating moves.
+- **[Original terrain and wind systems](docs/alpha/terrain.md)** — reactive surfaces, timed vector fields, move interactions and the neutral wind vane.
 - **[Movement and casting commitments](docs/alpha/movement.md)** — facing, turning, directional speed, lateral dodge, planted/mobile casts and current validation.
 - **[Core design and combat rules](docs/alpha/design.md)** — eight gameplay axes, counterplay, resource economy, the bloom objective, alpha boundaries.
 - **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
 - **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
-- **[Current terrain balance diagnostic](reports/terrain-v4-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/terrain.md#validation)**.
+- **[Current terrain balance diagnostic](reports/elements-v5-balance.md)** — full matrix, aggregate rates and worst pairings.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/elements.md#validation)**.
 
 ## Build and play
 
@@ -69,9 +70,9 @@ python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 python3 python/rollout.py --arenas 256 --decisions 1000
 ```
 
-The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Terrain v4 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
+The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Elements v5 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
 
-Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v4; old prototype saves/models fail compatibility checks.
+Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v5; old prototype saves/models fail compatibility checks.
 
 ## RL integration
 

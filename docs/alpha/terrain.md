@@ -1,3 +1,5 @@
+> Historical v4 foundation. [Elements v5](elements.md) extends this with currents, mud, oil, brittle ice, a creation budget and capped overlapping ground damage.
+
 # Terrain and controllable wind — alpha 0.4
 
 Rules/observations v4; content fingerprint `6ed507c8`. The arena now contains reactive ground alongside rocks and persistent spell fields. Ten signatures create ground, elemental attacks transform it, and five signatures can create a timed uniform wind contribution.

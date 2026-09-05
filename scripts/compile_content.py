@@ -7,7 +7,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 # Do not import author_roster: imports must never overwrite designer edits.
 KINDS=['Melee','Bolt','Lunge','Field','Evade','Beam','Nova','Trap','Ward','Blink','Turret']
 PASSIVES=['Cinder','Anchor','Focus','Conduit','Venom','Bulwark','Frost','Backstab','Mirror','Rainborn','Trapper','Renewal','Ambush','Ricochet','Wounder','Sanctuary','Tailwind','Berserk','Cadence','Nullify','Architect','Returner','Reservoir','Leech','Resonance','Forge','Skirmish','Tether','Overheat','Retaliate','Recycle','Harvest','Cover','Hunter','Corrode','Purify','Rhythm','Web','Magazine','Resolve']
-FIELDS='startup active recovery cooldown cost damage range radius speed impulse burn haste pierces_evasion min_range lifetime period shots spread slow root silence poison wound mark shield heal guard cleanse drain bonus_mark execute health_cost bounces returning pierce move_start move_active move_recovery surface surface_radius surface_life element wind_strength wind_duration'.split()
+FIELDS='startup active recovery cooldown cost damage range radius speed impulse burn haste pierces_evasion min_range lifetime period shots spread slow root silence poison wound mark shield heal guard cleanse drain bonus_mark execute health_cost bounces returning pierce move_start move_active move_recovery surface surface_radius surface_life element wind_strength wind_duration surface_flow'.split()
 raw=(ROOT/'content/roster.json').read_bytes();data=json.loads(raw);species=data['species'];assert len(species)==40
 moves=[]
 for i,s in enumerate(species):
@@ -31,8 +31,9 @@ for m in moves:
  assert 0<=m['speed']<=800 and 1<=m['shots']<=4 and 0<=m['spread']<=400
  assert all(0<=m[k]<=600 for k in ['burn','haste','lifetime','slow','root','silence','poison','wound','mark','guard'])
  assert all(0<=m[k]<=100 for k in ['move_start','move_active','move_recovery'])
- assert 0<=m['surface']<=6 and 0<=m['element']<=4
+ assert 0<=m['surface']<=8 and 0<=m['element']<=4
  assert 0<=m['surface_radius']<=4*1024 and 0<=m['surface_life']<=600
+ assert 0<=m['surface_flow']<=32
  assert 0<=m['wind_strength']<=24 and 0<=m['wind_duration']<=600
  assert (m['surface']==0)==(m['surface_life']==0) and (m['wind_strength']==0)==(m['wind_duration']==0)
  assert 1<=m['period']<=90 and 0<=m['bounces']<=3 and abs(m['impulse'])<=1600

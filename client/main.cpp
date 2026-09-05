@@ -75,8 +75,9 @@ void arrow(Vec a, Vec direction, int extent, SDL_Color c) {
     worldline(end, end - scale(dir, 300) - side, c);
 }
 const char *surface_name(int kind) {
-    static const char *names[] = {"BARE", "WATER", "ICE", "BRUSH", "FIRE", "STEAM", "CHARGED"};
-    return names[std::clamp(kind, 0, 6)];
+    static const char *names[] = {"BARE",  "WATER",   "ICE", "BRUSH", "FIRE",
+                                  "STEAM", "CHARGED", "MUD", "OIL"};
+    return names[std::clamp(kind, 0, 8)];
 }
 void corridor(Vec a, Vec b, int radius, SDL_Color c) {
     Vec side = scale(unit(Vec{a.y - b.y, b.x - a.x}), radius);
@@ -148,7 +149,7 @@ int main(int argc, char **argv) {
     Replay tape{w, {}};
     std::vector<uint8_t> saved;
     std::string note =
-        "WATER + COLD = ICE / BRUSH + HEAT = FIRE / WATER + HEAT = STEAM / Z-X: WIND POWER";
+        "FREEZE CURRENTS / HEAVY HITS BREAK ICE / OIL SPREADS FIRE / WATER WASHES MUD";
     std::string captures = "captures";
     if (std::string(argv[0]).find(".app/Contents/MacOS/") != std::string::npos)
         captures = (std::filesystem::path(argv[0])
@@ -490,7 +491,7 @@ int main(int argc, char **argv) {
         panel(10, 10, 1080, 760);
         rect(14, 14, 1072, 26, {0, 0, 128, 255});
         label(22, 20, "CREATURE LAB 95", white, 2);
-        label(720, 23, "40 SPECIES / TERRAIN ALPHA 0.4", white, 1);
+        label(720, 23, "40 SPECIES / ELEMENTS ALPHA 0.5", white, 1);
         panel(1058, 18, 22, 18);
         buttons.push_back({{1058, 18, 22, 18}, "X", 0});
         label(1064, 22, "X", black, 1);
@@ -535,10 +536,10 @@ int main(int argc, char **argv) {
         Vec wind = wind_vector(w);
         for (auto &g : w.surfaces)
             if (g.life) {
-                SDL_Color palette[] = {{0, 0, 0, 0},        {40, 120, 190, 255},
-                                       {90, 165, 210, 255}, {54, 110, 48, 255},
-                                       {205, 74, 25, 255},  {155, 160, 165, 255},
-                                       {155, 120, 18, 255}};
+                SDL_Color palette[] = {
+                    {0, 0, 0, 0},        {40, 120, 190, 255}, {90, 165, 210, 255},
+                    {54, 110, 48, 255},  {205, 74, 25, 255},  {155, 160, 165, 255},
+                    {155, 120, 18, 255}, {120, 85, 45, 255},  {75, 60, 105, 255}};
                 auto c = palette[g.kind];
                 worldcircle(g.pos, g.radius, {c.r, c.g, c.b, 65}, true);
                 worldcircle(g.pos, g.radius, c);
@@ -555,6 +556,9 @@ int main(int argc, char **argv) {
                 }
                 label(sx(g.pos.x) - int(std::string(surface_name(g.kind)).size()) * 3,
                       sy(g.pos.y + g.radius / 2) - 3, surface_name(g.kind), c, 1);
+                if ((g.kind == Water || g.kind == ChargedWater) && length(g.flow)) {
+                    arrow(g.pos + Vec{0, -g.radius / 2}, g.flow, 600 + length(g.flow) * 15, blue);
+                }
                 if (g.effect_timer || g.owner >= 0)
                     label(sx(g.pos.x) - 12, sy(g.pos.y + g.radius / 2) + 10,
                           num((g.effect_timer ? g.effect_timer : g.life) / 30) + "S", dark, 1);
@@ -623,7 +627,11 @@ int main(int argc, char **argv) {
                           "WIND " + num(m.wind_strength * b.aim_scale / Q), c, 1);
                 }
                 if (m.surface) {
-                    Vec place = m.kind == Field ? target_point(w, i, b.move) : b.pos;
+                    Vec place = (m.kind == Field || m.kind == Trap || m.kind == Turret)
+                                    ? target_point(w, i, b.move)
+                                    : b.pos;
+                    if (m.kind == Bolt)
+                        place = b.pos + scale(b.locked, m.range);
                     worldcircle(place, m.surface_radius, c);
                     label(sx(place.x) - 15, sy(place.y) - 18, surface_name(m.surface), c, 1);
                 }

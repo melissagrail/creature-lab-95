@@ -1,4 +1,4 @@
-> **Historical v2 verification.** These balance and performance figures describe release 0.2, before directional locomotion and planted casts. See [terrain v4 validation](alpha/terrain.md#validation) for the current build.
+> **Historical v2 verification.** These balance and performance figures describe release 0.2, before directional locomotion and planted casts. See [elements v5 validation](alpha/elements.md#validation) for the current build.
 
 # Combat alpha verification
 

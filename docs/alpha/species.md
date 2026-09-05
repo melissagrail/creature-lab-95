@@ -157,7 +157,7 @@ A squat toad whose poison needs repeated access.
 |---|---|---:|---|---|---|---|
 | 1. Venom Tongue | Melee | 9 | 6 / 3 / 9 | 27t / 90 | 2.44 / 0.83 | poison=150, move_recovery=30 |
 | 2. Spitball | Bolt | 9 | 10 / 1 / 11 | 36t / 130 | 11.23 / 0.20 | speed=320, poison=150, move_recovery=30 |
-| 3. Mire Pool | Field | 2 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, slow=30, poison=90, move_recovery=30, surface=1, surface_radius=1900, surface_life=240, pulse every 24t |
+| 3. Mire Pool | Field | 2 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, slow=30, poison=90, move_recovery=30, surface=7, surface_radius=1900, surface_life=240, pulse every 24t |
 | 4. Digest | Ward | 0 | 18 / 1 / 9 | 180t / 160 | 0.00 / 0.00 | heal=13, move_recovery=30 |
 
 ## Basaltusk
@@ -272,7 +272,7 @@ An eel that is faster and more sustainable on wet ground.
 |---|---|---:|---|---|---|---|
 | 1. Undertow | Beam | 18 | 18 / 1 / 17 | 66t / 190 | 7.81 / 0.27 | impulse=-700, slow=30, move_start=60, move_active=60, move_recovery=60, element=4 |
 | 2. Tidal Bite | Melee | 23 | 6 / 3 / 9 | 27t / 90 | 1.76 / 0.78 | move_start=35, move_active=35, move_recovery=60, element=4 |
-| 3. Rain Basin | Field | 3 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, slow=20, heal=2, move_recovery=30, surface=1, surface_radius=2400, surface_life=300, element=4, pulse every 24t |
+| 3. Rain Basin | Field | 3 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, slow=20, heal=2, move_recovery=30, surface=1, surface_radius=2400, surface_life=300, element=4, surface_flow=24, pulse every 24t |
 | 4. Surge | Lunge | 14 | 8 / 7 / 14 | 66t / 190 | 1.37 / 0.63 | speed=380, haste=60, move_recovery=25, element=4 |
 
 ## Quillrat
@@ -341,7 +341,7 @@ A burrowing mole that empowers its next hit after displacement.
 |---|---|---:|---|---|---|---|
 | 1. Grave Claw | Melee | 18 | 6 / 3 / 9 | 27t / 90 | 1.76 / 0.78 | move_start=35, move_active=35, move_recovery=60 |
 | 2. Burrow | Blink | 0 | 12 / 1 / 13 | 135t / 230 | 4.10 / 0.00 | move_recovery=25 |
-| 3. Upheaval | Trap | 24 | 16 / 1 / 10 | 81t / 150 | 4.88 / 1.51 | lifetime=270, root=12, move_recovery=30, pulse every 15t |
+| 3. Upheaval | Trap | 24 | 16 / 1 / 10 | 81t / 150 | 4.88 / 1.51 | lifetime=270, root=12, move_recovery=30, surface=7, surface_radius=1500, surface_life=210, pulse every 15t |
 | 4. Tunnel Rush | Lunge | 15 | 8 / 7 / 14 | 66t / 190 | 1.37 / 0.63 | speed=380, impulse=350, move_recovery=25 |
 
 ## Prismray
@@ -523,7 +523,7 @@ A wax wyrm whose strength has a separate health bar.
 
 | Slot / move | Form | Damage | Startup / active / recovery | CD / stamina | Range / radius | Effects |
 |---|---|---:|---|---|---|---|
-| 1. Wax Glob | Bolt | 11 | 10 / 1 / 11 | 36t / 130 | 11.23 / 0.20 | speed=330, slow=24, move_recovery=30, element=1 |
+| 1. Wax Glob | Bolt | 11 | 10 / 1 / 11 | 36t / 130 | 11.23 / 0.20 | speed=330, slow=24, move_recovery=30, surface=8, surface_radius=1400, surface_life=180, element=1 |
 | 2. Candle Sentry | Turret | 7 | 18 / 1 / 15 | 180t / 260 | 3.91 / 0.57 | speed=310, lifetime=240, move_recovery=30, element=1, pulse every 27t |
 | 3. Hot Seal | Field | 4 | 15 / 1 / 14 | 105t / 210 | 3.71 / 1.76 | lifetime=150, move_recovery=30, surface=4, surface_radius=1700, surface_life=180, element=1, pulse every 24t |
 | 4. Wax Jacket | Ward | 0 | 3 / 1 / 9 | 120t / 160 | 0.00 / 0.00 | shield=22, guard=18, move_recovery=30, element=1 |
@@ -686,7 +686,7 @@ A long-limbed widow that keeps prey at a precise intermediate range.
 |---|---|---:|---|---|---|---|
 | 1. Kelp Harpoon | Bolt | 17 | 10 / 1 / 11 | 36t / 130 | 10.25 / 0.20 | speed=390, slow=30, move_recovery=30 |
 | 2. Reel In | Beam | 17 | 18 / 1 / 17 | 66t / 190 | 8.30 / 0.27 | impulse=-600, root=12, move_recovery=30 |
-| 3. Tangle Bed | Field | 3 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, root=9, move_recovery=30, surface=1, surface_radius=2000, surface_life=240, pulse every 30t |
+| 3. Tangle Bed | Field | 3 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, root=9, move_recovery=30, surface=1, surface_radius=2000, surface_life=240, surface_flow=14, pulse every 30t |
 | 4. Leg Sweep | Nova | 17 | 14 / 2 / 15 | 75t / 170 | 0.00 / 2.73 | impulse=550, move_recovery=30 |
 
 ## Pyrelisk
@@ -847,7 +847,7 @@ A corrosive jaw that makes all contact compromise healing.
 |---|---|---:|---|---|---|---|
 | 1. Corrosive Bite | Melee | 20 | 6 / 3 / 9 | 27t / 90 | 1.76 / 0.78 | wound=90, move_recovery=30 |
 | 2. Acid Spit | Bolt | 15 | 10 / 1 / 11 | 36t / 130 | 9.28 / 0.20 | speed=430, poison=60, move_recovery=30 |
-| 3. Slag Trail | Field | 4 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, wound=60, move_recovery=30, pulse every 24t |
+| 3. Slag Trail | Field | 4 | 15 / 1 / 14 | 105t / 210 | 4.69 / 1.76 | lifetime=150, wound=60, move_recovery=30, surface=8, surface_radius=1900, surface_life=240, pulse every 24t |
 | 4. Jawbreaker | Lunge | 20 | 8 / 7 / 14 | 66t / 190 | 1.37 / 0.63 | speed=380, impulse=300, move_recovery=25 |
 
 ## Dewotter
@@ -871,7 +871,7 @@ An otter whose dodge removes slows and damage-over-time effects.
 | 1. Dew Dart | Bolt | 14 | 10 / 1 / 11 | 36t / 130 | 11.23 / 0.20 | speed=470, move_start=75, move_active=75, move_recovery=60, element=4 |
 | 2. River Cut | Melee | 16 | 6 / 3 / 9 | 27t / 90 | 1.76 / 0.78 | slow=20, move_start=35, move_active=35, move_recovery=60, element=4 |
 | 3. Waterwheel | Nova | 15 | 14 / 2 / 15 | 75t / 170 | 0.00 / 2.73 | impulse=350, move_recovery=30, element=4 |
-| 4. Fresh Spring | Ward | 0 | 3 / 1 / 9 | 180t / 160 | 0.00 / 0.00 | shield=10, heal=9, guard=24, cleanse=1, move_recovery=30, surface=1, surface_radius=1800, surface_life=210, element=4 |
+| 4. Fresh Spring | Ward | 0 | 3 / 1 / 9 | 180t / 160 | 0.00 / 0.00 | shield=10, heal=9, guard=24, cleanse=1, move_recovery=30, surface=1, surface_radius=1800, surface_life=210, element=4, surface_flow=12 |
 
 ## Echofin
 
