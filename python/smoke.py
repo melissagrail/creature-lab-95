@@ -7,6 +7,7 @@ with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
         obs, features, status = env.step(env.scripted_actions())
         assert len(obs) == 8 * 2 * OBS_SIZE
         assert all(math.isfinite(x) for x in obs)
+    assert len(env.species_names)==40
     data = env.snapshot(3)
     fork.restore(data)
     assert env.hash(3) == fork.hash()
@@ -28,10 +29,11 @@ with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
     except ValueError:
         pass
     assert quantize((2., -.5), (0., 1.), 3) == [1024, -512, 0, 1024, 3]
-    env.reset(0, 77, 2)
+    env.reset(0, 77, 2, species=(12,27), arena=1)
     for _ in range(100):
         env.step(env.scripted_actions())
-    assert env.hash(0) == 0xb92b46e8c4a2443c
+    assert env.hash(0)==0xeed14e993de79fb7
+    print(f"Python golden {env.hash(0):016x}")
 fork.close()  # Idempotent.
 try:
     fork.observe()

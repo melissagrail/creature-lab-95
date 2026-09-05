@@ -13,11 +13,17 @@ extern "C" {
 // Caller owns buffers. Functions return 0 on success, -1 on invalid arguments.
 // Handles must originate from cr_create; use each handle on one thread at a time.
 CR_API uint32_t cr_version(void);
+CR_API uint32_t cr_content_hash(void);
+CR_API uint32_t cr_observation_version(void);
+CR_API int32_t cr_species_count(void);
+CR_API const char *cr_species_name(int32_t id);
+CR_API int32_t cr_reset_match(void *, uint32_t seed, int32_t weather, int32_t a, int32_t b,
+                              int32_t arena);
 CR_API int32_t cr_observation_size(void);
 CR_API void *cr_create(uint32_t seed, int32_t weather);
 CR_API void cr_destroy(void *world);
 CR_API int32_t cr_reset(void *, uint32_t seed, int32_t weather);
-CR_API int32_t cr_step(void *, const int32_t *actions10, int32_t *features12, int32_t *status4);
+CR_API int32_t cr_step(void *, const int32_t *actions10, int32_t *features20, int32_t *status4);
 CR_API int32_t cr_observe(void *, int32_t agent, float *output, size_t count);
 CR_API int32_t cr_scripted(void *, int32_t agent, int32_t *action5);
 CR_API int32_t cr_command(void *, int32_t agent, int32_t guidance);

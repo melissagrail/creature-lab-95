@@ -1,44 +1,55 @@
-# RL and rendering integration
+# Alpha integration contract — rules / observations v2
 
-## Entry points
+The core is C++17 with no renderer, model runtime or network dependency. `include/creature/api.h` exports opaque handles, registry queries, match reset, batched stepping, structured actor observations, commands, snapshots and hashes. `cr_reset_match` selects both species, weather and arena. `cr_version`, `cr_observation_version` and `cr_content_hash` identify the contract. V1 saves, replays and policies are deliberately incompatible.
 
-C++: `reset`, `step`, `observe`, `action_mask`, `snapshot`, `restore`, `hash`, `command`. `World fork = world` creates an in-memory simulation branch. All state is per-world. Independent worlds can be assigned to separate workers; simultaneous calls on one world are unsupported.
+## Canonical action and result
 
-C: `include/creature/api.h` exposes opaque handles and caller-owned numeric buffers. No STL types or C++ objects cross this ABI. `cr_batch_step` performs N arenas in one native call; it is currently serial within the call. Parallelize independent batches at the worker level. The native loop has no per-tick heap allocations. Snapshot/hash allocate temporary buffers and should not be used on every high-throughput training tick unless needed.
+Each joint decision is `[2,5]` signed int32 values: move x/y, aim x/y, ability. Motion/aim components are in [-1024,1024]; movement is clamped to a unit disk. Ability 0 is no-op, 1–4 are the selected species' kit slots, 5 is dodge. Input is held for up to three 30-Hz ticks, with a single request on the first tick. Action masks describe readiness before accepting inputs; invalid requests spend nothing.
 
-Python: `python/creature.py` uses only the standard library. `Batch` is a context manager with explicit reset and close. Output buffers are reused; copy observations/features into trajectory storage before the next call. NumPy can view them without copies using `np.ctypeslib.as_array`. A `[N,2,678]` tensor contains both players after each joint decision. The reset-observation method is separate, so final observations are never implicitly replaced.
+For fields/traps/turrets, aim magnitude controls ground-target distance as a fraction of cast range. For other attacks it specifies direction; blink moves its full authored distance. Direction locks on acceptance. Record the quantized integer actions, not just model floats. `quantize` rejects nonfinite inputs and uses explicit ties-away-from-zero rounding.
 
-Actions have shape `[N,2,5]`: movement x/y, aim x/y in world coordinates and ability (0 no-op, 1–4 move slots, 5 dodge). Four vector components are Q integers in [-1024,1024]. The optional model returns tanh-bounded floats; `quantize` implements explicit ties-away-from-zero rounding. Keep this quantizer versioned. If an actor outputs egocentric actions, rotate them back using its facing before quantization. The reference policy currently outputs world-space actions and receives absolute self position/facing for that purpose.
+`cr_batch_step` outputs `[N,2,2206]` float observations, `[N,2,10]` integer features, and `[N,4]` status. Features are: HP damage dealt, damage taken, contacts dodged, interrupts, KO, death, HP healed, shield damage absorbed, control points gained, stamina spent. On-hit/status damage and environmental damage have deliberately different attribution; self-paid health is a resource cost, not opponent damage. Reward shaping remains the learner's choice.
 
-Features have shape `[N,2,6]`: actual damage dealt, damage taken, contacts dodged, interrupts, KO, death. They aggregate across all executed ticks. Friendly fire can appear in both dealt and taken for the same player. Status is `[N,4]`: terminated, truncated, winner (-1 none/draw), executed ticks. This is not a reward API. A sparse example is KO minus death; scale damage shaping separately and anneal it if it changes the desired tactics. Treat truncation bootstrap consistently in the learner.
+Status is native terminated, native clock-expired, winner (-1 draw/none), executed physics ticks. No auto-reset. A KO or capture can end before all three ticks execute. The 90-second scored verdict is **terminal for the finite game** even though the native API preserves its separate `truncated`/clock flag for debugging. The Gymnasium adapter maps either native ending to learner termination; an external rollout cutoff would instead be a truncation requiring appropriate bootstrap. Do not bootstrap through an adjudicated final win/loss as though the match continues.
 
-## Actor schema v1: 678 floats
+## Actor tensor v2: 2,206 floats
 
-| Slice | Shape | Contents |
-| --- | --- | --- |
-| 0:24 | self[24] | HP/100, energy/1000, velocity x/y divided by 512, facing x/y divided by Q, (move+1)/5, phase/3, age/90, stun/30, burn/90, haste/90, radius/Q, x/(24Q), y/(18Q), guidance/3, guidance_age/900, five cooldown fractions, two reserved zeros |
-| 24:456 | entities[27,16] | Opponent, two rocks, 16 projectile slots, eight zone slots |
-| 456:536 | moves[5,16] | Kind/4, startup/30, active/30, recovery/30, cooldown/90, cost/1000, damage/100, range/(24Q), radius/(24Q), speed/512, impulse/512, burn/90, haste/90, hits_evasive, present=1, reserved=0 |
-| 536:664 | history[16,8] | Newest visible events first; age/90, kind/9, actor relation, target relation, (move+1)/5, amount/100, visible=1, present=1 |
-| 664:672 | global[8] | tick/2700, rain/1000, wind_x/16, wetness/1000, terminal, truncated, two reserved zeros |
-| 672:678 | mask[6] | Readiness for no-op and five moves; no-op always legal |
+| Slice | Shape | Meaning |
+|---|---|---|
+| 0:56 | self[56] | Body, resources, cooldowns, statuses, passive meter/counter, physical attributes, axes |
+| 56:1752 | entities[53,32] | Enemy, four rock slots, 32 projectile slots, 16 zone slots |
+| 1752:1952 | moves[5,40] | Semantic descriptors of the creature's four moves and shared dodge |
+| 1952:1992 | announced[40] | Enemy's current move descriptor; zeros while idle |
+| 1992:2184 | history[24,8] | Recent public events, newest first, masked padding |
+| 2184:2200 | global[16] | Weather, terrain layout, time, objective/control and ending state |
+| 2200:2206 | mask[6] | No-op plus five legal-action indicators |
 
-Entity columns: kind/4, relative forward position/(24Q), relative right position/(24Q), relative-frame velocity forward and right ×30/(24Q), radius/(24Q), team relation (self +1, opponent -1, neutral 0), remaining lifetime/180, (move+1)/5, phase/3, phase age/90, HP/100, burn/90, facing forward, facing right, presence mask. Velocities use entity world velocity rotated into the actor frame, not velocity relative to the actor. Kind IDs: opponent 1, obstacle 2, projectile 3, zone 4. Zero rows are padding. Some normalized time features may exceed 1; these are scale factors, not universal clipping limits.
+Self columns 0–16: HP fraction, stamina/1000, world velocity x/y /512, facing x/y /1024, global (move+1)/161, phase/3, action age/90, stun/30, burn/150, haste/150, radius/1024, world x/(24×1024), y/(18×1024), guidance/3, guidance age/900. Columns 17–21 are cooldown fractions of each selected move.
 
-Phase: idle 0, startup 1, active 2, recovery 3. Guidance: free 0, attack 1, retreat 2, conserve 3; it expires at 900 ticks. Event kinds are documented by the enum in `sim.hpp`. Relations are ±1 from the observer's perspective. Enemy guidance events are filtered. The public history ring is bounded, so private commands may evict older records when saturated; strict information-theoretic privacy would require per-observer rings before adversarial competitive use.
+Self 22–42: species/39, passive/39, shield/60, guard/60, poison/150, poison stacks/5, slow/90, root/30, silence/30, wound/150, mark/150, control resistance/75, passive meter/1000, counter modulo 3 /2, time since cast/90, stationary time/90, control/600, base speed/210, max HP/180, regeneration/12, mass/200. Columns 43–50 are all eight design axes /5. Columns 51–55: previous slot+1 /5, aim magnitude/1024, shield lifetime/90, current slot+1 /5, reserved passive timer/90.
 
-The world is fully visible spatially: obstacles block contact but do not hide creatures. Actors do not receive enemy stamina, cooldowns, stun duration, guidance or RNG state. The renderer can inspect complete state. Enemy facing / locked telegraph aim is exposed in the actor frame; projectiles expose their travel direction. Add semantic announced-move descriptors before testing randomized opponent move libraries. A critic can receive the full World through a separately implemented training adapter; there is no privileged tensor in this version.
+Entity columns 0–13: kind/4, relative forward/right position /(24×1024), entity world velocity rotated into observer frame ×30/(24×1024), radius/(24×1024), team relation (+1 self, -1 enemy, 0 neutral), remaining lifetime/300, (move+1)/161, phase/3, phase age/90, HP fraction, forward/right facing relative to observer. Velocity is rotated world velocity, not subtraction of observer velocity.
 
-## Model and training boundary
+Enemy columns 14–30: shield/60, guard/60, burn/150, poison stacks/5, slow/90, mark/150, species/39, passive meter/1000, resistance/75, counter modulo 3 /2, root/30, silence/30, wound/150, haste/150, poison duration/150, stun/30, locked aim magnitude/1024. Column 31 is presence. Projectile columns 14/15 carry return phase and remaining bounces/3. Zone column 14 carries move kind/10; HP is /45. Zero rows are padding. Type IDs: enemy 1, rock 2, projectile 3, zone 4. Slot positions are stable for an object's lifetime but are reusable, not permanent identities.
 
-`policy.py` demonstrates a 68,903-parameter encoder/GRU with continuous movement/aim, a masked categorical move head, and a value head. Masked pooling keeps padding from changing the latent state. It is a gradient/inference integration test with random weights, not a learning result. Start with PPO against scripted and historical opponents, a short curriculum, several random seeds, and held-out evaluation. Do not estimate actual convergence from raw simulator throughput.
+Move columns 0–35: kind/10; startup/30; active/30; recovery/30; cooldown/180; stamina/1000; per-contact damage/60; range/(24×1024); radius/(4×1024); speed/800; impulse/1600; burn/150; haste/150; authored evasive-hit flag; minimum range/(24×1024); lifetime/300; interval/90; shots/4; spread/400; slow/90; root/30; silence/30; poison/150; wound/150; mark/150; shield/60; heal/30; guard/60; cleanse flag; stamina drain/300; marked payoff/30; execute bonus/30; health cost/20; bounces/3; returning flag; piercing flag. Column 36 is present=1 and 37–39 reserved. Fields/traps hit evasion by shared kind rule even if the authored flag is zero.
 
-Keep recurrent hidden state separate per creature per arena; clear it on reset and mask it across terminal transitions. For counterfactual branching, either retain the hidden state at the snapshot or reconstruct it by replaying observations. Copying the world alone does not copy the creature's memory. Store actual sampled integer actions and behavior-policy log probabilities in PPO rollout buffers. A fresh on-policy rollout from a historical world must use correctly initialized recurrent state; old replay trajectories are not automatically valid PPO data.
+History: age/150, kind/15, actor relation, target relation, (move+1)/161, amount/180, visible=1, present=1. Guidance is not inserted into public event history; it lives in private self state and replay input records. Opponent stamina and cooldowns, guidance, RNG and latent model memory are not exposed. Spatial state and combat telegraphs are public; rocks are collision occluders, not vision occluders.
 
-For lifelong updates, begin with episodic training in a local Python process. Hold the deployed weights fixed for a fight. Train a candidate, evaluate against a diverse fixed opponent suite and the previous brain, then promote it atomically between episodes. Record base/adapter/observation/rules versions. A frozen encoder plus trainable GRU/heads is a possible later parameter split, not a proven optimum. Feedback remains a learning signal and never alters physics. Authentication, durable queues, signed manifests, cloud sync and rollback remain future service work.
+Global: time/2700, rain/1000, wind/16, wetness/1000, native terminated, native clock-expired, arena/2, objective enabled, own/enemy control /600, own/enemy capture preparation /30, end reason/3, three reserved zeros. Time-like normalization factors are scales, not clipping guarantees; some features exceed 1.
 
-## Unity client plan
+## Python and model lifecycle
 
-Use `DllImport` with C calling convention to wrap the existing C ABI. Drive policy decisions at 10 Hz; call `cr_step` once per joint action and interpolate presentation independently. Do not let Unity colliders or animation events apply combat damage. The initial ABI exposes observations and snapshot bytes; add a versioned render-state/event buffer for production Unity integration rather than decoding private C++ object layout. The SDL client currently links directly to the C++ state for inspection. This is a clean authority boundary, not a complete Unity package.
+`Batch` is a dependency-free ctypes bridge. It owns reusable output buffers; copy them before the next step when storing experience. NumPy can view these via `np.ctypeslib.as_array`. Separate worlds/batches may run on different workers; do not concurrently mutate one handle. The native batch loop is serial and allocation-free per tick. Snapshots/hashes allocate temporary buffers and are not necessary on every training tick.
 
-Keep inference local. Torch, ONNX Runtime or Unity's inference runtime can implement the policy adapter without being linked into the engine. Verify the exported model's input/output schema and quantization through replay fixtures before swapping runtimes. GPU model execution is outside the deterministic-simulation guarantee.
+`policy.py` demonstrates a 79,555-parameter recurrent network. It pools masked entities/history, encodes the actual move and announced enemy move descriptors, uses a 96-wide GRU, and scores each slot by combining its token with the recurrent state. This avoids pooling away which descriptor belongs to which action. We test inference, masks, quantization, native submission and gradients. Weights are random. No learner, trained checkpoint, or claim of convergence is included.
+
+`gym_env.py` adds a checked Gymnasium interface for a custom hybrid-action learner versus a scripted opponent. Action space is a Dict with continuous `motion[4]` and Discrete `ability`; observation space is the structured Dict above. Not every off-the-shelf PPO implementation supports hybrid Dict actions. Use the reference heads in a suitable learner, or adapt intentionally; do not silently discretize aim/motion and assume equivalent gameplay. [Gymnasium's environment API](https://gymnasium.farama.org/api/env/) defines the reset/step and termination contracts used here.
+
+Keep recurrent state per creature/arena. Reset memory between fights. A simulation snapshot alone is insufficient to fork an RNN policy; retain the corresponding memory or reconstruct it through observation replay. Historical trajectories are not automatically valid on-policy PPO data. Store behavior log probabilities, canonical actions, model/version metadata and the final observation before reset.
+
+## Renderer / Unity boundary
+
+The SDL workbench reads native C++ state directly. A future Unity client should use C ABI render-state/event buffers added as a versioned presentation adapter, not decode C++ object layout or drive damage from Unity physics/animation. The core, content, actions and snapshots already remain independent of the renderer. Production Unity bindings, model export/runtime packaging and networking are not implemented.
+
+Inference should stay local. Training can later run in a local Python sidecar or authenticated remote worker. Hold weights fixed during an episode; evaluate candidates on historical opponents and species-specific scenarios before atomic between-fight promotion. Per-creature adapters, signed registry entries, replay queues and rollback are still future services.

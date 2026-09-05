@@ -1,0 +1,205 @@
+{
+  "reason": "Authored physical silhouettes: small agile bodies and large anchors; mass remains independent.",
+  "changes": [
+    {
+      "field": "Cinderfox.radius",
+      "before": 460,
+      "after": 420
+    },
+    {
+      "field": "Brambleback.radius",
+      "before": 460,
+      "after": 640
+    },
+    {
+      "field": "Glasswing.radius",
+      "before": 460,
+      "after": 360
+    },
+    {
+      "field": "Voltjack.radius",
+      "before": 460,
+      "after": 440
+    },
+    {
+      "field": "Miretoad.radius",
+      "before": 460,
+      "after": 580
+    },
+    {
+      "field": "Basaltusk.radius",
+      "before": 460,
+      "after": 660
+    },
+    {
+      "field": "Rimehare.radius",
+      "before": 460,
+      "after": 350
+    },
+    {
+      "field": "Gloamcat.radius",
+      "before": 460,
+      "after": 370
+    },
+    {
+      "field": "Ironmoth.radius",
+      "before": 460,
+      "after": 480
+    },
+    {
+      "field": "Tidecoil.radius",
+      "before": 460,
+      "after": 430
+    },
+    {
+      "field": "Quillrat.radius",
+      "before": 460,
+      "after": 340
+    },
+    {
+      "field": "Sunstag.radius",
+      "before": 460,
+      "after": 510
+    },
+    {
+      "field": "Gravemole.radius",
+      "before": 460,
+      "after": 500
+    },
+    {
+      "field": "Prismray.radius",
+      "before": 460,
+      "after": 450
+    },
+    {
+      "field": "Thornmantis.radius",
+      "before": 460,
+      "after": 390
+    },
+    {
+      "field": "Mosswarden.radius",
+      "before": 460,
+      "after": 640
+    },
+    {
+      "field": "Galecrest.radius",
+      "before": 460,
+      "after": 370
+    },
+    {
+      "field": "Ashram.radius",
+      "before": 460,
+      "after": 570
+    },
+    {
+      "field": "Clockfin.radius",
+      "before": 460,
+      "after": 400
+    },
+    {
+      "field": "Nullurchin.radius",
+      "before": 460,
+      "after": 550
+    },
+    {
+      "field": "Waxwyrm.radius",
+      "before": 460,
+      "after": 530
+    },
+    {
+      "field": "Ribbonape.radius",
+      "before": 460,
+      "after": 440
+    },
+    {
+      "field": "Saltcrab.radius",
+      "before": 460,
+      "after": 650
+    },
+    {
+      "field": "Nectarbat.radius",
+      "before": 460,
+      "after": 350
+    },
+    {
+      "field": "Bellox.radius",
+      "before": 460,
+      "after": 590
+    },
+    {
+      "field": "Anvilnewt.radius",
+      "before": 460,
+      "after": 550
+    },
+    {
+      "field": "Duneskink.radius",
+      "before": 460,
+      "after": 340
+    },
+    {
+      "field": "Kelpwidow.radius",
+      "before": 460,
+      "after": 470
+    },
+    {
+      "field": "Pyrelisk.radius",
+      "before": 460,
+      "after": 520
+    },
+    {
+      "field": "Mooncalf.radius",
+      "before": 460,
+      "after": 600
+    },
+    {
+      "field": "Coppergecko.radius",
+      "before": 460,
+      "after": 360
+    },
+    {
+      "field": "Orchardboar.radius",
+      "before": 460,
+      "after": 610
+    },
+    {
+      "field": "Inkheron.radius",
+      "before": 460,
+      "after": 410
+    },
+    {
+      "field": "Hooklynx.radius",
+      "before": 460,
+      "after": 430
+    },
+    {
+      "field": "Slagjaw.radius",
+      "before": 460,
+      "after": 620
+    },
+    {
+      "field": "Dewotter.radius",
+      "before": 460,
+      "after": 370
+    },
+    {
+      "field": "Echofin.radius",
+      "before": 460,
+      "after": 430
+    },
+    {
+      "field": "Latchspider.radius",
+      "before": 460,
+      "after": 420
+    },
+    {
+      "field": "Flintroc.radius",
+      "before": 460,
+      "after": 450
+    },
+    {
+      "field": "Oathhound.radius",
+      "before": 460,
+      "after": 580
+    }
+  ]
+}

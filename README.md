@@ -1,84 +1,85 @@
-# Creature Lab 95
+# Creature Lab 95 — combat alpha
 
-A small, deterministic creature-combat engine and a deliberately simple Windows 95-style workbench. **The creature's eventual progression is its learned policy, not an XP multiplier.** This repository establishes the simulation and model boundary; the included opponents are scripted, not trained.
+A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and a deliberately simple native Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
 
-![Combat workbench](docs/viewer.png)
+![Alpha species catalog](docs/alpha/catalog.png)
 
-## Run
+## Start here
 
-Requires a C++17 compiler. The headless engine has **no third-party dependencies**. Python 3 is optional. Only the native viewer requires SDL2 (2.0.18 or newer).
+- **[Core design and combat rules](docs/alpha/design.md)** — eight gameplay axes, counterplay, resource economy, the bloom objective, alpha boundaries.
+- **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
+- **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
+- **[Fresh-seed balance evidence](reports/holdout-balance.md)** — full matrix, aggregate rates and worst pairings.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/validation.md)**.
+
+## Build and play
+
+C++17 compiler required; only the viewer needs SDL2 2.0.18+. The headless core has no third-party library dependencies.
 
 ```sh
-# macOS (Apple command-line developer tools + Homebrew)
+# macOS: install command-line developer tools, then:
 brew install sdl2
-make
-make test
+make all test
 ./build/creature_lab
 
-# Linux / Ubuntu
+# Ubuntu / Linux:
 sudo apt-get install build-essential libsdl2-dev python3
-make
-make test
+make all test
 ./build/creature_lab
 ```
 
-On macOS, double-click `Launch.command` after installing the prerequisites. It builds and launches the viewer. `scripts/package-macos.sh` also produces a local `.app` bundle (it still depends on your installed SDL2).
-
-Headless builds do not need SDL:
+On this Mac, double-click `Launch.command`. `scripts/package-macos.sh` produces a local `.app` bundle using the installed SDL2. CMake supports native builds including Windows:
 
 ```sh
-make core
-./build/benchmark
+cmake -S . -B build-cmake -DCREATURE_VIEWER=OFF -DCMAKE_BUILD_TYPE=Release
+cmake --build build-cmake --config Release
+ctest --test-dir build-cmake -C Release --output-on-failure
+```
+
+Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on Windows). The Python bridge can use `CREATURE_LIB=/absolute/path/to/library` for non-Make layouts.
+
+## Workbench controls
+
+- **Tab / Roster:** browse 40 species, select for A or B. The `-` / `+` controls cycle either side.
+- **P:** pause/resume. **N:** one decision (three simulation ticks). **R:** restart seed.
+- **M:** human A versus bot B, or two bots. Human uses **WASD**, **mouse aim**, **1–4**, **Space dodge**. Clicking a move selects human control and requests that move.
+- Ground-targeted fields/traps/turrets land at the cursor up to their maximum cast range. Directional attacks lock aim at cast start.
+- **L:** cycle pillars/grove/open arena. Weather and new seed are toolbar controls. Match setting changes restart.
+- **F5 / F9:** snapshot / restore a replay branch. Save/load replay records actions, guidance, feedback and per-decision hashes.
+- Guidance is policy input; praise/correction are recorded learning annotations. They do not change physics or weights.
+
+The bloom wins at 600 uncontested control points, with a one-second capture preparation. KO takes priority. After 60 seconds the boundary contracts; at 90 seconds control then health fraction adjudicates. Shield/guard, status meters, visible traps, destructible turrets, attack geometry and the event monitor make the fundamentals inspectable.
+
+```sh
+./build/creature_lab --species-a 21 --species-b 8 --arena 1
+# Species CLI IDs are zero-based; catalog displays 1–40.
+```
+
+## Test, simulate, tune
+
+```sh
+make test                         # content validation + native + Python FFI
+make build/tournament
+./build/tournament 36 reports/matches.csv 3000
+python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 python3 python/rollout.py --arenas 256 --decisions 1000
 ```
 
-CMake is also supported: `cmake -S . -B build-cmake -DCREATURE_VIEWER=OFF`, then `cmake --build build-cmake --config Release` and `ctest --test-dir build-cmake -C Release`. For Windows, enable the viewer with an SDL2 CMake package (for example via vcpkg). Windows has not yet been exercised locally. The Python bridge accepts an explicit shared-library path through `CREATURE_LIB`.
+The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. Extreme pairings remain playtest targets even when aggregate rates are close.
 
-## Workbench
+Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v2; old prototype saves/models fail compatibility checks.
 
-- **P** pause/resume; **N** advance one decision (three physics ticks).
-- **M** switch between two bots and human A versus bot B.
-- Human: **WASD** movement, **mouse** aim, **1–4** moves, **Space** dodge. A key press requests a move once. Requests during recovery/cooldown are ignored; they are not buffered.
-- **R** restart the same seed. **New seed** changes starting jitter; weather presets restart the episode.
-- **F5** snapshot; **F9** restore and begin a fresh replay branch.
-- **Save replay / Load replay** write/read `captures/battle.crr`. Loading verifies every recorded state hash before playback.
-- Guidance is an input to A's policy. The baseline implements simple attack/retreat/conserve responses. Human control bypasses guidance.
-- Praise/correction enter the next decision's experience record. They do not change stats, health, or model weights. Inputs at the end of an episode require a new episode.
+## RL integration
 
-Blue/orange circles are creature colliders. Yellow shows windup; orange shows active melee geometry. Rock circles block movement and shots. Fire circles persist and can damage their owner. Projectile telegraph lines show initial aim/range, not the wind-curved trajectory. The inspector is an omniscient debugging tool; actor observations deliberately expose less.
-
-## What is implemented
-
-- C++17, 30 Hz integer kinematics; 10 Hz policy decisions with movement/aim held for three ticks and a single move request per decision.
-- Two creatures, five data-described moves: Quick Claw, Ember Bolt, Thunder Lunge, Cinder Patch, Dodge.
-- Startup/active/recovery, energy/cooldown, collision, knockback, interruptible startup, evasive frames, burn, a haste buff, wind drift, rain/wetness affecting traction and fire persistence.
-- Simultaneous hit collection, double-KO draws, independent 90-second time-limit truncation, terminal no-op behavior.
-- Fixed-capacity projectiles, zones, and observable event history. Pool overflow is counted and emitted as an event.
-- Explicit, versioned, little-endian snapshots with checksums and validation. In-memory forks are simple world copies.
-- Action replays with per-decision hashes and trainer feedback; no dependency on policy inference to replay a fight.
-- Versioned C ABI, dependency-free Python batch wrapper, normalized structured observations, legal-action masks, and reward features.
-- Optional **68,903-parameter PyTorch recurrent policy** with tested inference, action submission, and gradients. Random weights only; no trained checkpoint or PPO learner is included.
+The dependency-free Python batch API exposes both creatures, legal actions, semantic own/announced move tokens, public entity/status/passive state, objective pressure and reward features. Optional examples:
 
 ```sh
 python3 -m venv .venv
 .venv/bin/pip install -r python/requirements-ml.txt
 .venv/bin/python python/policy.py
+.venv/bin/python python/gym_env.py
 ```
 
-## Architecture and design judgment
+The 79,555-parameter recurrent model scores actual move tokens, with continuous motion/aim and masked ability selection. The Gymnasium wrapper supports a custom hybrid-action learner. Both have integration tests; **no trained policy or RL learner is shipped**. Unity presentation, persistent individual adaptation, campaign/economy and online services remain future work. The engine/content is playable alpha; competitive balance needs human and trained-agent evidence.
 
-The simulator is authoritative. SDL consumes it; a future Unity client can call the same C ABI. Rendering, inference, gradient updates, and policy memory are outside the physics engine. There is no Unity/PhysX, Torch, networking, or wall-clock dependency in the core.
-
-I retained the original discussion's state-first simulator, public observations, separate training process, snapshots, and trainer-input distinction. I narrowed the implementation to testable primitives: circular collision shapes and five move kinds, with parameterized effects. This is deliberately **not yet a universal effect scripting VM**, arbitrary species system, or environmental surface grid. A single arena-wide wetness value is enough to exercise weather-dependent control before introducing hundreds of surface cells per rollout.
-
-I would establish that a small MLP/GRU learns this game before paying for attention everywhere. The reference policy uses masked pooling and a small GRU. Network size, sample budgets, universal-species transfer, and individual adaptation remain experiments. Server-owned model signatures alone would not solve cheating; authoritative competitive match validation would still be necessary.
-
-For lifelong training, retain a species model plus individual parameters, recurrent memory, actual integer action records, and an explicit version manifest. Train in a Python sidecar, evaluate candidates against historical opponents, then promote weights between episodes. Remote training is a later transport change with real authentication, job/retry, and storage work—not an already implemented server feature.
-
-## Further reading
-
-- [Simulation rules, determinism and limitations](docs/engine.md)
-- [Tensor schema, model lifecycle and Unity boundary](docs/integration.md)
-- [Verification results and reproducible commands](docs/validation.md)
-
-MIT licensed. Original placeholder names and pixel alphabet; no franchise assets.
+MIT licensed; original placeholder creatures and pixel font, no franchise assets.

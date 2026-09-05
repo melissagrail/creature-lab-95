@@ -2,7 +2,7 @@ CXX ?= c++
 CXXFLAGS ?= -O2 -std=c++17 -Wall -Wextra -Wpedantic
 CPPFLAGS += -Iinclude
 BUILD := build
-CORE := src/sim.cpp
+CORE := src/sim.cpp src/content.cpp
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
 LIB := $(BUILD)/libcreature.dylib
@@ -26,7 +26,19 @@ viewer: $(BUILD)/creature_lab
 $(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) client/main.cpp $$(sdl2-config --cflags --libs) -o $@
 test: core
+	python3 scripts/compile_content.py --check
 	$(BUILD)/sim_tests
 	python3 python/smoke.py
 clean:
 	rm -rf $(BUILD)
+
+.PHONY: content balance
+content:
+	python3 scripts/compile_content.py
+$(BUILD)/tournament: $(CORE) tests/tournament.cpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/tournament.cpp -o $@
+balance: $(BUILD)/tournament
+	$(BUILD)/tournament 36 reports/matches.csv
+	python3 scripts/analyze_balance.py reports/matches.csv reports/balance
+$(BUILD)/counterplay: $(CORE) tests/counterplay.cpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/counterplay.cpp -o $@

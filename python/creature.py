@@ -6,9 +6,11 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-OBS_SIZE = 678
-SLICES = dict(self=slice(0, 24), entities=slice(24, 456), moves=slice(456, 536),
-              history=slice(536, 664), global_=slice(664, 672), mask=slice(672, 678))
+OBS_SIZE = 2206
+SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE = 56, 53, 32, 40
+FEATURE_SIZE = 10
+SLICES = dict(self=slice(0,56), entities=slice(56,1752), moves=slice(1752,1952),
+              announced=slice(1952,1992), history=slice(1992,2184), global_=slice(2184,2200), mask=slice(2200,2206))
 I = C.c_int32
 F = C.c_float
 P = C.c_void_p
@@ -19,7 +21,10 @@ def library():
     path = Path(os.environ.get('CREATURE_LIB', ROOT / 'build' / f'libcreature.{suffix}'))
     lib = C.CDLL(str(path))
     signatures = {
-        'cr_version': ([], C.c_uint32), 'cr_observation_size': ([], I),
+        'cr_version': ([], C.c_uint32), 'cr_content_hash': ([], C.c_uint32),
+        'cr_observation_version': ([], C.c_uint32), 'cr_species_count': ([], I),
+        'cr_species_name': ([I], C.c_char_p),
+        'cr_reset_match': ([P, C.c_uint32, I, I, I, I], I), 'cr_observation_size': ([], I),
         'cr_create': ([C.c_uint32, I], P), 'cr_destroy': ([P], None),
         'cr_reset': ([P, C.c_uint32, I], I),
         'cr_step': ([P, C.POINTER(I), C.POINTER(I), C.POINTER(I)], I),
@@ -35,7 +40,7 @@ def library():
     for name, (args, result) in signatures.items():
         fn = getattr(lib, name)
         fn.argtypes, fn.restype = args, result
-    if lib.cr_version() != 1 or lib.cr_observation_size() != OBS_SIZE:
+    if lib.cr_version() != 2 or lib.cr_observation_version() != 2 or lib.cr_observation_size() != OBS_SIZE:
         raise RuntimeError('Incompatible simulation / observation schema')
     return lib
 
@@ -58,12 +63,12 @@ def quantize(move=(0., 0.), aim=(1., 0.), ability=0):
 class Batch:
     """Independent worlds; no global RNG and no implicit episode reset.
 
-    step returns reusable ctypes buffers: observations [N,2,678], reward FEATURES
-    [N,2,6], status [N,4] = terminated,truncated,winner,actual_physics_ticks.
+    step returns reusable ctypes buffers: observations [N,2,2206], reward FEATURES
+    [N,2,10], status [N,4] = terminated,truncated,winner,actual_physics_ticks.
     Copy buffers before the next step when retaining trajectories.
     One batch per worker; do not concurrently operate on the same handle.
     """
-    def __init__(self, size=1, seed=1, weather=0):
+    def __init__(self, size=1, seed=1, weather=0, species=(0,1), arena=0):
         if not 1 <= size <= 65536:
             raise ValueError('size must be 1..65536')
         self.lib = library()
@@ -74,12 +79,13 @@ class Batch:
                 self.handles[i] = self.lib.cr_create(seed + i, weather)
                 if not self.handles[i]:
                     raise MemoryError('Could not allocate world')
+                self.reset(i, seed+i, weather, species, arena)
         except Exception:
             self.close()
             raise
         self.actions = (I * (size * 10))()
         self.observations = (F * (size * 2 * OBS_SIZE))()
-        self.features = (I * (size * 12))()
+        self.features = (I * (size * 2 * FEATURE_SIZE))()
         self.status = (I * (size * 4))()
 
     def _handle(self, index):
@@ -87,8 +93,13 @@ class Batch:
             raise ValueError('Invalid arena index or closed batch')
         return self.handles[index]
 
-    def reset(self, index, seed, weather=0):
-        self.lib.cr_reset(self._handle(index), seed, weather)
+    def reset(self, index, seed, weather=0, species=(0,1), arena=0):
+        if len(species)!=2 or self.lib.cr_reset_match(self._handle(index),seed,weather,*species,arena):
+            raise ValueError('Invalid species, weather, or arena')
+
+    @property
+    def species_names(self):
+        return [self.lib.cr_species_name(i).decode() for i in range(self.lib.cr_species_count())]
 
     def observe(self, index=0, player=0):
         out = (F * OBS_SIZE)()

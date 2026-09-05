@@ -1,0 +1,180 @@
+{
+  "source": "reports/calibration.csv",
+  "changes": [
+    {
+      "field": "Brambleback.hp",
+      "before": 129,
+      "after": 136
+    },
+    {
+      "field": "Brambleback.Briar Club.damage",
+      "before": 17,
+      "after": 18
+    },
+    {
+      "field": "Brambleback.Rootfurrow.damage",
+      "before": 10,
+      "after": 11
+    },
+    {
+      "field": "Glasswing.hp",
+      "before": 98,
+      "after": 94
+    },
+    {
+      "field": "Glasswing.Needle Ray.damage",
+      "before": 29,
+      "after": 28
+    },
+    {
+      "field": "Glasswing.Repulsion.damage",
+      "before": 12,
+      "after": 11
+    },
+    {
+      "field": "Basaltusk.hp",
+      "before": 135,
+      "after": 141
+    },
+    {
+      "field": "Basaltusk.Stone Tusk.damage",
+      "before": 17,
+      "after": 18
+    },
+    {
+      "field": "Basaltusk.Fault Ram.damage",
+      "before": 20,
+      "after": 21
+    },
+    {
+      "field": "Thornmantis.hp",
+      "before": 119,
+      "after": 113
+    },
+    {
+      "field": "Thornmantis.Open Seam.damage",
+      "before": 12,
+      "after": 11
+    },
+    {
+      "field": "Thornmantis.Harvest Cut.damage",
+      "before": 23,
+      "after": 22
+    },
+    {
+      "field": "Thornmantis.Thorn Leap.damage",
+      "before": 17,
+      "after": 16
+    },
+    {
+      "field": "Galecrest.hp",
+      "before": 122,
+      "after": 115
+    },
+    {
+      "field": "Galecrest.Feather Fan.damage",
+      "before": 10,
+      "after": 9
+    },
+    {
+      "field": "Galecrest.Gust Lance.damage",
+      "before": 18,
+      "after": 17
+    },
+    {
+      "field": "Galecrest.Jetstream.damage",
+      "before": 16,
+      "after": 15
+    },
+    {
+      "field": "Galecrest.Updraft.damage",
+      "before": 17,
+      "after": 16
+    },
+    {
+      "field": "Saltcrab.hp",
+      "before": 169,
+      "after": 175
+    },
+    {
+      "field": "Saltcrab.Salt Pinch.damage",
+      "before": 23,
+      "after": 24
+    },
+    {
+      "field": "Saltcrab.Brine Cannon.damage",
+      "before": 25,
+      "after": 26
+    },
+    {
+      "field": "Saltcrab.Scuttle.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Nectarbat.hp",
+      "before": 113,
+      "after": 105
+    },
+    {
+      "field": "Nectarbat.Siphon Fang.damage",
+      "before": 20,
+      "after": 19
+    },
+    {
+      "field": "Nectarbat.Nectar Needle.damage",
+      "before": 13,
+      "after": 12
+    },
+    {
+      "field": "Nectarbat.Swoop.damage",
+      "before": 18,
+      "after": 17
+    },
+    {
+      "field": "Nectarbat.Night Bloom.damage",
+      "before": 18,
+      "after": 17
+    },
+    {
+      "field": "Slagjaw.hp",
+      "before": 134,
+      "after": 140
+    },
+    {
+      "field": "Slagjaw.Corrosive Bite.damage",
+      "before": 19,
+      "after": 20
+    },
+    {
+      "field": "Slagjaw.Acid Spit.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Slagjaw.Jawbreaker.damage",
+      "before": 19,
+      "after": 20
+    },
+    {
+      "field": "Flintroc.hp",
+      "before": 93,
+      "after": 104
+    },
+    {
+      "field": "Flintroc.Flint Cannon.damage",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "field": "Flintroc.Stone Scatter.damage",
+      "before": 6,
+      "after": 7
+    },
+    {
+      "field": "Flintroc.Backdraft.damage",
+      "before": 11,
+      "after": 12
+    }
+  ]
+}

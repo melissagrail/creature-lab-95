@@ -6,13 +6,13 @@ using namespace creature;
 int main() {
     std::vector<World> worlds(256);
     for (int i = 0; i < 256; i++)
-        reset(worlds[i], i + 1, i % 3);
+        reset(worlds[i], i + 1, i % 3, i % 40, (i + 17) % 40, i % 3);
     long ticks = 0;
     auto start = std::chrono::steady_clock::now();
     for (int k = 0; k < 1000; k++)
         for (auto &w : worlds) {
             if (w.terminal || w.truncated)
-                reset(w, w.rng, 1);
+                reset(w, w.rng, 1, w.bodies[0].species, w.bodies[1].species, w.arena);
             ticks += step(w, {scripted(w, 0), scripted(w, 1)}).ticks;
         }
     double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();

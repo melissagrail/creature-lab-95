@@ -1,0 +1,300 @@
+{
+  "source": "reports/baseline-corrected.csv",
+  "changes": [
+    {
+      "field": "Glasswing.hp",
+      "before": 104,
+      "after": 98
+    },
+    {
+      "field": "Glasswing.Needle Ray.damage",
+      "before": 31,
+      "after": 29
+    },
+    {
+      "field": "Glasswing.Glass Shards.damage",
+      "before": 9,
+      "after": 8
+    },
+    {
+      "field": "Glasswing.Repulsion.damage",
+      "before": 13,
+      "after": 12
+    },
+    {
+      "field": "Rimehare.hp",
+      "before": 123,
+      "after": 131
+    },
+    {
+      "field": "Rimehare.Icicle.damage",
+      "before": 15,
+      "after": 16
+    },
+    {
+      "field": "Rimehare.Snowshoe.damage",
+      "before": 11,
+      "after": 12
+    },
+    {
+      "field": "Rimehare.Whiteout.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Ironmoth.hp",
+      "before": 143,
+      "after": 126
+    },
+    {
+      "field": "Ironmoth.Steel Dust.damage",
+      "before": 11,
+      "after": 10
+    },
+    {
+      "field": "Ironmoth.Mirror Carapace.shield",
+      "before": 14,
+      "after": 12
+    },
+    {
+      "field": "Ironmoth.Shear Wing.damage",
+      "before": 24,
+      "after": 21
+    },
+    {
+      "field": "Quillrat.hp",
+      "before": 119,
+      "after": 124
+    },
+    {
+      "field": "Quillrat.Barb Shot.damage",
+      "before": 15,
+      "after": 16
+    },
+    {
+      "field": "Quillrat.Caltrop.damage",
+      "before": 26,
+      "after": 27
+    },
+    {
+      "field": "Quillrat.Panic Quills.damage",
+      "before": 15,
+      "after": 16
+    },
+    {
+      "field": "Clockfin.hp",
+      "before": 122,
+      "after": 129
+    },
+    {
+      "field": "Clockfin.Tick.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Clockfin.Tock.damage",
+      "before": 23,
+      "after": 24
+    },
+    {
+      "field": "Clockfin.Second Hand.damage",
+      "before": 15,
+      "after": 16
+    },
+    {
+      "field": "Nullurchin.hp",
+      "before": 126,
+      "after": 132
+    },
+    {
+      "field": "Nullurchin.Null Spine.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Nullurchin.Mute Line.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Saltcrab.hp",
+      "before": 161,
+      "after": 169
+    },
+    {
+      "field": "Saltcrab.Salt Pinch.damage",
+      "before": 22,
+      "after": 23
+    },
+    {
+      "field": "Saltcrab.Brine Cannon.damage",
+      "before": 24,
+      "after": 25
+    },
+    {
+      "field": "Saltcrab.Scuttle.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Kelpwidow.hp",
+      "before": 137,
+      "after": 145
+    },
+    {
+      "field": "Kelpwidow.Kelp Harpoon.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Kelpwidow.Reel In.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Kelpwidow.Leg Sweep.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Pyrelisk.hp",
+      "before": 116,
+      "after": 111
+    },
+    {
+      "field": "Pyrelisk.Heat Lance.damage",
+      "before": 22,
+      "after": 21
+    },
+    {
+      "field": "Pyrelisk.Vent.damage",
+      "before": 15,
+      "after": 14
+    },
+    {
+      "field": "Coppergecko.hp",
+      "before": 120,
+      "after": 125
+    },
+    {
+      "field": "Coppergecko.Copper Ping.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Coppergecko.Coil Cannon.damage",
+      "before": 28,
+      "after": 29
+    },
+    {
+      "field": "Coppergecko.Springwire.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Inkheron.hp",
+      "before": 115,
+      "after": 121
+    },
+    {
+      "field": "Inkheron.Ink Needle.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Inkheron.Brushstroke.damage",
+      "before": 22,
+      "after": 23
+    },
+    {
+      "field": "Hooklynx.hp",
+      "before": 145,
+      "after": 152
+    },
+    {
+      "field": "Hooklynx.Trail Dart.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Hooklynx.Hookline.damage",
+      "before": 18,
+      "after": 19
+    },
+    {
+      "field": "Hooklynx.Claim Claw.damage",
+      "before": 24,
+      "after": 25
+    },
+    {
+      "field": "Hooklynx.Hunting Bound.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Echofin.hp",
+      "before": 102,
+      "after": 93
+    },
+    {
+      "field": "Echofin.Sonar Tap.damage",
+      "before": 13,
+      "after": 12
+    },
+    {
+      "field": "Echofin.Echo Fan.damage",
+      "before": 7,
+      "after": 6
+    },
+    {
+      "field": "Echofin.Bass Ring.damage",
+      "before": 21,
+      "after": 19
+    },
+    {
+      "field": "Echofin.Silent Beat.shield",
+      "before": 15,
+      "after": 13
+    },
+    {
+      "field": "Latchspider.hp",
+      "before": 140,
+      "after": 150
+    },
+    {
+      "field": "Latchspider.Silk Dart.damage",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "field": "Latchspider.Latch.damage",
+      "before": 18,
+      "after": 19
+    },
+    {
+      "field": "Latchspider.Skitter.damage",
+      "before": 17,
+      "after": 18
+    },
+    {
+      "field": "Flintroc.hp",
+      "before": 112,
+      "after": 99
+    },
+    {
+      "field": "Flintroc.Flint Cannon.damage",
+      "before": 24,
+      "after": 21
+    },
+    {
+      "field": "Flintroc.Stone Scatter.damage",
+      "before": 7,
+      "after": 6
+    },
+    {
+      "field": "Flintroc.Backdraft.damage",
+      "before": 14,
+      "after": 12
+    }
+  ]
+}

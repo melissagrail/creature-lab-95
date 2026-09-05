@@ -1,0 +1,595 @@
+{
+  "source": "reports/baseline-v0.csv",
+  "changes": [
+    {
+      "field": "Cinderfox.hp",
+      "before": 108,
+      "after": 113
+    },
+    {
+      "field": "Cinderfox.Kindlebite.damage",
+      "before": 18,
+      "after": 19
+    },
+    {
+      "field": "Cinderfox.Wickshot.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Cinderfox.Flare Step.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Brambleback.hp",
+      "before": 148,
+      "after": 139
+    },
+    {
+      "field": "Brambleback.Briar Club.damage",
+      "before": 19,
+      "after": 18
+    },
+    {
+      "field": "Brambleback.Rootfurrow.damage",
+      "before": 12,
+      "after": 11
+    },
+    {
+      "field": "Brambleback.Barkskin.shield",
+      "before": 29,
+      "after": 25
+    },
+    {
+      "field": "Miretoad.hp",
+      "before": 132,
+      "after": 123
+    },
+    {
+      "field": "Miretoad.Venom Tongue.damage",
+      "before": 10,
+      "after": 9
+    },
+    {
+      "field": "Miretoad.Spitball.damage",
+      "before": 10,
+      "after": 9
+    },
+    {
+      "field": "Miretoad.Digest.heal",
+      "before": 15,
+      "after": 13
+    },
+    {
+      "field": "Basaltusk.hp",
+      "before": 154,
+      "after": 142
+    },
+    {
+      "field": "Basaltusk.Stone Tusk.damage",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "field": "Basaltusk.Fault Ram.damage",
+      "before": 23,
+      "after": 21
+    },
+    {
+      "field": "Basaltusk.Quarry Hook.damage",
+      "before": 12,
+      "after": 11
+    },
+    {
+      "field": "Basaltusk.Bedrock.shield",
+      "before": 28,
+      "after": 24
+    },
+    {
+      "field": "Rimehare.hp",
+      "before": 102,
+      "after": 112
+    },
+    {
+      "field": "Rimehare.Icicle.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Rimehare.Snowshoe.damage",
+      "before": 9,
+      "after": 10
+    },
+    {
+      "field": "Rimehare.Whiteout.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Ironmoth.hp",
+      "before": 125,
+      "after": 136
+    },
+    {
+      "field": "Ironmoth.Steel Dust.damage",
+      "before": 9,
+      "after": 10
+    },
+    {
+      "field": "Ironmoth.Shear Wing.damage",
+      "before": 21,
+      "after": 23
+    },
+    {
+      "field": "Tidecoil.hp",
+      "before": 124,
+      "after": 139
+    },
+    {
+      "field": "Tidecoil.Undertow.damage",
+      "before": 15,
+      "after": 17
+    },
+    {
+      "field": "Tidecoil.Tidal Bite.damage",
+      "before": 19,
+      "after": 21
+    },
+    {
+      "field": "Tidecoil.Surge.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Quillrat.hp",
+      "before": 108,
+      "after": 112
+    },
+    {
+      "field": "Quillrat.Barb Shot.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Quillrat.Caltrop.damage",
+      "before": 23,
+      "after": 24
+    },
+    {
+      "field": "Quillrat.Panic Quills.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Mosswarden.hp",
+      "before": 145,
+      "after": 130
+    },
+    {
+      "field": "Mosswarden.Moss Fist.damage",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "field": "Mosswarden.Seed Bomb.damage",
+      "before": 15,
+      "after": 13
+    },
+    {
+      "field": "Mosswarden.Living Wall.shield",
+      "before": 32,
+      "after": 28
+    },
+    {
+      "field": "Galecrest.hp",
+      "before": 101,
+      "after": 109
+    },
+    {
+      "field": "Galecrest.Feather Fan.damage",
+      "before": 8,
+      "after": 9
+    },
+    {
+      "field": "Galecrest.Gust Lance.damage",
+      "before": 15,
+      "after": 16
+    },
+    {
+      "field": "Galecrest.Jetstream.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Galecrest.Updraft.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Clockfin.hp",
+      "before": 117,
+      "after": 122
+    },
+    {
+      "field": "Clockfin.Tick.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Clockfin.Tock.damage",
+      "before": 22,
+      "after": 23
+    },
+    {
+      "field": "Clockfin.Second Hand.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Nullurchin.hp",
+      "before": 134,
+      "after": 126
+    },
+    {
+      "field": "Nullurchin.Null Spine.damage",
+      "before": 15,
+      "after": 14
+    },
+    {
+      "field": "Nullurchin.Mute Line.damage",
+      "before": 17,
+      "after": 16
+    },
+    {
+      "field": "Nullurchin.Void Shell.shield",
+      "before": 25,
+      "after": 22
+    },
+    {
+      "field": "Waxwyrm.hp",
+      "before": 118,
+      "after": 107
+    },
+    {
+      "field": "Waxwyrm.Wax Glob.damage",
+      "before": 13,
+      "after": 12
+    },
+    {
+      "field": "Waxwyrm.Candle Sentry.damage",
+      "before": 8,
+      "after": 7
+    },
+    {
+      "field": "Waxwyrm.Wax Jacket.shield",
+      "before": 26,
+      "after": 22
+    },
+    {
+      "field": "Ribbonape.hp",
+      "before": 117,
+      "after": 124
+    },
+    {
+      "field": "Ribbonape.Ribbon Throw.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Ribbonape.Tail Snap.damage",
+      "before": 20,
+      "after": 21
+    },
+    {
+      "field": "Ribbonape.Acrobat.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Ribbonape.Silk Whorl.damage",
+      "before": 17,
+      "after": 18
+    },
+    {
+      "field": "Saltcrab.hp",
+      "before": 150,
+      "after": 161
+    },
+    {
+      "field": "Saltcrab.Salt Pinch.damage",
+      "before": 21,
+      "after": 22
+    },
+    {
+      "field": "Saltcrab.Brine Cannon.damage",
+      "before": 22,
+      "after": 24
+    },
+    {
+      "field": "Saltcrab.Scuttle.damage",
+      "before": 12,
+      "after": 13
+    },
+    {
+      "field": "Nectarbat.hp",
+      "before": 110,
+      "after": 121
+    },
+    {
+      "field": "Nectarbat.Siphon Fang.damage",
+      "before": 19,
+      "after": 21
+    },
+    {
+      "field": "Nectarbat.Nectar Needle.damage",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "field": "Nectarbat.Swoop.damage",
+      "before": 17,
+      "after": 19
+    },
+    {
+      "field": "Nectarbat.Night Bloom.damage",
+      "before": 17,
+      "after": 19
+    },
+    {
+      "field": "Anvilnewt.hp",
+      "before": 130,
+      "after": 114
+    },
+    {
+      "field": "Anvilnewt.Hammer Tongue.damage",
+      "before": 19,
+      "after": 17
+    },
+    {
+      "field": "Anvilnewt.Forged Bolt.damage",
+      "before": 17,
+      "after": 15
+    },
+    {
+      "field": "Anvilnewt.Temper.shield",
+      "before": 32,
+      "after": 28
+    },
+    {
+      "field": "Anvilnewt.Anvil Fall.damage",
+      "before": 24,
+      "after": 21
+    },
+    {
+      "field": "Kelpwidow.hp",
+      "before": 119,
+      "after": 127
+    },
+    {
+      "field": "Kelpwidow.Kelp Harpoon.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Kelpwidow.Reel In.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Kelpwidow.Leg Sweep.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Pyrelisk.hp",
+      "before": 122,
+      "after": 116
+    },
+    {
+      "field": "Pyrelisk.Heat Lance.damage",
+      "before": 23,
+      "after": 22
+    },
+    {
+      "field": "Pyrelisk.Vent.damage",
+      "before": 16,
+      "after": 15
+    },
+    {
+      "field": "Mooncalf.hp",
+      "before": 130,
+      "after": 114
+    },
+    {
+      "field": "Mooncalf.Moon Tap.damage",
+      "before": 15,
+      "after": 13
+    },
+    {
+      "field": "Mooncalf.Lunar Shield.shield",
+      "before": 34,
+      "after": 29
+    },
+    {
+      "field": "Mooncalf.Moonbeam.damage",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "field": "Mooncalf.Orbit.damage",
+      "before": 13,
+      "after": 11
+    },
+    {
+      "field": "Orchardboar.hp",
+      "before": 139,
+      "after": 132
+    },
+    {
+      "field": "Orchardboar.Root Tusk.damage",
+      "before": 20,
+      "after": 19
+    },
+    {
+      "field": "Orchardboar.Falling Fruit.damage",
+      "before": 16,
+      "after": 15
+    },
+    {
+      "field": "Orchardboar.Harvest Run.damage",
+      "before": 14,
+      "after": 13
+    },
+    {
+      "field": "Hooklynx.hp",
+      "before": 119,
+      "after": 137
+    },
+    {
+      "field": "Hooklynx.Trail Dart.damage",
+      "before": 10,
+      "after": 12
+    },
+    {
+      "field": "Hooklynx.Hookline.damage",
+      "before": 15,
+      "after": 17
+    },
+    {
+      "field": "Hooklynx.Claim Claw.damage",
+      "before": 20,
+      "after": 23
+    },
+    {
+      "field": "Hooklynx.Hunting Bound.damage",
+      "before": 13,
+      "after": 15
+    },
+    {
+      "field": "Slagjaw.hp",
+      "before": 135,
+      "after": 141
+    },
+    {
+      "field": "Slagjaw.Corrosive Bite.damage",
+      "before": 19,
+      "after": 20
+    },
+    {
+      "field": "Slagjaw.Acid Spit.damage",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "field": "Slagjaw.Jawbreaker.damage",
+      "before": 19,
+      "after": 20
+    },
+    {
+      "field": "Dewotter.hp",
+      "before": 111,
+      "after": 101
+    },
+    {
+      "field": "Dewotter.Dew Dart.damage",
+      "before": 15,
+      "after": 14
+    },
+    {
+      "field": "Dewotter.River Cut.damage",
+      "before": 18,
+      "after": 16
+    },
+    {
+      "field": "Dewotter.Waterwheel.damage",
+      "before": 17,
+      "after": 15
+    },
+    {
+      "field": "Dewotter.Fresh Spring.shield",
+      "before": 12,
+      "after": 10
+    },
+    {
+      "field": "Dewotter.Fresh Spring.heal",
+      "before": 10,
+      "after": 9
+    },
+    {
+      "field": "Echofin.hp",
+      "before": 116,
+      "after": 102
+    },
+    {
+      "field": "Echofin.Sonar Tap.damage",
+      "before": 15,
+      "after": 13
+    },
+    {
+      "field": "Echofin.Echo Fan.damage",
+      "before": 8,
+      "after": 7
+    },
+    {
+      "field": "Echofin.Bass Ring.damage",
+      "before": 24,
+      "after": 21
+    },
+    {
+      "field": "Echofin.Silent Beat.shield",
+      "before": 17,
+      "after": 15
+    },
+    {
+      "field": "Latchspider.hp",
+      "before": 110,
+      "after": 125
+    },
+    {
+      "field": "Latchspider.Silk Dart.damage",
+      "before": 12,
+      "after": 14
+    },
+    {
+      "field": "Latchspider.Latch.damage",
+      "before": 14,
+      "after": 16
+    },
+    {
+      "field": "Latchspider.Skitter.damage",
+      "before": 13,
+      "after": 15
+    },
+    {
+      "field": "Oathhound.hp",
+      "before": 139,
+      "after": 123
+    },
+    {
+      "field": "Oathhound.Oath Fang.damage",
+      "before": 18,
+      "after": 16
+    },
+    {
+      "field": "Oathhound.Sworn Guard.shield",
+      "before": 23,
+      "after": 20
+    },
+    {
+      "field": "Oathhound.Intercept.damage",
+      "before": 18,
+      "after": 16
+    },
+    {
+      "field": "Oathhound.Intercept.shield",
+      "before": 10,
+      "after": 9
+    },
+    {
+      "field": "Oathhound.Judgment.damage",
+      "before": 21,
+      "after": 19
+    }
+  ]
+}
