@@ -1,6 +1,6 @@
-# Engine alpha v3
+# Engine alpha v4
 
-See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. Earlier v1/v2 builds remains in Git history; their content, snapshots and observation shape are incompatible.
+See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. Earlier v1/v2/v3 builds remains in Git history; their content, snapshots and observation shape are incompatible.
 
 The core uses signed integer coordinates at 1,024 units per game unit. Products/dot products use 64-bit intermediates; integer square root and explicit normalization avoid floating-point physics. A world has no renderer, wall clock, model or shared RNG dependency. The xorshift state is per world. Rendering and observation conversion can use floats without changing physics.
 
@@ -8,7 +8,7 @@ Collision is deterministic kinematic substepping, at most 1/16 unit per projecti
 
 The tick pipeline accepts both actors' inputs against pre-tick masks, resolves movement/terrain/body separation, releases effects, collects contacts, integrates projectile and zone behavior, resolves contacts, applies periodic statuses/passives, ages state, then judges the objective and ending. Collected hits can trade; later overkill credit is capped by remaining HP. Timers use integer ticks. New casts do not arise recursively during damage resolution.
 
-There are 32 projectile slots, 16 zone slots and 64 public-history entries. Allocation uses the first free slot; overflow drops the new object after paying its cost/cooldown and emits an explicit counter/event. A renderer or training harness can fail an experiment on overflow. The action tape is the complete replay record; recent history is intentionally bounded.
+There are 32 projectile slots, 16 spell-zone slots, 16 surface slots and 64 public-history entries. Allocation uses the first free slot; overflow drops the new object after paying its cost/cooldown and emits an explicit counter/event. A renderer or training harness can fail an experiment on overflow. The action tape is the complete replay record; recent history is intentionally bounded.
 
 Snapshots encode every field explicitly in little-endian order, preceded by magic, rules version and a content fingerprint, followed by a 64-bit FNV checksum. No pointers, object padding, enum ABI or host endianness enter the format. The decoder checks length, identity, checksum and bounded state before atomic restore. Content fingerprinting covers the exact canonical JSON bytes, making even an unversioned table edit fail closed on old saves. The checksum/fingerprint provide compatibility and corruption checks, not cryptographic anti-cheat authentication.
 
@@ -17,3 +17,5 @@ Content is authored in `content/roster.json`. `scripts/compile_content.py` valid
 RulesVersion must change with future behavior/schema breaks; content changes already invalidate the fingerprint. Model manifests should retain rules, observation version, content fingerprint, quantizer version and source revision. Integer state is designed to reproduce across targets, but neural inference/training need not be bit-identical across devices. Replays record actual actions so they do not depend on rerunning a neural policy.
 
 Locomotion uses an integer sine/cosine lookup for authored yaw steps (degrees per tick), shortest-turn steering with a deterministic positive tie at 180 degrees, and integer normalization. Directional speed interpolates forward/side/reverse ratios using the movement-to-facing dot product. Acceleration/braking are first-order integer velocity convergence; zero-mobility casts hard-stop voluntary motion even in rain. Displacement and body separation may still move a planted body. [Movement contracts and validation](alpha/movement.md).
+
+Terrain surfaces, elemental transformation timers, both wind contributions, prevailing wind, and vane capture/cooldown are explicitly serialized. Surface reactions use stable actor/projectile/zone order; overlapping elemental applications are deterministic but are not commutative. Wind contributions are summed only after both actors release, so simultaneous opposing casts cancel without a last-writer winner. Body movement samples the pre-release field; projectiles sample the post-release field. [Terrain v4 design and verification](alpha/terrain.md).

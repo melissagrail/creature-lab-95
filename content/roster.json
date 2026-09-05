@@ -1,6 +1,6 @@
 {
-  "rules_version": 3,
-  "observation_version": 3,
+  "rules_version": 4,
+  "observation_version": 4,
   "axes": [
     "reach",
     "commitment",
@@ -78,7 +78,13 @@
           "pierce": 0,
           "move_start": 55,
           "move_active": 55,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Wickshot",
@@ -120,7 +126,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Flare Step",
@@ -162,7 +174,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Ash Circle",
@@ -204,7 +222,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 12,
@@ -212,7 +236,8 @@
       "backward": 60,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 1,
@@ -280,7 +305,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Rootfurrow",
@@ -322,7 +353,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Bramble Garden",
@@ -364,7 +401,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 3,
+          "surface_radius": 2100,
+          "surface_life": 240,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Barkskin",
@@ -406,7 +449,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 4,
@@ -414,7 +463,8 @@
       "backward": 35,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 60
     },
     {
       "id": 2,
@@ -482,7 +532,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Glass Shards",
@@ -524,7 +580,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Wing Slip",
@@ -566,7 +628,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Repulsion",
@@ -608,7 +676,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 5,
@@ -616,7 +690,8 @@
       "backward": 40,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 85
+      "dodge_speed": 85,
+      "wind_affinity": 160
     },
     {
       "id": 3,
@@ -684,7 +759,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Arc Fang",
@@ -726,7 +807,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Discharge",
@@ -768,7 +855,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Static Screen",
@@ -810,7 +903,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 14,
@@ -818,7 +917,8 @@
       "backward": 52,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 4,
@@ -886,7 +986,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Spitball",
@@ -928,7 +1034,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Mire Pool",
@@ -970,7 +1082,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 1,
+          "surface_radius": 1900,
+          "surface_life": 240,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Digest",
@@ -1012,7 +1130,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 7,
@@ -1020,7 +1144,8 @@
       "backward": 48,
       "acceleration": 3,
       "braking": 2,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 5,
@@ -1088,7 +1213,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Fault Ram",
@@ -1130,7 +1261,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Quarry Hook",
@@ -1172,7 +1309,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Bedrock",
@@ -1214,7 +1357,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 3,
@@ -1222,7 +1371,8 @@
       "backward": 28,
       "acceleration": 5,
       "braking": 2,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 60
     },
     {
       "id": 6,
@@ -1290,7 +1440,13 @@
           "pierce": 0,
           "move_start": 100,
           "move_active": 100,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 2,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Snowshoe",
@@ -1332,7 +1488,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 2,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Frost Lace",
@@ -1374,7 +1536,13 @@
           "pierce": 0,
           "move_start": 65,
           "move_active": 65,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 2,
+          "surface_radius": 1900,
+          "surface_life": 270,
+          "element": 2,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Whiteout",
@@ -1416,7 +1584,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 2,
+          "wind_strength": 10,
+          "wind_duration": 120
         }
       ],
       "turn_degrees": 16,
@@ -1424,7 +1598,8 @@
       "backward": 72,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 115
+      "dodge_speed": 115,
+      "wind_affinity": 100
     },
     {
       "id": 7,
@@ -1492,7 +1667,13 @@
           "pierce": 0,
           "move_start": 70,
           "move_active": 70,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Dusk Needle",
@@ -1534,7 +1715,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Night Pounce",
@@ -1576,7 +1763,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Crossfade",
@@ -1618,7 +1811,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 18,
@@ -1626,7 +1825,8 @@
       "backward": 65,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 115
+      "dodge_speed": 115,
+      "wind_affinity": 100
     },
     {
       "id": 8,
@@ -1694,7 +1894,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Mirror Carapace",
@@ -1736,7 +1942,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Shear Wing",
@@ -1778,7 +1990,13 @@
           "pierce": 0,
           "move_start": 50,
           "move_active": 50,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Magnet Wake",
@@ -1820,7 +2038,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 8,
@@ -1828,7 +2052,8 @@
       "backward": 60,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 95
+      "dodge_speed": 95,
+      "wind_affinity": 160
     },
     {
       "id": 9,
@@ -1896,7 +2121,13 @@
           "pierce": 0,
           "move_start": 60,
           "move_active": 60,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Tidal Bite",
@@ -1938,7 +2169,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Rain Basin",
@@ -1980,7 +2217,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 1,
+          "surface_radius": 2400,
+          "surface_life": 300,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Surge",
@@ -2022,7 +2265,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 9,
@@ -2030,7 +2279,8 @@
       "backward": 62,
       "acceleration": 3,
       "braking": 2,
-      "dodge_speed": 100
+      "dodge_speed": 100,
+      "wind_affinity": 100
     },
     {
       "id": 10,
@@ -2098,7 +2348,13 @@
           "pierce": 0,
           "move_start": 60,
           "move_active": 60,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Caltrop",
@@ -2140,7 +2396,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Needle Fence",
@@ -2182,7 +2444,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Panic Quills",
@@ -2224,7 +2492,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 12,
@@ -2232,7 +2506,8 @@
       "backward": 68,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 105
+      "dodge_speed": 105,
+      "wind_affinity": 100
     },
     {
       "id": 11,
@@ -2300,7 +2575,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Daybreak",
@@ -2342,7 +2623,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Golden Bound",
@@ -2384,7 +2671,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Renew",
@@ -2426,7 +2719,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 8,
@@ -2434,7 +2733,8 @@
       "backward": 50,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 95
+      "dodge_speed": 95,
+      "wind_affinity": 100
     },
     {
       "id": 12,
@@ -2502,7 +2802,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Burrow",
@@ -2544,7 +2850,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Upheaval",
@@ -2586,7 +2898,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Tunnel Rush",
@@ -2628,7 +2946,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 6,
@@ -2636,7 +2960,8 @@
       "backward": 40,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 13,
@@ -2704,7 +3029,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Split Spectrum",
@@ -2746,7 +3077,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Refraction",
@@ -2788,7 +3125,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Prism Fold",
@@ -2830,7 +3173,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 7,
@@ -2838,7 +3187,8 @@
       "backward": 50,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 95
+      "dodge_speed": 95,
+      "wind_affinity": 160
     },
     {
       "id": 14,
@@ -2906,7 +3256,13 @@
           "pierce": 0,
           "move_start": 60,
           "move_active": 60,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Harvest Cut",
@@ -2948,7 +3304,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Thorn Leap",
@@ -2990,7 +3352,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Razor Guard",
@@ -3032,7 +3400,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 15,
@@ -3040,7 +3414,8 @@
       "backward": 55,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 15,
@@ -3108,7 +3483,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Seed Bomb",
@@ -3150,7 +3531,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Shelter Grove",
@@ -3192,7 +3579,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 3,
+          "surface_radius": 2300,
+          "surface_life": 270,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Living Wall",
@@ -3234,7 +3627,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 4,
@@ -3242,7 +3641,8 @@
       "backward": 35,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 60
     },
     {
       "id": 16,
@@ -3250,9 +3650,9 @@
       "role": "wind mobility",
       "passive": "Tailwind",
       "identity": "A crestbird that turns wind into unusually fast rotations.",
-      "loop": "Sweep the opponent off a line, reposition, send a fan into their exit.",
-      "counterplay": "Use terrain to shorten its strafe path and exploit its thin health pool.",
-      "learning_test": "Learn different projectile leads and approach paths in each weather preset.",
+      "loop": "Choose a wind direction with Windwright, ride a tailwind to shape Feather Fan, and contest the vane before the field expires.",
+      "counterplay": "Force the bird to travel into its own headwind, counter-cast wind, or punish the planted Windwright startup.",
+      "learning_test": "Choose wind heading and strength to improve projectile contact and relocation; distinguish an advantageous tailwind from merely nonzero wind.",
       "hp": 115,
       "speed": 181,
       "radius": 370,
@@ -3310,7 +3710,13 @@
           "pierce": 0,
           "move_start": 100,
           "move_active": 100,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Gust Lance",
@@ -3352,7 +3758,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 12,
+          "wind_duration": 90
         },
         {
           "name": "Jetstream",
@@ -3394,16 +3806,22 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
-          "name": "Updraft",
+          "name": "Windwright",
           "kind": "Nova",
-          "startup": 14,
+          "startup": 21,
           "active": 2,
           "recovery": 15,
-          "cooldown": 75,
-          "cost": 170,
+          "cooldown": 240,
+          "cost": 320,
           "damage": 16,
           "range": 0,
           "radius": 2800,
@@ -3436,7 +3854,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 24,
+          "wind_duration": 180
         }
       ],
       "turn_degrees": 15,
@@ -3444,7 +3868,8 @@
       "backward": 65,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 115
+      "dodge_speed": 115,
+      "wind_affinity": 240
     },
     {
       "id": 17,
@@ -3512,7 +3937,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Cinder Charge",
@@ -3554,7 +3985,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Fury",
@@ -3596,7 +4033,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Last Ember",
@@ -3638,7 +4081,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 5,
@@ -3646,7 +4095,8 @@
       "backward": 32,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 18,
@@ -3714,7 +4164,13 @@
           "pierce": 0,
           "move_start": 65,
           "move_active": 65,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Tock",
@@ -3756,7 +4212,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Second Hand",
@@ -3798,7 +4260,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Windup Key",
@@ -3840,7 +4308,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 11,
@@ -3848,7 +4322,8 @@
       "backward": 65,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 100
+      "dodge_speed": 100,
+      "wind_affinity": 100
     },
     {
       "id": 19,
@@ -3916,7 +4391,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Mute Line",
@@ -3958,7 +4439,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Deadwater",
@@ -4000,7 +4487,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Void Shell",
@@ -4042,7 +4535,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 6,
@@ -4050,7 +4549,8 @@
       "backward": 55,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 20,
@@ -4118,7 +4618,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Candle Sentry",
@@ -4160,7 +4666,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Hot Seal",
@@ -4202,7 +4714,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 4,
+          "surface_radius": 1700,
+          "surface_life": 180,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Wax Jacket",
@@ -4244,7 +4762,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 5,
@@ -4252,7 +4776,8 @@
       "backward": 40,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 85
+      "dodge_speed": 85,
+      "wind_affinity": 100
     },
     {
       "id": 21,
@@ -4320,7 +4845,13 @@
           "pierce": 0,
           "move_start": 100,
           "move_active": 100,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Tail Snap",
@@ -4362,7 +4893,13 @@
           "pierce": 0,
           "move_start": 75,
           "move_active": 75,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Acrobat",
@@ -4404,7 +4941,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 8,
+          "wind_duration": 75
         },
         {
           "name": "Silk Whorl",
@@ -4446,7 +4989,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 17,
@@ -4454,7 +5003,8 @@
       "backward": 80,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 115
+      "dodge_speed": 115,
+      "wind_affinity": 160
     },
     {
       "id": 22,
@@ -4522,7 +5072,13 @@
           "pierce": 0,
           "move_start": 50,
           "move_active": 50,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Brine Cannon",
@@ -4564,7 +5120,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Closed Shell",
@@ -4606,7 +5168,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Scuttle",
@@ -4648,7 +5216,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 4,
@@ -4656,7 +5230,8 @@
       "backward": 40,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 85
+      "dodge_speed": 85,
+      "wind_affinity": 60
     },
     {
       "id": 23,
@@ -4724,7 +5299,13 @@
           "pierce": 0,
           "move_start": 100,
           "move_active": 100,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Nectar Needle",
@@ -4766,7 +5347,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Swoop",
@@ -4808,7 +5395,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Night Bloom",
@@ -4850,7 +5443,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 16,
@@ -4858,7 +5457,8 @@
       "backward": 75,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 160
     },
     {
       "id": 24,
@@ -4926,7 +5526,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Bell Wave",
@@ -4968,7 +5574,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Peal Rush",
@@ -5010,7 +5622,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Resonant Shell",
@@ -5052,7 +5670,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 5,
@@ -5060,7 +5684,8 @@
       "backward": 35,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 85
+      "dodge_speed": 85,
+      "wind_affinity": 100
     },
     {
       "id": 25,
@@ -5128,7 +5753,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Forged Bolt",
@@ -5170,7 +5801,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Temper",
@@ -5212,7 +5849,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Anvil Fall",
@@ -5254,7 +5897,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 3,
@@ -5262,7 +5911,8 @@
       "backward": 30,
       "acceleration": 5,
       "braking": 2,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 100
     },
     {
       "id": 26,
@@ -5330,7 +5980,13 @@
           "pierce": 0,
           "move_start": 80,
           "move_active": 80,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Dune Dart",
@@ -5372,7 +6028,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Sand Sprint",
@@ -5414,7 +6076,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Dust Kick",
@@ -5456,7 +6124,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 14,
@@ -5464,7 +6138,8 @@
       "backward": 75,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 27,
@@ -5532,7 +6207,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Reel In",
@@ -5574,7 +6255,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Tangle Bed",
@@ -5616,7 +6303,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 1,
+          "surface_radius": 2000,
+          "surface_life": 240,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Leg Sweep",
@@ -5658,7 +6351,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 7,
@@ -5666,7 +6365,8 @@
       "backward": 55,
       "acceleration": 3,
       "braking": 2,
-      "dodge_speed": 95
+      "dodge_speed": 95,
+      "wind_affinity": 100
     },
     {
       "id": 28,
@@ -5734,7 +6434,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Coal Fan",
@@ -5776,7 +6482,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Furnace",
@@ -5818,7 +6530,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 4,
+          "surface_radius": 1900,
+          "surface_life": 180,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Vent",
@@ -5860,7 +6578,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 1,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 6,
@@ -5868,7 +6592,8 @@
       "backward": 38,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 29,
@@ -5936,7 +6661,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Lunar Shield",
@@ -5978,7 +6709,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Moonbeam",
@@ -6020,7 +6757,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Orbit",
@@ -6062,7 +6805,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 7,
@@ -6070,7 +6819,8 @@
       "backward": 55,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 90
+      "dodge_speed": 90,
+      "wind_affinity": 100
     },
     {
       "id": 30,
@@ -6138,7 +6888,13 @@
           "pierce": 0,
           "move_start": 80,
           "move_active": 80,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Coil Cannon",
@@ -6180,7 +6936,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Springwire",
@@ -6222,7 +6984,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Capacitor",
@@ -6264,7 +7032,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 3,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 13,
@@ -6272,7 +7046,8 @@
       "backward": 75,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 31,
@@ -6340,7 +7115,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Falling Fruit",
@@ -6382,7 +7163,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Orchard",
@@ -6424,7 +7211,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 3,
+          "surface_radius": 2100,
+          "surface_life": 270,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Harvest Run",
@@ -6466,7 +7259,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 5,
@@ -6474,7 +7273,8 @@
       "backward": 35,
       "acceleration": 4,
       "braking": 2,
-      "dodge_speed": 85
+      "dodge_speed": 85,
+      "wind_affinity": 60
     },
     {
       "id": 32,
@@ -6542,7 +7342,13 @@
           "pierce": 0,
           "move_start": 60,
           "move_active": 60,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Ink Cloud",
@@ -6584,7 +7390,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Brushstroke",
@@ -6626,7 +7438,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Takeoff",
@@ -6668,7 +7486,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 12,
+          "wind_duration": 120
         }
       ],
       "turn_degrees": 9,
@@ -6676,7 +7500,8 @@
       "backward": 65,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 100
+      "dodge_speed": 100,
+      "wind_affinity": 160
     },
     {
       "id": 33,
@@ -6744,7 +7569,13 @@
           "pierce": 0,
           "move_start": 65,
           "move_active": 65,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Hookline",
@@ -6786,7 +7617,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Claim Claw",
@@ -6828,7 +7665,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Hunting Bound",
@@ -6870,7 +7713,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 15,
@@ -6878,7 +7727,8 @@
       "backward": 55,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 34,
@@ -6946,7 +7796,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Acid Spit",
@@ -6988,7 +7844,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Slag Trail",
@@ -7030,7 +7892,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Jawbreaker",
@@ -7072,7 +7940,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 4,
@@ -7080,7 +7954,8 @@
       "backward": 30,
       "acceleration": 5,
       "braking": 2,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 100
     },
     {
       "id": 35,
@@ -7148,7 +8023,13 @@
           "pierce": 0,
           "move_start": 75,
           "move_active": 75,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "River Cut",
@@ -7190,7 +8071,13 @@
           "pierce": 0,
           "move_start": 35,
           "move_active": 35,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Waterwheel",
@@ -7232,7 +8119,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Fresh Spring",
@@ -7274,7 +8167,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 1,
+          "surface_radius": 1800,
+          "surface_life": 210,
+          "element": 4,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 14,
@@ -7282,7 +8181,8 @@
       "backward": 75,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 110
+      "dodge_speed": 110,
+      "wind_affinity": 100
     },
     {
       "id": 36,
@@ -7350,7 +8250,13 @@
           "pierce": 0,
           "move_start": 65,
           "move_active": 65,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Echo Fan",
@@ -7392,7 +8298,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Bass Ring",
@@ -7434,7 +8346,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Silent Beat",
@@ -7476,7 +8394,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 11,
@@ -7484,7 +8408,8 @@
       "backward": 65,
       "acceleration": 2,
       "braking": 1,
-      "dodge_speed": 105
+      "dodge_speed": 105,
+      "wind_affinity": 100
     },
     {
       "id": 37,
@@ -7552,7 +8477,13 @@
           "pierce": 0,
           "move_start": 65,
           "move_active": 65,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Webway",
@@ -7594,7 +8525,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Latch",
@@ -7636,7 +8573,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Skitter",
@@ -7678,7 +8621,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 10,
@@ -7686,7 +8635,8 @@
       "backward": 65,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 105
+      "dodge_speed": 105,
+      "wind_affinity": 100
     },
     {
       "id": 38,
@@ -7754,7 +8704,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Stone Scatter",
@@ -7796,7 +8752,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Backdraft",
@@ -7838,7 +8800,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Ridge Hop",
@@ -7880,7 +8848,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 4,
@@ -7888,7 +8862,8 @@
       "backward": 30,
       "acceleration": 4,
       "braking": 1,
-      "dodge_speed": 80
+      "dodge_speed": 80,
+      "wind_affinity": 100
     },
     {
       "id": 39,
@@ -7956,7 +8931,13 @@
           "pierce": 0,
           "move_start": 45,
           "move_active": 45,
-          "move_recovery": 60
+          "move_recovery": 60,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Sworn Guard",
@@ -7998,7 +8979,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Intercept",
@@ -8040,7 +9027,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 25
+          "move_recovery": 25,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         },
         {
           "name": "Judgment",
@@ -8082,7 +9075,13 @@
           "pierce": 0,
           "move_start": 0,
           "move_active": 0,
-          "move_recovery": 30
+          "move_recovery": 30,
+          "surface": 0,
+          "surface_radius": 0,
+          "surface_life": 0,
+          "element": 0,
+          "wind_strength": 0,
+          "wind_duration": 0
         }
       ],
       "turn_degrees": 8,
@@ -8090,7 +9089,8 @@
       "backward": 50,
       "acceleration": 3,
       "braking": 1,
-      "dodge_speed": 95
+      "dodge_speed": 95,
+      "wind_affinity": 60
     }
   ],
   "dodge": {
@@ -8133,6 +9133,12 @@
     "pierce": 0,
     "move_start": 0,
     "move_active": 0,
-    "move_recovery": 60
+    "move_recovery": 60,
+    "surface": 0,
+    "surface_radius": 0,
+    "surface_life": 0,
+    "element": 0,
+    "wind_strength": 0,
+    "wind_duration": 0
   }
 }

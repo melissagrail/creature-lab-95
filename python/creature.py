@@ -6,11 +6,11 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-OBS_SIZE = 2638
-SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE = 64, 53, 40, 40
+OBS_SIZE = 3620
+SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE = 66, 69, 44, 48
 FEATURE_SIZE = 10
-SLICES = dict(self=slice(0,64), entities=slice(64,2184), moves=slice(2184,2384),
-              announced=slice(2384,2424), history=slice(2424,2616), global_=slice(2616,2632), mask=slice(2632,2638))
+SLICES = dict(self=slice(0,66), entities=slice(66,3102), moves=slice(3102,3342),
+              announced=slice(3342,3390), history=slice(3390,3582), global_=slice(3582,3614), mask=slice(3614,3620))
 I = C.c_int32
 F = C.c_float
 P = C.c_void_p
@@ -40,7 +40,7 @@ def library():
     for name, (args, result) in signatures.items():
         fn = getattr(lib, name)
         fn.argtypes, fn.restype = args, result
-    if lib.cr_version() != 3 or lib.cr_observation_version() != 3 or lib.cr_observation_size() != OBS_SIZE:
+    if lib.cr_version() != 4 or lib.cr_observation_version() != 4 or lib.cr_observation_size() != OBS_SIZE:
         raise RuntimeError('Incompatible simulation / observation schema')
     return lib
 
@@ -63,7 +63,7 @@ def quantize(move=(0., 0.), aim=(1., 0.), ability=0):
 class Batch:
     """Independent worlds; no global RNG and no implicit episode reset.
 
-    step returns reusable ctypes buffers: observations [N,2,2638], reward FEATURES
+    step returns reusable ctypes buffers: observations [N,2,3620], reward FEATURES
     [N,2,10], status [N,4] = terminated,truncated,winner,actual_physics_ticks.
     Copy buffers before the next step when retaining trajectories.
     One batch per worker; do not concurrently operate on the same handle.

@@ -46,8 +46,8 @@ Three layouts stress different choices: two central pillars, a four-rock grove, 
 - Damage can be traded. Contacts are collected before resolution; a hit already collected is not erased by a later KO/interrupt that tick. On-hit statuses apply through shields, but not through a successful dodge.
 - Push/pull respects mass and terrain. An obstructed positive knockback adds six wall-slam damage. It is damage, not another stun. A pull does not add wall damage.
 - Traps are visible, have 12 HP, arm after 15 ticks, and trigger once. Turrets have 32 HP (45 for Waxwyrm), fire only with line of sight within 7.32 units, and expire. All direct attack shapes can damage enemy targetable setup. Persistent ordinary fields cannot be destroyed.
-- Terrain blocks movement, projectiles, beams and direct melee/area line of sight. Fields are placed at a valid position but can be cast across rocks. They damage enemies and heal their owner; this alpha does not use friendly fire.
-- Rain builds arena-wide wetness, changing traction; it ages burn and burning fields twice as fast. Wind accelerates projectiles on the x axis. There is no hidden random weather change during a fight.
+- Terrain blocks movement, projectiles, beams and direct melee/area line of sight. Fields are placed at a valid position but can be cast across rocks. Spell fields damage enemies and heal their owner. Ground fire and charged-water hazards affect both creatures, including their creator. Ground and spell fields are separate layers: extinguishing ground does not cancel a spell.
+- Rain builds arena-wide wetness, changing traction; it ages burn and burning fields twice as fast. Wind is now a uniform two-dimensional vector field, composed from prevailing weather and two timed player contributions. It accelerates projectiles, changes travel speed relative to the flow, and advects steam. [Terrain/wind v4](terrain.md) defines the contracts. There is no hidden random weather change during a fight.
 
 ## Resource economy and tempo
 
@@ -67,4 +67,4 @@ Species-specific learning tests should be judged on held-out scenarios, not just
 
 ## Alpha boundaries
 
-This is a playable engine/content alpha, not a completed game or a competitively certified roster. There is no campaign, collection economy, matchmaking, cosmetic asset pipeline, network authority, trained checkpoint, species progression service or per-creature persistent learner. There are no stealth/vision rules, teams, jump height, arbitrary scripted callbacks or terrain destruction. The central mechanics, all 40 kits, model interface, test harness and design contracts are implemented; the next decisive evidence is trained-policy and human playtesting.
+This is a playable engine/content alpha, not a completed game or a competitively certified roster. There is no campaign, collection economy, matchmaking, cosmetic asset pipeline, network authority, trained checkpoint, species progression service or per-creature persistent learner. There are no stealth/vision rules, teams, jump height, arbitrary scripted callbacks or rock destruction. Brush can burn away and water can change state. The central mechanics, all 40 kits, model interface, test harness and design contracts are implemented; the next decisive evidence is trained-policy and human playtesting.

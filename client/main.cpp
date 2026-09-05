@@ -66,6 +66,18 @@ void worldcircle(Vec p, int radius, SDL_Color c, bool fill = false) {
 void worldline(Vec a, Vec b, SDL_Color c) {
     line(sx(a.x), sy(a.y), sx(b.x), sy(b.y), c);
 }
+void arrow(Vec a, Vec direction, int extent, SDL_Color c) {
+    if (!direction.x && !direction.y)
+        return;
+    Vec dir = unit(direction), end = a + scale(dir, extent), side = scale(Vec{-dir.y, dir.x}, 180);
+    worldline(a, end, c);
+    worldline(end, end - scale(dir, 300) + side, c);
+    worldline(end, end - scale(dir, 300) - side, c);
+}
+const char *surface_name(int kind) {
+    static const char *names[] = {"BARE", "WATER", "ICE", "BRUSH", "FIRE", "STEAM", "CHARGED"};
+    return names[std::clamp(kind, 0, 6)];
+}
 void corridor(Vec a, Vec b, int radius, SDL_Color c) {
     Vec side = scale(unit(Vec{a.y - b.y, b.x - a.x}), radius);
     worldline(a + side, b + side, c);
@@ -128,14 +140,15 @@ int main(int argc, char **argv) {
     SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
     bool run = true, paused = false, manual = false, playback = false, catalog = false;
     int species_a = 0, species_b = 1, arena = 0, catalog_target = 0, catalog_page = 0;
-    int weather = 0, speed = 1, ability = 0, pending_guidance = -1, feedback = 0;
+    int weather = 0, speed = 1, ability = 0, pending_guidance = -1, feedback = 0, wind_power = 100;
     uint32_t seed = 42;
     size_t cursor = 0;
     World w;
     reset(w, seed, weather, species_a, species_b, arena);
     Replay tape{w, {}};
     std::vector<uint8_t> saved;
-    std::string note = "NOSE: FACING / YELLOW: WINDUP / ORANGE: ACTIVE / GRAY: RECOVERY";
+    std::string note =
+        "WATER + COLD = ICE / BRUSH + HEAT = FIRE / WATER + HEAT = STEAM / Z-X: WIND POWER";
     std::string captures = "captures";
     if (std::string(argv[0]).find(".app/Contents/MacOS/") != std::string::npos)
         captures = (std::filesystem::path(argv[0])
@@ -389,7 +402,9 @@ int main(int argc, char **argv) {
             int strength = Q;
             if (ability >= 1 && ability <= 4) {
                 auto &m = move_for(w.bodies[0], ability - 1);
-                if (m.kind == Field || m.kind == Trap || m.kind == Turret)
+                if (m.wind_strength)
+                    strength = wind_power * Q / 100;
+                else if (m.kind == Field || m.kind == Trap || m.kind == Turret)
                     strength = std::min(Q, length(aim) * Q / std::max(1, m.range));
             }
             aim = scale(unit(aim), strength);
@@ -440,6 +455,10 @@ int main(int argc, char **argv) {
                     ability = int(k - SDLK_1) + 1;
                 else if (k == SDLK_SPACE)
                     ability = 5;
+                else if (k == SDLK_z)
+                    wind_power = std::max(25, wind_power - 25);
+                else if (k == SDLK_x)
+                    wind_power = std::min(100, wind_power + 25);
             }
             if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
                 float x = float(e.button.x), y = float(e.button.y);
@@ -471,7 +490,7 @@ int main(int argc, char **argv) {
         panel(10, 10, 1080, 760);
         rect(14, 14, 1072, 26, {0, 0, 128, 255});
         label(22, 20, "CREATURE LAB 95", white, 2);
-        label(720, 23, "40 SPECIES / MOVEMENT ALPHA 0.3", white, 1);
+        label(720, 23, "40 SPECIES / TERRAIN ALPHA 0.4", white, 1);
         panel(1058, 18, 22, 18);
         buttons.push_back({{1058, 18, 22, 18}, "X", 0});
         label(1064, 22, "X", black, 1);
@@ -513,6 +532,54 @@ int main(int argc, char **argv) {
                 line(x, y, x + 3, y + 7, {120, 155, 173, 255});
             }
         }
+        Vec wind = wind_vector(w);
+        for (auto &g : w.surfaces)
+            if (g.life) {
+                SDL_Color palette[] = {{0, 0, 0, 0},        {40, 120, 190, 255},
+                                       {90, 165, 210, 255}, {54, 110, 48, 255},
+                                       {205, 74, 25, 255},  {155, 160, 165, 255},
+                                       {155, 120, 18, 255}};
+                auto c = palette[g.kind];
+                worldcircle(g.pos, g.radius, {c.r, c.g, c.b, 65}, true);
+                worldcircle(g.pos, g.radius, c);
+                for (int n = -1; n <= 1; n++) {
+                    Vec center = g.pos + Vec{0, n * g.radius / 2};
+                    if (g.kind == Brush) {
+                        worldline(center - Vec{250, 250}, center + Vec{250, 250}, c);
+                        worldline(center + Vec{-250, 250}, center + Vec{250, -250}, c);
+                    } else if (g.kind == ChargedWater) {
+                        worldline(center + Vec{-350, -120}, center, yellow);
+                        worldline(center, center + Vec{300, 150}, yellow);
+                    } else
+                        worldline(center - Vec{g.radius / 2, 0}, center + Vec{g.radius / 2, 0}, c);
+                }
+                label(sx(g.pos.x) - int(std::string(surface_name(g.kind)).size()) * 3,
+                      sy(g.pos.y + g.radius / 2) - 3, surface_name(g.kind), c, 1);
+                if (g.effect_timer || g.owner >= 0)
+                    label(sx(g.pos.x) - 12, sy(g.pos.y + g.radius / 2) + 10,
+                          num((g.effect_timer ? g.effect_timer : g.life) / 30) + "S", dark, 1);
+            }
+        // Every sample is the same uniform vector; animation conveys flow, not hidden variation.
+        if (length(wind))
+            for (int gy = 1; gy < 18; gy += 3)
+                for (int gx = 1; gx < 24; gx += 3) {
+                    Vec center{gx * Q, gy * Q};
+                    center = center + scale(wind, (w.tick % 30), 1);
+                    arrow(center, wind, 350 + length(wind) * 30, {50, 95, 115, 120});
+                }
+        if (w.vane_enabled) {
+            worldcircle(w.vane_pos, 950, {90, 100, 115, 255});
+            arrow(w.vane_pos, wind.x || wind.y ? wind : Vec{Q, 0}, 900, blue);
+            label(sx(w.vane_pos.x) + 35, sy(w.vane_pos.y) - 3, "VANE", blue, 1);
+            label(sx(w.vane_pos.x) - 45, sy(w.vane_pos.y) + 34,
+                  w.vane_cooldown ? "RECHARGE " + num((w.vane_cooldown + 29) / 30) + "S"
+                                  : "HOLD 1.5S / AIM",
+                  dark, 1);
+            if (w.vane_capture[0] || w.vane_capture[1])
+                meter(sx(w.vane_pos.x) - 24, sy(w.vane_pos.y) + 20, 48,
+                      std::max(w.vane_capture[0], w.vane_capture[1]), 45,
+                      w.vane_capture[0] ? blue : orange);
+        }
         worldcircle({12 * Q, 9 * Q}, 2500, {40, 140, 90, 35}, true);
         worldcircle({12 * Q, 9 * Q}, 2500, green);
         label(sx(12 * Q) - 15, sy(9 * Q) - 3, "BLOOM", green, 1);
@@ -550,6 +617,16 @@ int main(int argc, char **argv) {
             if (b.move >= 0 && (ph == Startup || ph == Active)) {
                 const auto &m = Moves[b.move];
                 SDL_Color c = ph == Startup ? yellow : orange;
+                if (m.wind_strength) {
+                    arrow(b.pos, b.locked, 2200, c);
+                    label(sx(b.pos.x) - 24, sy(b.pos.y) + 40,
+                          "WIND " + num(m.wind_strength * b.aim_scale / Q), c, 1);
+                }
+                if (m.surface) {
+                    Vec place = m.kind == Field ? target_point(w, i, b.move) : b.pos;
+                    worldcircle(place, m.surface_radius, c);
+                    label(sx(place.x) - 15, sy(place.y) - 18, surface_name(m.surface), c, 1);
+                }
                 Vec end = b.pos + scale(b.locked, m.range);
                 if (m.kind == Melee || m.kind == Lunge) {
                     Vec center = b.pos + scale(b.locked, m.range / 2);
@@ -671,16 +748,29 @@ int main(int argc, char **argv) {
             panel(285, 164, 170, 26);
             label(300, 173, "PAUSED / N TO STEP", black, 1);
         }
+        panel(30, 164, 210, 74, true);
+        label(38, 172, "UNIFORM WIND / Z-X CAST POWER", blue, 1);
+        label(38, 188, "BASE (" + num(w.wind_base.x) + "," + num(w.wind_base.y) + ")", dark, 1);
+        for (int owner = 0; owner < 2; owner++) {
+            const auto &g = w.winds[owner];
+            label(38, 202 + owner * 14,
+                  std::string(owner ? "B " : "A ") + "(" + num(g.force.x) + "," + num(g.force.y) +
+                      ") " + num((g.life + 29) / 30) + "S",
+                  owner ? orange : blue, 1);
+        }
         label(28, 696,
               "BLOOM  A " + num(w.bodies[0].control) + " / B " + num(w.bodies[1].control) +
-                  "  TARGET 600",
+                  "  WIND (" + num(wind.x) + "," + num(wind.y) +
+                  ")  A:" + num((w.winds[0].life + 29) / 30) +
+                  "S B:" + num((w.winds[1].life + 29) / 30) + "S",
               green, 1);
         button(28, 550, 690, 168,
                arena == 0   ? "ARENA: PILLARS [L]"
                : arena == 1 ? "ARENA: GROVE [L]"
                             : "ARENA: OPEN [L]");
         label(28, 714,
-              "TICK " + num(w.tick) + " / 2700   SEED " + num(seed) + "   TAB: SPECIES CATALOG",
+              "TICK " + num(w.tick) + "  SEED " + num(seed) +
+                  "  WIND CAST [Z/X]: " + num(wind_power) + "%  TAB: ROSTER",
               dark, 1);
         panel(738, 108, 330, 220, true);
         label(752, 121, "CREATURE INSPECTOR", blue, 2);
@@ -734,9 +824,10 @@ int main(int argc, char **argv) {
         button(9, 962, 558, 94, "LOAD REPLAY");
         panel(738, 606, 330, 120, true);
         label(752, 618, "EVENT MONITOR", blue, 1);
-        const char *names[] = {"",        "START",    "RELEASE",   "HIT",      "DODGE", "INTERRUPT",
-                               "KO",      "GUIDANCE", "POOL FULL", "END",      "HEAL",  "SHIELD",
-                               "CAPTURE", "PARRY",    "STATUS",    "WALL SLAM"};
+        const char *names[] = {"",          "START",   "RELEASE",  "HIT",       "DODGE",
+                               "INTERRUPT", "KO",      "GUIDANCE", "POOL FULL", "END",
+                               "HEAL",      "SHIELD",  "CAPTURE",  "PARRY",     "STATUS",
+                               "WALL SLAM", "TERRAIN", "WIND"};
         for (int j = 0; j < std::min(6, w.event_count); j++) {
             auto &v = w.events[(w.event_head - 1 - j + HistoryCount) % HistoryCount];
             label(752, 638 + j * 13,

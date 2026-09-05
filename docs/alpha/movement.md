@@ -1,3 +1,5 @@
+> Historical movement v3 baseline. These locomotion rules remain in v4, with additional wind/ground modifiers; its balance results and tensor sizes are historical. See [terrain v4](terrain.md) for the current build.
+
 # Movement alpha: facing, travel and commitment
 
 Rules/observations **v3**, content fingerprint `56c01336`. This iteration addresses the freely drifting circles: a creature now has a physical orientation, a travel budget relative to that orientation, and a per-move permission to move. It changes gameplay, not just drawing.

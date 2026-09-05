@@ -19,6 +19,8 @@ static World duel(int species = 0, int enemy = 26) {
     World w;
     reset(w, 42, 0, species, enemy, 2);
     w.objective = 0;
+    w.surfaces = {};
+    w.vane_enabled = 0;
     w.bodies[0].pos = {8 * Q, 9 * Q};
     w.bodies[1].pos = {9 * Q, 9 * Q};
     return w;
@@ -47,6 +49,8 @@ int main() {
         World w;
         reset(w, 7, 0, species, 0, 2);
         w.objective = 0;
+        w.surfaces = {};
+        w.vane_enabled = 0;
         w.bodies[0].pos = {12 * Q, 9 * Q};
         w.bodies[1].pos = {22 * Q, 16 * Q};
         return w;
@@ -107,7 +111,7 @@ int main() {
             auto o = observe(w, 0);
             CHECK(o.moves[slot * MoveSize + 37] == float(m.move_start) / 100);
             CHECK(o.self[56] == float(spec.turn_degrees * 30) / 600);
-            CHECK(o.entities[39] == 1);
+            CHECK(o.entities[43] == 1);
         }
         // Dodge direction comes from travel input, independent of facing and cast aim.
         World dodge = locomotion_world(sp);
@@ -365,7 +369,7 @@ int main() {
     CHECK(a.bodies[0].hp == Roster[15].hp - 7); // Sanctuary
     a = duel(16);
     b = a;
-    a.wind = 12;
+    a.wind_base = {12, 0};
     step(a, {{{Q, 0, Q, 0, 0}, {}}}, 1);
     step(b, {{{Q, 0, Q, 0, 0}, {}}}, 1);
     CHECK(a.bodies[0].vel.x > b.bodies[0].vel.x); // Tailwind
@@ -533,6 +537,6 @@ int main() {
     reset(a, 77, 2, 12, 27, 1);
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
-    CHECK(hash(a) == 0x1247c68eb6a064e7ull);
+    CHECK(hash(a) == 0x5e4d1c87cb0a9adeull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

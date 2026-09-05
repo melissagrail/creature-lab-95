@@ -8,21 +8,21 @@ This is an integration/gradient smoke test, NOT a learning benchmark or trained 
 """
 import torch
 from torch import nn
-from creature import OBS_SIZE, Batch, quantize
+from creature import OBS_SIZE, SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE, SLICES, Batch, quantize
 
 
 class CreaturePolicy(nn.Module):
     """Masked entity/move/history encoders + 96-wide recurrent individual brain.
 
-    obs: [batch,2638], memory: [batch,96]. For episodes/branches, manage memory
+    obs: [batch,3620], memory: [batch,96]. For episodes/branches, manage memory
     explicitly; it does not belong to the deterministic physics snapshot.
     """
     def __init__(self):
         super().__init__()
-        self.entity = nn.Sequential(nn.Linear(39, 32), nn.Tanh())
-        self.move = nn.Sequential(nn.Linear(40, 24), nn.Tanh())
+        self.entity = nn.Sequential(nn.Linear(ENTITY_SIZE-1, 32), nn.Tanh())
+        self.move = nn.Sequential(nn.Linear(MOVE_SIZE, 24), nn.Tanh())
         self.event = nn.Sequential(nn.Linear(7, 24), nn.Tanh())
-        self.encoder = nn.Sequential(nn.Linear(64 + 32 + 24 + 24 + 16 + 24, 96), nn.Tanh())
+        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + 32 + 24 + 24 + 32 + 24, 96), nn.Tanh())
         self.memory = nn.GRUCell(96, 96)
         self.motion = nn.Linear(96, 4)
         self.noop = nn.Linear(96, 1)
@@ -35,19 +35,19 @@ class CreaturePolicy(nn.Module):
         return (values * mask).sum(1) / mask.sum(1).clamp_min(1)
 
     def forward(self, obs, memory):
-        entities = obs[:, 64:2184].reshape(-1, 53, 40)
-        moves = obs[:, 2184:2384].reshape(-1, 5, 40)
-        history = obs[:, 2424:2616].reshape(-1, 24, 8)
-        x = torch.cat((obs[:, :64],
-                       self.pool(self.entity(entities[:, :, :39]), entities[:, :, 39:40]),
+        entities = obs[:, SLICES["entities"]].reshape(-1, ENTITY_COUNT, ENTITY_SIZE)
+        moves = obs[:, SLICES["moves"]].reshape(-1, 5, MOVE_SIZE)
+        history = obs[:, SLICES["history"]].reshape(-1, 24, 8)
+        x = torch.cat((obs[:, SLICES["self"]],
+                       self.pool(self.entity(entities[:, :, :-1]), entities[:, :, -1:]),
                        self.move(moves).mean(1),
                        self.pool(self.event(history[:, :, :7]), history[:, :, 7:8]),
-                       obs[:, 2616:2632], self.move(obs[:, 2384:2424])), dim=-1)
+                       obs[:, SLICES["global_"]], self.move(obs[:, SLICES["announced"]])), dim=-1)
         hidden = self.memory(self.encoder(x), memory)
         # Score each move using its actual descriptor, preserving slot identity.
         slot_latent = torch.cat((hidden[:,None,:].expand(-1,5,-1), self.move(moves)), dim=-1)
         logits = torch.cat((self.noop(hidden), self.slot_score(slot_latent).squeeze(-1)), dim=-1)
-        logits = logits.masked_fill(obs[:, 2632:2638] < .5, -1e9)
+        logits = logits.masked_fill(obs[:, SLICES["mask"]] < .5, -1e9)
         return self.motion(hidden), logits, self.value(hidden).squeeze(-1), hidden
 
     def sample(self, obs, memory, deterministic=False):

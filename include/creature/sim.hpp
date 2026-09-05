@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32, ZoneCount = 16,
               HistoryCount = 64;
-constexpr uint32_t RulesVersion = 3, ObservationVersion = 3;
+constexpr uint32_t RulesVersion = 4, ObservationVersion = 4;
 struct Vec {
     int32_t x = 0, y = 0;
 };
@@ -17,6 +17,9 @@ Vec scale(Vec, int, int = Q);
 int length(Vec);
 Vec unit(Vec);
 enum MoveKind { Melee, Bolt, Lunge, Field, Evade, Beam, Nova, Trap, Ward, Blink, Turret };
+constexpr int SurfaceCount = 16;
+enum SurfaceKind { Bare, Water, Ice, Brush, Fire, Steam, ChargedWater };
+enum Element { Neutral, Heat, Chill, Shock, Splash };
 enum Phase { Idle, Startup, Active, Recovery };
 enum Guidance { Free, Attack, Retreat, Conserve };
 enum EventKind {
@@ -34,7 +37,9 @@ enum EventKind {
     Controlled,
     Parried,
     Status,
-    WallSlam
+    WallSlam,
+    GroundChanged,
+    WindChanged
 };
 enum Passive {
     Cinder,
@@ -87,6 +92,8 @@ struct Move {
             cleanse = 0, drain = 0, bonus_mark = 0, execute = 0, health_cost = 0, bounces = 0,
             returning = 0, pierce = 0;
     int32_t move_start = 0, move_active = 0, move_recovery = 30;
+    int32_t surface = 0, surface_radius = 0, surface_life = 0, element = 0, wind_strength = 0,
+            wind_duration = 0;
 };
 struct Species {
     const char *name;
@@ -95,7 +102,7 @@ struct Species {
     int32_t hp, speed, radius, regen, mass, passive, preferred_range;
     std::array<int32_t, 4> moves;
     std::array<int32_t, 8> axes;
-    int32_t turn_degrees, strafe, backward, acceleration, braking, dodge_speed;
+    int32_t turn_degrees, strafe, backward, acceleration, braking, dodge_speed, wind_affinity;
 };
 extern const std::array<Move, MoveCount> Moves;
 extern const std::array<Species, SpeciesCount> Roster;
@@ -114,15 +121,24 @@ struct Body {
     int32_t meter = 0, counter = 0, passive_timer = 0, last_slot = -1, idle_ticks = 0,
             stationary = 0, control = 0, capture = 0;
     std::array<int32_t, 5> cooldown{};
-    int32_t guidance = Free, guidance_age = 0;
+    int32_t guidance = Free, guidance_age = 0, surface_mask = 0;
 };
 struct Projectile {
     Vec pos{}, vel{}, origin{};
-    int32_t life = 0, owner = 0, move = 0, age = 0, hit_mask = 0, bounces = 0, returning = 0;
+    int32_t life = 0, owner = 0, move = 0, age = 0, hit_mask = 0, bounces = 0, returning = 0,
+            surface_mask = 0;
 };
 struct Zone {
     Vec pos{};
     int32_t life = 0, owner = 0, move = 0, age = 0, hp = 0;
+};
+struct Surface {
+    Vec pos{};
+    int32_t radius = 0, kind = Bare, life = 0, owner = -1, base = Bare, effect_timer = 0;
+};
+struct WindCast {
+    Vec force{};
+    int32_t life = 0;
 };
 struct Obstacle {
     Vec pos{};
@@ -135,8 +151,13 @@ struct Event {
 struct World {
     uint32_t rng = 1;
     int32_t tick = 0, terminal = 0, truncated = 0, winner = -1, end_reason = 0;
-    int32_t rain = 0, wind = 0, wetness = 0, event_head = 0, event_count = 0, overflow = 0,
-            arena = 0, objective = 1;
+    int32_t rain = 0, wetness = 0, event_head = 0, event_count = 0, overflow = 0, arena = 0,
+            objective = 1;
+    Vec wind_base{}, vane_pos{12 * Q, 2 * Q};
+    std::array<WindCast, 2> winds{};
+    std::array<int32_t, 2> vane_capture{};
+    int32_t vane_cooldown = 0, vane_enabled = 1;
+    std::array<Surface, SurfaceCount> surfaces{};
     std::array<Body, 2> bodies{};
     std::array<Projectile, ProjectileCount> projectiles{};
     std::array<Zone, ZoneCount> zones{};
@@ -157,12 +178,15 @@ const Move &move_for(const Body &, int slot);
 int move_id(const Body &, int slot);
 Phase phase(const Body &);
 Vec target_point(const World &, int, int);
+Vec wind_vector(const World &);
+int surface_flags(const World &, Vec);
+bool wet_at(const World &, Vec);
 void command(World &, int, int);
 std::array<int32_t, 6> action_mask(const World &, int);
 StepResult step(World &, const std::array<Action, 2> &, int ticks = DecisionTicks);
 Action scripted(const World &, int, int style = 0);
-constexpr int SelfSize = 64, EntityCount = 53, EntitySize = 40, MoveSize = 40, EventSize = 8,
-              EventCount = 24, GlobalSize = 16;
+constexpr int SelfSize = 66, EntityCount = 69, EntitySize = 44, MoveSize = 48, EventSize = 8,
+              EventCount = 24, GlobalSize = 32;
 constexpr int ObservationSize =
     SelfSize + EntityCount * EntitySize + 6 * MoveSize + EventCount * EventSize + GlobalSize + 6;
 struct Observation {

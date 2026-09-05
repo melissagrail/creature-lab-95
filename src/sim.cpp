@@ -83,7 +83,22 @@ void reset(World &w, uint32_t seed, int weather, int a, int b, int arena) {
         for (auto &o : w.obstacles)
             o.radius = 0;
     w.rain = weather == 2 ? 800 : 0;
-    w.wind = weather == 1 || weather == 2 ? int(random(w) % 9) + 5 : 0;
+    w.wind_base = weather == 1 || weather == 2 ? Vec{int(random(w) % 9) + 5, -4} : Vec{};
+    // Symmetric permanent ground; the open arena keeps an unobstructed center.
+    int ground = arena == 1 ? Brush : Water;
+    w.surfaces[0] = {{8 * Q, 9 * Q}, 1800, ground, MaxTicks, -1, ground, 0};
+    w.surfaces[1] = {{16 * Q, 9 * Q}, 1800, ground, MaxTicks, -1, ground, 0};
+    w.surfaces[2] = {{12 * Q, arena == 2 ? 6 * Q : 9 * Q},
+                     1500,
+                     arena == 1 ? Water : Ice,
+                     MaxTicks,
+                     -1,
+                     Water,
+                     arena == 1 ? 0 : 180};
+    if (arena == 2) {
+        w.surfaces[0].pos = {7 * Q, 4 * Q};
+        w.surfaces[1].pos = {17 * Q, 14 * Q};
+    }
 }
 void command(World &w, int a, int g) {
     if (a < 0 || a > 1 || g < 0 || g > 3 || w.terminal || w.truncated)
@@ -151,6 +166,97 @@ Vec target_point(const World &w, int i, int move) {
     return m.kind == Field || m.kind == Trap || m.kind == Turret
                ? terrain(w, p, std::max(64, m.radius))
                : p;
+}
+Vec wind_vector(const World &w) {
+    Vec v = w.wind_base;
+    for (auto &g : w.winds)
+        if (g.life)
+            v = v + g.force;
+    return length(v) > 24 ? scale(unit(v), 24) : v;
+}
+int surface_flags(const World &w, Vec pos) {
+    int flags = 0;
+    for (auto &g : w.surfaces)
+        if (g.life && overlap(pos, 0, g.pos, g.radius))
+            flags |= 1 << g.kind;
+    return flags;
+}
+bool wet_at(const World &w, Vec pos) {
+    return w.wetness > 300 || (surface_flags(w, pos) & ((1 << Water) | (1 << ChargedWater)));
+}
+static int ground_kind(const World &w, Vec pos) {
+    int flags = surface_flags(w, pos);
+    for (int kind = ChargedWater; kind > 0; kind--)
+        if (flags & (1 << kind))
+            return kind;
+    return Bare;
+}
+static void react(World &w, Surface &g, int element, int owner, int move) {
+    if (!g.life || !element)
+        return;
+    int kind = g.kind, duration = 0;
+    if (element == Heat) {
+        if (kind == Brush) {
+            kind = Fire;
+            duration = 120;
+        } else if (kind == Ice)
+            kind = Water;
+        else if (kind == Water || kind == ChargedWater) {
+            kind = Steam;
+            duration = 90;
+        }
+    } else if (element == Chill && (kind == Water || kind == ChargedWater)) {
+        kind = Ice;
+        duration = 180;
+    } else if (element == Shock && kind == Water) {
+        kind = ChargedWater;
+        duration = 120;
+    } else if (element == Splash) {
+        if (kind == Fire) {
+            kind = Steam;
+            duration = 90;
+        } else if (kind == ChargedWater)
+            kind = Water;
+    }
+    if (kind == g.kind)
+        return;
+    g.kind = kind;
+    g.effect_timer = duration;
+    g.owner = owner;
+    g.base = kind == Fire ? Bare : Water;
+    event(w, GroundChanged, owner, owner, move, kind, g.pos);
+}
+static void create_ground(World &w, Vec pos, const Move &m, int owner, int move) {
+    Surface *slot = nullptr;
+    for (auto &g : w.surfaces)
+        if (g.life && g.kind == m.surface && g.owner == owner &&
+            length(g.pos - pos) < m.surface_radius / 2) {
+            slot = &g;
+            break;
+        }
+    if (!slot)
+        for (auto &g : w.surfaces)
+            if (!g.life) {
+                slot = &g;
+                break;
+            }
+    if (!slot) {
+        w.overflow++;
+        event(w, Overflow, owner, owner, move, 0, pos);
+        return;
+    }
+    *slot = {pos,
+             m.surface_radius,
+             m.surface,
+             m.surface_life,
+             owner,
+             m.surface == Ice || m.surface == Steam || m.surface == ChargedWater ? Water
+                                                                                 : m.surface,
+             m.surface == Ice            ? 180
+             : m.surface == Steam        ? 90
+             : m.surface == ChargedWater ? 120
+                                         : 0};
+    event(w, GroundChanged, owner, owner, move, m.surface, pos);
 }
 static bool in_owned_zone(const World &w, int i) {
     for (auto &z : w.zones)
@@ -278,6 +384,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             b.slot = slot;
             b.age = 0;
             b.hit_mask = 0;
+            b.surface_mask = 0;
             b.locked = b.aim;
             if (m.kind == Evade) {
                 Vec dodge{std::clamp(actions[i].mx, -Q, Q), std::clamp(actions[i].my, -Q, Q)};
@@ -315,9 +422,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             speed = speed * 5 / 4;
         if (b.slow)
             speed = speed * 65 / 100;
-        if (s.passive == Tailwind)
-            speed += std::abs(w.wind) * 2;
-        if (s.passive == Rainborn && w.wetness > 300)
+        if (s.passive == Rainborn && wet_at(w, b.pos))
             speed = speed * 115 / 100;
         if (s.passive == Web && in_owned_zone(w, i))
             speed = speed * 135 / 100;
@@ -330,6 +435,17 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                                        : s.strafe + (s.strafe - s.backward) * alignment / Q;
             speed = speed * std::clamp(ratio, 1, 100) / 100;
         }
+        int ground = surface_flags(w, b.pos);
+        if (ground & (1 << Brush))
+            speed = speed * 65 / 100;
+        if (ground & (1 << Ice))
+            speed = speed * 110 / 100;
+        if (ground & ((1 << Water) | (1 << ChargedWater)))
+            b.burn = 0;
+        if (input.x || input.y) {
+            int push = int(dot(unit(input), wind_vector(w)) / Q) * s.wind_affinity / 100;
+            speed += std::clamp(push, -speed / 2, speed / 2);
+        }
         int mobility = 100;
         if (b.move >= 0) {
             const auto &m = Moves[b.move];
@@ -341,8 +457,10 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         if (b.stun || b.root)
             speed = 0;
         int traction = (input.x || input.y) ? s.acceleration : s.braking;
-        if (w.wetness > 400)
+        if (w.wetness > 400 || (ground & ((1 << Water) | (1 << ChargedWater))))
             traction += 2;
+        if (ground & (1 << Ice))
+            traction += 5;
         b.vel = b.vel + scale(scale(input, speed) - b.vel, 1, traction);
         if (b.stun || b.root || mobility == 0)
             b.vel = {};
@@ -398,6 +516,18 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                 heal(w, i, m.heal, result);
             if (m.haste)
                 b.haste = std::max(b.haste, m.haste);
+            if (m.wind_strength) {
+                w.winds[i] = {scale(b.locked, std::max(1, m.wind_strength * b.aim_scale / Q)),
+                              m.wind_duration};
+                event(w, WindChanged, i, i, b.move, m.wind_duration, b.pos);
+            }
+            if (m.surface) {
+                Vec ground_pos = m.kind == Field ? target_point(w, i, b.move) : b.pos;
+                for (auto &g : w.surfaces)
+                    if (g.life && overlap(g.pos, g.radius, ground_pos, m.surface_radius))
+                        react(w, g, m.element, i, b.move);
+                create_ground(w, ground_pos, m, i, b.move);
+            }
             if (m.kind == Bolt)
                 spawn(i, b.move, b.pos, b.locked);
             if (m.kind == Blink) {
@@ -447,6 +577,12 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             }
             return false;
         };
+        for (int j = 0; j < SurfaceCount; j++)
+            if (!(b.surface_mask & (1 << j)) && w.surfaces[j].life &&
+                contact(w.surfaces[j].pos, w.surfaces[j].radius)) {
+                react(w, w.surfaces[j], m.element, i, b.move);
+                b.surface_mask |= 1 << j;
+            }
         int t = 1 - i;
         if (!(b.hit_mask & (1 << t)) && contact(w.bodies[t].pos, w.bodies[t].radius)) {
             queue(i, t, b.move, m.damage, b.locked);
@@ -468,6 +604,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             if (p.returning && p.age >= m.lifetime / 2) {
                 if (p.returning == 1) {
                     p.hit_mask = 0;
+                    p.surface_mask = 0;
                     p.returning = 2;
                 }
                 p.vel = scale(unit(w.bodies[p.owner].pos - p.pos), m.speed);
@@ -476,7 +613,11 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                     continue;
                 }
             }
-            p.vel.x = std::clamp(p.vel.x + w.wind, -800, 800);
+            Vec wind = wind_vector(w);
+            p.vel.x = std::clamp(p.vel.x + wind.x, -800, 800);
+            p.vel.y = std::clamp(p.vel.y + wind.y, -800, 800);
+            if (surface_flags(w, p.pos) & (1 << Steam))
+                p.vel = scale(p.vel, 92, 100);
             Vec start = p.pos;
             int n = std::max(1, (length(p.vel) + 63) / 64);
             for (int j = 1; j <= n && p.life; j++) {
@@ -502,6 +643,12 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                     break;
                 }
                 p.pos = next;
+                for (int k = 0; k < SurfaceCount; k++)
+                    if (!(p.surface_mask & (1 << k)) && w.surfaces[k].life &&
+                        overlap(next, radius, w.surfaces[k].pos, w.surfaces[k].radius)) {
+                        react(w, w.surfaces[k], m.element, p.owner, p.move);
+                        p.surface_mask |= 1 << k;
+                    }
                 bool covered = false;
                 for (auto &z : w.zones)
                     if (z.life && z.owner != p.owner &&
@@ -538,6 +685,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                         p.vel = scale(p.vel, -Q);
                         p.origin = p.pos;
                         p.hit_mask = 0;
+                        p.surface_mask = 0;
                         event(w, Parried, target, 1 - target, p.move, 0, p.pos);
                         break;
                     }
@@ -566,6 +714,9 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                     z.life = 0;
                 }
             } else if (z.age % m.period == 0) {
+                for (auto &g : w.surfaces)
+                    if (g.life && overlap(z.pos, m.radius, g.pos, g.radius))
+                        react(w, g, m.element, z.owner, z.move);
                 int t = 1 - z.owner;
                 if (overlap(z.pos, m.radius, w.bodies[t].pos, w.bodies[t].radius))
                     queue(z.owner, t, z.move, m.damage, unit(w.bodies[t].pos - z.pos), false);
@@ -617,7 +768,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                 damage += std::min(12, a.stationary / 6);
                 break;
             case Conduit:
-                if (w.wetness > 300)
+                if (wet_at(w, t.pos))
                     damage = damage * 115 / 100;
                 break;
             case Backstab:
@@ -789,7 +940,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
                 dot_damage(b.burn_owner, 2);
             if (b.poison)
                 dot_damage(b.poison_owner, b.poison_stacks);
-            if (s.passive == Rainborn && w.wetness > 300)
+            if (s.passive == Rainborn && wet_at(w, b.pos))
                 heal(w, i, 2, result);
             if (s.passive == Sanctuary && in_owned_zone(w, i))
                 heal(w, i, 3, result);
@@ -867,6 +1018,56 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             }
         }
     }
+    for (auto &g : w.surfaces)
+        if (g.life) {
+            if (g.kind == Steam) {
+                g.pos = g.pos + scale(wind_vector(w), 2, 1);
+                g.pos.x = std::clamp(g.pos.x, g.radius, 24 * Q - g.radius);
+                g.pos.y = std::clamp(g.pos.y, g.radius, 18 * Q - g.radius);
+            }
+            if ((g.kind == Fire || g.kind == ChargedWater) && w.tick % 30 == 0)
+                for (int i = 0; i < 2; i++) {
+                    auto &body = w.bodies[i];
+                    if (!overlap(body.pos, 0, g.pos, g.radius))
+                        continue;
+                    int damage = std::min(body.hp, g.kind == Fire ? 4 : 3);
+                    body.hp -= damage;
+                    result.features[i].taken += damage;
+                    if (g.owner >= 0 && g.owner != i)
+                        result.features[g.owner].dealt += damage;
+                    if (damage)
+                        event(w, Hit, g.owner < 0 ? i : g.owner, i, -1, damage, body.pos);
+                }
+            --g.life;
+            if (g.effect_timer && --g.effect_timer == 0) {
+                g.kind = g.base;
+                if (!g.kind)
+                    g.life = 0;
+            }
+        }
+    for (auto &gust : w.winds)
+        if (gust.life && --gust.life == 0)
+            gust.force = {};
+    if (w.vane_cooldown)
+        --w.vane_cooldown;
+    if (w.vane_enabled && !w.vane_cooldown) {
+        bool inside[2] = {length(w.bodies[0].pos - w.vane_pos) < 950,
+                          length(w.bodies[1].pos - w.vane_pos) < 950};
+        for (int i = 0; i < 2; i++) {
+            if (inside[i] && !inside[1 - i] && w.bodies[i].hp > 0)
+                ++w.vane_capture[i];
+            else
+                w.vane_capture[i] = 0;
+            if (w.vane_capture[i] >= 45) {
+                w.winds[i] = {scale(w.bodies[i].aim, 16), 150};
+                w.vane_cooldown = 240;
+                w.vane_capture = {};
+                event(w, WindChanged, i, i, -1, 150, w.vane_pos);
+                break;
+            }
+        }
+    } else
+        w.vane_capture = {};
     for (int i = 0; i < 2; i++)
         if (w.bodies[i].hp == 0) {
             event(w, Knockout, 1 - i, i, -1, 0, w.bodies[i].pos);
@@ -960,6 +1161,13 @@ Action scripted(const World &w, int i, int style) {
     for (auto &p : w.projectiles)
         if (p.life && p.owner != i && length(p.pos - b.pos) < 2300 && dot(p.vel, b.pos - p.pos) > 0)
             danger = true;
+    for (auto &g : w.surfaces)
+        if (g.life && (g.kind == Fire || g.kind == ChargedWater) &&
+            overlap(b.pos, 0, g.pos, g.radius + 200))
+            movement = unit(b.pos - g.pos);
+    if (s.passive == Tailwind && w.vane_enabled && !w.vane_cooldown && !w.winds[i].life &&
+        distance > 6000)
+        movement = length(b.pos - w.vane_pos) > 650 ? unit(w.vane_pos - b.pos) : Vec{};
     auto mask = action_mask(w, i);
     int ability = 0, best = -999;
     Vec chosen = dir;
@@ -968,8 +1176,21 @@ Action scripted(const World &w, int i, int style) {
             auto &m = move_for(b, slot);
             int score = m.damage * 3 - m.cost / 20;
             bool viable = false;
+            int flight = m.kind == Bolt && m.speed ? std::min(90, distance / m.speed) : 0;
+            Vec compensation{};
+            // Public gust expiry lets the baseline estimate curvature without privileged state.
+            for (int time = 1; time <= flight; time++) {
+                Vec wind = w.wind_base;
+                for (auto &gust : w.winds)
+                    if (gust.life > m.startup + time)
+                        wind = wind + gust.force;
+                if (length(wind) > 24)
+                    wind = scale(unit(wind), 24);
+                compensation = compensation + scale(wind, flight - time + 1, 1);
+            }
             Vec aim =
-                unit(d + scale(enemy_velocity, m.startup + (m.speed ? distance / m.speed : 0), 1));
+                unit(d + scale(enemy_velocity, m.startup + (m.speed ? distance / m.speed : 0), 1) -
+                     compensation);
             if (m.kind == Melee)
                 viable = distance < m.range / 2 + m.radius + e.radius - 80;
             if (m.kind == Lunge) {
@@ -1030,6 +1251,14 @@ Action scripted(const World &w, int i, int style) {
                 viable = distance > desired + 2500 || (danger && distance < 3000);
                 aim = distance > desired + 2500 ? dir : scale(dir, -Q);
                 score = 20;
+            }
+            if (m.wind_strength && w.winds[i].life < 30) {
+                if (s.passive == Tailwind && m.kind == Nova) {
+                    viable = true;
+                    score += 45;
+                    aim = dir;
+                } else if (viable)
+                    score += 12; // Wind is a bonus, not a reason to waste mobility.
             }
             if (m.mark && !e.mark)
                 score += 28;
@@ -1126,11 +1355,13 @@ Observation observe(const World &w, int i) {
     o.self[61] = float(s.dodge_speed) / 150;
     o.self[62] = float(b.locked.x) / Q;
     o.self[63] = float(b.locked.y) / Q;
+    o.self[64] = float(s.wind_affinity) / 300;
+    o.self[65] = float(ground_kind(w, b.pos)) / 6;
     auto entity = [&](int row, int kind, Vec pos, Vec vel, int radius, int team, int life, int move,
                       int ph, int age, float hp) {
         float *p = o.entities.data() + row * EntitySize;
         auto rp = relative(pos - b.pos), rv = relative(vel);
-        p[0] = float(kind) / 4;
+        p[0] = float(kind) / 5;
         p[1] = rp[0];
         p[2] = rp[1];
         p[3] = rv[0] * 30;
@@ -1145,7 +1376,7 @@ Observation observe(const World &w, int i) {
         Vec facing = kind == 1 ? e.aim : kind == 3 ? unit(vel) : Vec{};
         p[12] = float(dot(facing, b.aim)) / (Q * Q);
         p[13] = float(int64_t(facing.y) * b.aim.x - int64_t(facing.x) * b.aim.y) / (Q * Q);
-        p[39] = 1;
+        p[43] = 1;
     };
     entity(0, 1, e.pos, e.vel, e.radius, -1, 0, e.move, phase(e), e.age,
            float(e.hp) / Roster[e.species].hp);
@@ -1176,6 +1407,8 @@ Observation observe(const World &w, int i) {
     p[36] = float(es.dodge_speed) / 150;
     p[37] = float(dot(e.locked, b.aim)) / (Q * Q);
     p[38] = float(int64_t(e.locked.y) * b.aim.x - int64_t(e.locked.x) * b.aim.y) / (Q * Q);
+    p[39] = float(es.wind_affinity) / 300;
+    p[40] = float(ground_kind(w, e.pos)) / 6;
     for (int j = 0; j < 4; j++)
         if (w.obstacles[j].radius)
             entity(1 + j, 2, w.obstacles[j].pos, {}, w.obstacles[j].radius, 0, 0, -1, 0, 0, 0);
@@ -1196,6 +1429,19 @@ Observation observe(const World &w, int i) {
             o.entities[(37 + j) * EntitySize + 14] = float(Moves[z.move].kind) / 10;
         }
     }
+    for (int j = 0; j < SurfaceCount; j++)
+        if (w.surfaces[j].life) {
+            const auto &g = w.surfaces[j];
+            entity(53 + j, 5, g.pos, {}, g.radius,
+                   g.owner < 0    ? 0
+                   : g.owner == i ? 1
+                                  : -1,
+                   g.life, -1, 0, 0, 0);
+            auto *gp = o.entities.data() + (53 + j) * EntitySize;
+            gp[14] = float(g.kind) / 6;
+            gp[15] = float(g.base) / 6;
+            gp[16] = float(g.effect_timer) / 300;
+        }
     for (int j = 0; j < 6; j++) {
         if (j == 5 && e.move < 0)
             continue;
@@ -1240,7 +1486,15 @@ Observation observe(const World &w, int i) {
                           1,
                           float(m.move_start) / 100,
                           float(m.move_active) / 100,
-                          float(m.move_recovery) / 100};
+                          float(m.move_recovery) / 100,
+                          float(m.surface) / 6,
+                          float(m.surface_radius) / (4 * Q),
+                          float(m.surface_life) / 600,
+                          float(m.element) / 4,
+                          float(m.wind_strength) / 24,
+                          float(m.wind_duration) / 600,
+                          0,
+                          0};
         std::copy(std::begin(values), std::end(values), mp);
     }
     int visible = 0;
@@ -1250,7 +1504,7 @@ Observation observe(const World &w, int i) {
             continue;
         auto *ep = o.history.data() + visible++ * EventSize;
         ep[0] = float(w.tick - ev.tick) / 150;
-        ep[1] = float(ev.kind) / 15;
+        ep[1] = float(ev.kind) / 17;
         ep[2] = ev.actor == i ? 1 : -1;
         ep[3] = ev.target == i ? 1 : -1;
         ep[4] = float(ev.move + 1) / MoveCount;
@@ -1260,7 +1514,7 @@ Observation observe(const World &w, int i) {
     }
     o.global = {float(w.tick) / MaxTicks,
                 float(w.rain) / 1000,
-                float(w.wind) / 16,
+                float(wind_vector(w).x) / 24,
                 float(w.wetness) / 1000,
                 float(w.terminal),
                 float(w.truncated),
@@ -1271,9 +1525,22 @@ Observation observe(const World &w, int i) {
                 float(b.capture) / 30,
                 float(e.capture) / 30,
                 float(w.end_reason) / 3,
-                0,
-                0,
-                0};
+                float(wind_vector(w).y) / 24,
+                float(std::max(w.winds[0].life, w.winds[1].life)) / 600,
+                float(w.vane_cooldown) / 240};
+    for (int j = 0; j < 2; j++) {
+        const auto &g = w.winds[j == 0 ? i : 1 - i];
+        o.global[16 + 3 * j] = float(g.force.x) / 24;
+        o.global[17 + 3 * j] = float(g.force.y) / 24;
+        o.global[18 + 3 * j] = float(g.life) / 600;
+    }
+    o.global[22] = float(w.wind_base.x) / 24;
+    o.global[23] = float(w.wind_base.y) / 24;
+    o.global[24] = float(w.vane_pos.x) / (24 * Q);
+    o.global[25] = float(w.vane_pos.y) / (18 * Q);
+    o.global[26] = float(w.vane_capture[i]) / 45;
+    o.global[27] = float(w.vane_capture[1 - i]) / 45;
+    o.global[28] = float(w.vane_enabled);
     auto mask = action_mask(w, i);
     for (int j = 0; j < 6; j++)
         o.mask[j] = float(mask[j]);
@@ -1288,7 +1555,6 @@ template <class F> static void fields(World &w, F f) {
     f(w.winner);
     f(w.end_reason);
     f(w.rain);
-    f(w.wind);
     f(w.wetness);
     f(w.event_head);
     f(w.event_count);
@@ -1299,7 +1565,27 @@ template <class F> static void fields(World &w, F f) {
         f(v.x);
         f(v.y);
     };
+    vec(w.wind_base);
+    vec(w.vane_pos);
+    for (auto &g : w.winds) {
+        vec(g.force);
+        f(g.life);
+    }
+    for (auto &v : w.vane_capture)
+        f(v);
+    f(w.vane_cooldown);
+    f(w.vane_enabled);
+    for (auto &g : w.surfaces) {
+        vec(g.pos);
+        f(g.radius);
+        f(g.kind);
+        f(g.life);
+        f(g.owner);
+        f(g.base);
+        f(g.effect_timer);
+    }
     for (auto &b : w.bodies) {
+        f(b.surface_mask);
         vec(b.pos);
         vec(b.vel);
         vec(b.aim);
@@ -1344,6 +1630,7 @@ template <class F> static void fields(World &w, F f) {
         f(b.guidance_age);
     }
     for (auto &p : w.projectiles) {
+        f(p.surface_mask);
         vec(p.pos);
         vec(p.vel);
         vec(p.origin);
@@ -1405,24 +1692,41 @@ static bool valid(const World &w) {
     if (!w.rng || w.tick < 0 || w.tick > MaxTicks || w.terminal < 0 || w.terminal > 1 ||
         w.truncated < 0 || w.truncated > 1 || w.winner < -1 || w.winner > 1 || w.end_reason < 0 ||
         w.end_reason > 3 || w.event_head < 0 || w.event_head >= HistoryCount || w.event_count < 0 ||
-        w.event_count > HistoryCount || w.wind < -16 || w.wind > 16 || w.rain < 0 ||
-        w.rain > 1000 || w.wetness < 0 || w.wetness > 1000 || w.overflow < 0 ||
-        w.overflow > 100000 || w.arena < 0 || w.arena > 2 || w.objective < 0 || w.objective > 1)
+        w.event_count > HistoryCount || w.rain < 0 || w.rain > 1000 || w.wetness < 0 ||
+        w.wetness > 1000 || w.overflow < 0 || w.overflow > 100000 || w.arena < 0 || w.arena > 2 ||
+        w.objective < 0 || w.objective > 1)
         return false;
     auto pos = [](Vec v) { return v.x >= -Q && v.x <= 25 * Q && v.y >= -Q && v.y <= 19 * Q; };
     auto vel = [](Vec v) { return v.x >= -2 * Q && v.x <= 2 * Q && v.y >= -2 * Q && v.y <= 2 * Q; };
+    auto force = [](Vec v) { return std::abs(int64_t(v.x)) <= 24 && std::abs(int64_t(v.y)) <= 24; };
+    if (!force(w.wind_base) || !pos(w.vane_pos) || w.vane_enabled < 0 || w.vane_enabled > 1 ||
+        w.vane_cooldown < 0 || w.vane_cooldown > 240)
+        return false;
+    for (auto c : w.vane_capture)
+        if (c < 0 || c >= 45)
+            return false;
+    for (auto &g : w.winds)
+        if (!force(g.force) || g.life < 0 || g.life > 600)
+            return false;
+    for (auto &g : w.surfaces)
+        if (!pos(g.pos) || g.radius < 0 || g.radius > 4 * Q || g.kind < 0 || g.kind > 6 ||
+            g.life < 0 || g.life > MaxTicks || g.owner < -1 || g.owner > 1 || g.base < 0 ||
+            g.base > 6 || g.effect_timer < 0 || g.effect_timer > 600 ||
+            (g.life && (!g.kind || !g.radius)))
+            return false;
     for (auto &b : w.bodies) {
-        if (b.species < 0 || b.species >= 40 || b.move < -1 || b.move >= MoveCount || b.slot < -1 ||
-            b.slot > 4 || b.last_slot < -1 || b.last_slot > 4 || b.hp < 0 ||
-            b.hp > Roster[b.species].hp || b.radius != Roster[b.species].radius || b.energy < 0 ||
-            b.energy > 1000 || !pos(b.pos) || !vel(b.vel) || !vel(b.aim) || !vel(b.locked) ||
-            b.age < 0 || b.age > 120 || b.aim_scale < 0 || b.aim_scale > Q || b.meter < 0 ||
-            b.meter > 1000 || b.counter < 0 || b.counter > 10000 || b.poison_stacks < 0 ||
-            b.poison_stacks > 5 || b.control < 0 || b.control > 600 || b.capture < 0 ||
-            b.capture > MaxTicks || b.hit_mask < 0 || b.hit_mask >= (1 << (ZoneCount + 2)) ||
-            b.burn_owner < 0 || b.burn_owner > 1 || b.poison_owner < 0 || b.poison_owner > 1 ||
-            b.mark_owner < 0 || b.mark_owner > 1 || b.guidance < 0 || b.guidance > 3 ||
-            b.guidance_age < 0 || b.guidance_age > 900)
+        if (b.surface_mask < 0 || b.surface_mask > 65535 || b.species < 0 || b.species >= 40 ||
+            b.move < -1 || b.move >= MoveCount || b.slot < -1 || b.slot > 4 || b.last_slot < -1 ||
+            b.last_slot > 4 || b.hp < 0 || b.hp > Roster[b.species].hp ||
+            b.radius != Roster[b.species].radius || b.energy < 0 || b.energy > 1000 ||
+            !pos(b.pos) || !vel(b.vel) || !vel(b.aim) || !vel(b.locked) || b.age < 0 ||
+            b.age > 120 || b.aim_scale < 0 || b.aim_scale > Q || b.meter < 0 || b.meter > 1000 ||
+            b.counter < 0 || b.counter > 10000 || b.poison_stacks < 0 || b.poison_stacks > 5 ||
+            b.control < 0 || b.control > 600 || b.capture < 0 || b.capture > MaxTicks ||
+            b.hit_mask < 0 || b.hit_mask >= (1 << (ZoneCount + 2)) || b.burn_owner < 0 ||
+            b.burn_owner > 1 || b.poison_owner < 0 || b.poison_owner > 1 || b.mark_owner < 0 ||
+            b.mark_owner > 1 || b.guidance < 0 || b.guidance > 3 || b.guidance_age < 0 ||
+            b.guidance_age > 900)
             return false;
         const int timers[] = {b.stun,      b.burn,          b.haste,      b.poison,
                               b.slow,      b.root,          b.silence,    b.wound,
@@ -1442,10 +1746,11 @@ static bool valid(const World &w) {
             return false;
     }
     for (auto &p : w.projectiles)
-        if (!pos(p.pos) || !pos(p.origin) || !vel(p.vel) || p.life < 0 || p.life > 600 ||
-            p.age < 0 || p.age > 600 || p.owner < 0 || p.owner > 1 || p.move < 0 ||
-            p.move >= MoveCount || p.bounces < 0 || p.bounces > 3 || p.returning < 0 ||
-            p.returning > 2 || p.hit_mask < 0 || p.hit_mask >= (1 << (ZoneCount + 2)))
+        if (p.surface_mask < 0 || p.surface_mask > 65535 || !pos(p.pos) || !pos(p.origin) ||
+            !vel(p.vel) || p.life < 0 || p.life > 600 || p.age < 0 || p.age > 600 || p.owner < 0 ||
+            p.owner > 1 || p.move < 0 || p.move >= MoveCount || p.bounces < 0 || p.bounces > 3 ||
+            p.returning < 0 || p.returning > 2 || p.hit_mask < 0 ||
+            p.hit_mask >= (1 << (ZoneCount + 2)))
             return false;
     for (auto &z : w.zones)
         if (!pos(z.pos) || z.life < 0 || z.life > 600 || z.owner < 0 || z.owner > 1 || z.move < 0 ||
@@ -1455,7 +1760,7 @@ static bool valid(const World &w) {
         if (!pos(o.pos) || o.radius < 0 || o.radius > 2 * Q)
             return false;
     for (auto &e : w.events)
-        if (e.tick < 0 || e.tick > MaxTicks || e.kind < 0 || e.kind > 15 || e.actor < 0 ||
+        if (e.tick < 0 || e.tick > MaxTicks || e.kind < 0 || e.kind > 17 || e.actor < 0 ||
             e.actor > 1 || e.target < 0 || e.target >= ZoneCount + 2 || e.move < -1 ||
             e.move >= MoveCount || e.amount < 0 || e.amount > 10000 || !pos(e.pos))
             return false;

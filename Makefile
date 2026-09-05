@@ -25,9 +25,10 @@ $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUI
 viewer: $(BUILD)/creature_lab
 $(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) client/main.cpp $$(sdl2-config --cflags --libs) -o $@
-test: core
+test: core $(BUILD)/environment_tests
 	python3 scripts/compile_content.py --check
 	$(BUILD)/sim_tests
+	$(BUILD)/environment_tests
 	python3 python/smoke.py
 clean:
 	rm -rf $(BUILD)
@@ -42,3 +43,6 @@ balance: $(BUILD)/tournament
 	python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 $(BUILD)/counterplay: $(CORE) tests/counterplay.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/counterplay.cpp -o $@
+
+$(BUILD)/environment_tests: $(CORE) tests/environment_tests.cpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/environment_tests.cpp -o $@

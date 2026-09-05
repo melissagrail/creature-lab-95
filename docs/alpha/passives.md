@@ -7,20 +7,20 @@ All passive state is in the deterministic world and snapshots. Public meters/cou
 | Cinderfox | +6 direct damage against a burning target | Deny or wait out burn before the real exchange |
 | Brambleback | After 30 stationary ticks, each global 60-tick cadence refreshes shield to at least 18 for 90 ticks | Make the anchor relocate between refreshes |
 | Glasswing | +1 damage per 6 stationary ticks, capped at +12 | Interrupt safe firing residency |
-| Voltjack | +15% direct damage above 300 wetness | Respect wet burst; exploit dry baseline |
+| Voltjack | +15% direct damage against a target in water/charged water, or above 300 global wetness | Respect wet burst; exploit dry baseline |
 | Miretoad | Its poison stacks cap at 5 instead of 3 | Break contact before the stack count matters |
 | Basaltusk | 20% reduction to frontal contact damage | Rear/flank access defeats the reduction |
 | Rimehare | Every third slow-applying contact roots for 15 ticks if resistance permits | Track chill rhythm and CC resistance |
 | Gloamcat | +9 direct damage when positioned behind the target's facing | Turn to face it, don't just run away |
 | Ironmoth | Guard reflects frontal enemy projectiles, changing owner and reversing velocity | Feint, use non-projectile attacks, or change angle |
-| Tidecoil | Above 300 wetness: +15% speed and 2 HP each second | Avoid paying for a long wet trade |
+| Tidecoil | In water/charged water or above 300 global wetness: +15% speed and 2 HP each second | Avoid paying for a long wet trade |
 | Quillrat | +8 trap trigger damage | Avoid, clear or deny placement |
 | Sunstag | Its cleansing action grants 60 ticks of haste | Force an early cleanse, then reapply pressure |
 | Gravemole | Blink/lunge release arms +9 on the next direct contact | Protect the arrival payoff rather than the movement itself |
 | Prismray | +2 on bolt contacts; its authored bolts also have one ricochet | Bank geometry is the main identity, the passive is a modest reliability budget |
 | Thornmantis | +6 direct damage against wounded targets | Wound setup precedes the dangerous trade |
 | Mosswarden | Heal 3 each second while within an owned field | Evict it; wounds halve the healing |
-| Galecrest | +2 speed units per tick for each absolute wind unit | Wind rewards movement, but does not remove collision constraints |
+| Galecrest | 240% wind affinity: amplify both tailwind assistance and headwind penalty | Choose heading; wind is no longer an unconditional speed buff |
 | Ashram | Up to +12 direct damage proportional to missing HP | Deny the final exchange; self-cost remains real |
 | Clockfin | Casting a different slot from the previous one refunds 70 stamina | Interrupt the sequence or force repeated defense |
 | Nullurchin | Direct contacts remove twice as much shield per blocked damage | HP is not doubled damage; only shields suffer extra depletion |
