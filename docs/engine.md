@@ -25,3 +25,5 @@ Created ground first refreshes a nearby same-kind owned patch. At five live owne
 The shared energy pool, cast-triggered regeneration lock and eligible regeneration rate follow the [v6 energy contract](alpha/tinikami.md). The 24-tick lock is explicitly persisted. Rendering is a selectable presentation layer: Tinikami consumes only const state and the same input commands as the debugging workbench. PNG decoding is an authoring step; shipped RGBA textures require only SDL2.
 
 Six fixed arena layouts are registered in the core, independent of their [garden presentation](alpha/gardens.md). Neutral ground and cover in the three added layouts are invariant under a 180-degree rotation; the existing north wind vane and prevailing weather remain asymmetric. First-three-map geometry and all energy/ability tuning are unchanged in v7.
+
+The optional [learned controller](alpha/learning.md) is compiled separately from the simulation library. It reads observations, maintains caller-owned recurrent state, and emits normal integer actions. Neural inference never runs inside `step`. Rules, snapshots and the core golden stay at v7 in the alpha 0.8 learning release.

@@ -1,4 +1,4 @@
-> **Historical v2 verification.** These balance and performance figures describe release 0.2, before directional locomotion and planted casts. See [v7 validation](alpha/gardens.md#validation) for the current build.
+> **Historical v2 verification.** These balance and performance figures describe release 0.2, before directional locomotion and planted casts. See [current validation](alpha/learning.md#verification) for the current build.
 
 # Combat alpha verification
 

@@ -21,3 +21,18 @@ jobs:
       - run: python3 tests/viewer_smoke.py
       - run: c++ -std=c++17 -O1 -g -fsanitize=address,undefined -Iinclude src/sim.cpp src/content.cpp tests/sim_tests.cpp -o build/sanitized && ./build/sanitized
       - run: c++ -std=c++17 -O1 -g -fsanitize=address,undefined -Iinclude src/sim.cpp src/content.cpp tests/environment_tests.cpp -o build/environment_sanitized && ./build/environment_sanitized
+
+  learning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: make core brain
+      - run: python -m pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install 'numpy>=2,<3' 'gymnasium>=1,<2'
+      - run: python tests/learning_tests.py models/apprentice.pt
+      - run: python python/gym_env.py
+      - run: python python/train.py --out runs/ci-smoke --demo-envs 2 --demo-steps 32 --bc-epochs 1 --envs 4 --horizon 32 --updates 1 --epochs 1 --minibatch 8 --eval-games 4 --test-games 4 --threads 1
+      - run: c++ -std=c++17 -O1 -g -fsanitize=address,undefined -Iinclude src/sim.cpp src/content.cpp agents/brain.cpp tests/brain_tests.cpp -o build/brain_sanitized && ./build/brain_sanitized models/apprentice.tbrain

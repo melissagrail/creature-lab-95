@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED
+#include "creature/brain.hpp"
 #include "creature/replay.hpp"
 #include "creature/sim.hpp"
 #include "font.hpp"
@@ -143,7 +144,14 @@ int main(int argc, char **argv) {
     SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
     bool run = true, paused = false, manual = false, playback = false, catalog = false;
     bool spirit_skin = true, hitboxes = false;
-    std::filesystem::path art_directory;
+    std::filesystem::path art_directory, brain_path;
+    Brain brain;
+    std::array<BrainMemory, 2> brain_memory{}, saved_brain_memory{};
+    std::array<bool, 2> learned{false, false}, saved_learned{};
+    std::array<int, 2> requested_pilot{-1, 0};
+    bool explicit_brain = false, saved_brain_valid = false;
+    uint64_t saved_brain_world = 0;
+    uint32_t saved_brain_id = 0;
     int species_a = 0, species_b = 1, arena = 0, catalog_target = 0, catalog_page = 0;
     int weather = 0, speed = 1, ability = 0, pending_guidance = -1, feedback = 0, wind_power = 100;
     uint32_t seed = 42;
@@ -167,7 +175,20 @@ int main(int argc, char **argv) {
     int frames_limit = 0, preview_ticks = 0;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
-        if (a == "--skin" && i + 1 < argc)
+        if (a == "--brain" && i + 1 < argc) {
+            brain_path = argv[++i];
+            explicit_brain = true;
+        } else if ((a == "--pilot-a" || a == "--pilot-b") && i + 1 < argc) {
+            int side = a == "--pilot-a" ? 0 : 1;
+            std::string pilot = argv[++i];
+            if (pilot != "learned" && pilot != "scripted") {
+                std::cerr << "Pilot must be learned or scripted\n";
+                return 2;
+            }
+            requested_pilot[side] = pilot == "learned";
+        } else if (a == "--seed" && i + 1 < argc)
+            seed = uint32_t(std::stoul(argv[++i]));
+        else if (a == "--skin" && i + 1 < argc)
             spirit_skin = std::string(argv[++i]) != "debug";
         else if (a == "--hitboxes")
             hitboxes = true;
@@ -219,9 +240,46 @@ int main(int argc, char **argv) {
         note = "F2 CHANGE SKIN / H HITBOXES / TAB SPIRIT BOOK / M TAKE CONTROL";
     SDL_SetWindowTitle(window,
                        spirit_skin ? "Tinikami - Spirit Garden" : "Tinikami - Creature Lab 95");
+    if (brain_path.empty()) {
+        for (const auto &candidate :
+             {art_directory.parent_path() / "models" / "apprentice.tbrain",
+              art_directory.parent_path().parent_path() / "models" / "apprentice.tbrain",
+              std::filesystem::path("models/apprentice.tbrain")})
+            if (std::filesystem::exists(candidate)) {
+                brain_path = candidate;
+                break;
+            }
+        if (brain_path.empty())
+            brain_path = "models/apprentice.tbrain";
+    }
+    std::string brain_error;
+    bool brain_ready = brain.load(brain_path.string(), brain_error);
+    if (!brain_ready && (explicit_brain || requested_pilot[0] == 1 || requested_pilot[1] == 1)) {
+        std::cerr << "Cannot enable learned pilot: " << brain_error << "\n";
+        tinikami::free();
+        SDL_DestroyRenderer(r);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 2;
+    }
+    for (int i = 0; i < 2; ++i)
+        learned[i] = brain_ready && (requested_pilot[i] == 1 || (i == 0 && requested_pilot[i] < 0));
+    if (brain_ready) {
+        std::cout << "Brain " << std::hex << brain.checksum() << std::dec
+                  << " / NATIVE INFERENCE\n";
+        note = "B / V SWITCH PILOTS   F6 RELOAD BRAIN   M TAKE CONTROL   TAB SPIRIT BOOK";
+    }
+    auto pilot_actions = [&]() {
+        std::array<Action, 2> actions;
+        for (int i = 0; i < 2; ++i)
+            actions[i] = learned[i] && !(i == 0 && manual)
+                             ? brain.action(observe(w, i), brain_memory[i])
+                             : scripted(w, i);
+        return actions;
+    };
     reset(w, seed, weather, species_a, species_b, arena);
-    for (int t = 0; t < preview_ticks; t += DecisionTicks)
-        step(w, {scripted(w, 0), scripted(w, 1)}, std::min(DecisionTicks, preview_ticks - t));
+    for (int t = 0; t < preview_ticks && !w.terminal && !w.truncated; t += DecisionTicks)
+        step(w, pilot_actions(), std::min(DecisionTicks, preview_ticks - t));
     if (preview_ticks)
         paused = true;
     tape = {w, {}};
@@ -235,6 +293,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     auto restart = [&]() {
+        brain_memory = {};
         reset(w, seed, weather, species_a, species_b, arena);
         tape = {w, {}};
         playback = false;
@@ -266,6 +325,34 @@ int main(int argc, char **argv) {
             return;
         }
         switch (id) {
+        case 31:
+        case 32: {
+            if (playback) {
+                note = "RECORDED PLAYBACK / PILOT CHANGES REQUIRE A NEW EPISODE";
+                break;
+            }
+            if (!brain.ready()) {
+                note = "NO TRAINED BRAIN / USE --brain PATH OR TRAIN A CHECKPOINT";
+                break;
+            }
+            int side = id - 31;
+            learned[side] = !learned[side];
+            brain_memory[side] = {};
+            if (side == 0)
+                manual = false;
+            note = std::string(side ? "B" : "A") +
+                   (learned[side] ? " / TRAINED APPRENTICE / FRESH MEMORY" : " / SCRIPTED PILOT");
+            break;
+        }
+        case 33:
+            if (brain.load(brain_path.string(), brain_error)) {
+                learned[0] = true;
+                manual = false;
+                restart();
+                note = "BRAIN RELOADED / NEW EPISODE / FRESH MEMORY";
+            } else
+                note = "BRAIN RELOAD FAILED / " + brain_error;
+            break;
         case 29:
             if (art_ready)
                 spirit_skin = !spirit_skin;
@@ -289,9 +376,10 @@ int main(int argc, char **argv) {
             break;
         case 4:
             manual = !manual;
+            brain_memory[0] = {};
             ability = 0;
             note = manual ? "WASD MOVE / MOUSE AIM / 1-4 MOVES / SPACE + WASD DODGE"
-                          : "BOTH CREATURES USE SCRIPTED POLICIES";
+                          : "COMPUTER PILOTS ACTIVE / B AND V SELECT LEARNED OR SCRIPTED";
             break;
         case 5:
             weather = (weather + 1) % 3;
@@ -299,6 +387,11 @@ int main(int argc, char **argv) {
             break;
         case 6:
             saved = snapshot(w);
+            saved_brain_memory = brain_memory;
+            saved_learned = learned;
+            saved_brain_valid = !playback;
+            saved_brain_world = hash(w);
+            saved_brain_id = brain.checksum();
             {
                 std::ofstream f(captures + "/snapshot.crs", std::ios::binary);
                 f.write(reinterpret_cast<const char *>(saved.data()), saved.size());
@@ -324,7 +417,15 @@ int main(int argc, char **argv) {
                 ability = 0;
                 pending_guidance = -1;
                 feedback = 0;
-                note = "FORK RESTORED / NEW REPLAY BRANCH";
+                if (saved_brain_valid && saved_brain_world == hash(w) &&
+                    saved_brain_id == brain.checksum()) {
+                    brain_memory = saved_brain_memory;
+                    learned = saved_learned;
+                    note = "FORK RESTORED / BRAIN MEMORY RESTORED / NEW REPLAY BRANCH";
+                } else {
+                    brain_memory = {};
+                    note = "WORLD RESTORED / BRAIN MEMORY RESET / NEW REPLAY BRANCH";
+                }
             } else
                 note = "NO VALID SNAPSHOT";
             break;
@@ -339,6 +440,7 @@ int main(int argc, char **argv) {
             if (load_replay(loaded, captures + "/battle.crr")) {
                 tape = std::move(loaded);
                 w = tape.initial;
+                brain_memory = {};
                 species_a = w.bodies[0].species;
                 species_b = w.bodies[1].species;
                 arena = w.arena;
@@ -440,7 +542,7 @@ int main(int argc, char **argv) {
             command(w, 0, pending_guidance);
         pending_guidance = -1;
         feedback = 0;
-        f.actions = {scripted(w, 0), scripted(w, 1)};
+        f.actions = pilot_actions();
         if (manual) {
             const Uint8 *keys = SDL_GetKeyboardState(nullptr);
             int mx, my;
@@ -486,6 +588,12 @@ int main(int argc, char **argv) {
                     run = false;
                 else if (k == SDLK_F2)
                     act(29);
+                else if (k == SDLK_b)
+                    act(31);
+                else if (k == SDLK_v)
+                    act(32);
+                else if (k == SDLK_F6)
+                    act(33);
                 else if (k == SDLK_h)
                     act(30);
                 else if (k == SDLK_TAB)
@@ -542,17 +650,23 @@ int main(int argc, char **argv) {
         buttons.clear();
         if (spirit_skin) {
             tinikami::draw(w, {paused, manual, playback, catalog, hitboxes, catalog_target,
-                               catalog_page, weather, speed, wind_power, seed, note});
+                               catalog_page, weather, speed, wind_power, seed, note, learned[0],
+                               learned[1], brain.ready()});
         } else {
             rect(0, 0, 1100, 780, {0, 112, 112, 255});
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / GARDENS ALPHA 0.7", white, 1);
+            label(720, 23, "F2 TINIKAMI / LEARNING ALPHA 0.8", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);
             label(24, 50, "FILE   SIMULATION   INSPECT   HELP", black, 1);
+            button(31, 350, 41, 162,
+                   manual       ? "A: HUMAN [M]"
+                   : learned[0] ? "A: APPRENTICE [B]"
+                                : "A: SCRIPTED [B]");
+            button(32, 522, 41, 162, learned[1] ? "B: APPRENTICE [V]" : "B: SCRIPTED [V]");
             label(768, 50, "30 HZ WORLD / 10 HZ BRAIN", dark, 1);
             button(1, 24, 70, 86, paused ? "RESUME [P]" : "PAUSE [P]", paused);
             button(2, 116, 70, 86, "STEP [N]");

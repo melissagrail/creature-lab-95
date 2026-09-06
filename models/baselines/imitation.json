@@ -1,0 +1,193 @@
+{
+  "identity": {
+    "format": 2,
+    "rules": 7,
+    "observations": 7,
+    "content": 574261014,
+    "observation_size": 3620,
+    "hidden": 96,
+    "action_codec": "opponent-local-tanh-v1"
+  },
+  "parameters": 86755,
+  "bytes": 347060,
+  "checksum": "3f9fb3f9",
+  "parameter_order": [
+    {
+      "name": "log_std",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "entity.0.weight",
+      "shape": [
+        32,
+        43
+      ]
+    },
+    {
+      "name": "entity.0.bias",
+      "shape": [
+        32
+      ]
+    },
+    {
+      "name": "move.0.weight",
+      "shape": [
+        24,
+        48
+      ]
+    },
+    {
+      "name": "move.0.bias",
+      "shape": [
+        24
+      ]
+    },
+    {
+      "name": "event.0.weight",
+      "shape": [
+        24,
+        7
+      ]
+    },
+    {
+      "name": "event.0.bias",
+      "shape": [
+        24
+      ]
+    },
+    {
+      "name": "encoder.0.weight",
+      "shape": [
+        96,
+        245
+      ]
+    },
+    {
+      "name": "encoder.0.bias",
+      "shape": [
+        96
+      ]
+    },
+    {
+      "name": "memory.weight_ih",
+      "shape": [
+        288,
+        96
+      ]
+    },
+    {
+      "name": "memory.weight_hh",
+      "shape": [
+        288,
+        96
+      ]
+    },
+    {
+      "name": "memory.bias_ih",
+      "shape": [
+        288
+      ]
+    },
+    {
+      "name": "memory.bias_hh",
+      "shape": [
+        288
+      ]
+    },
+    {
+      "name": "motion.weight",
+      "shape": [
+        4,
+        96
+      ]
+    },
+    {
+      "name": "motion.bias",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "noop.weight",
+      "shape": [
+        1,
+        96
+      ]
+    },
+    {
+      "name": "noop.bias",
+      "shape": [
+        1
+      ]
+    },
+    {
+      "name": "slot_score.0.weight",
+      "shape": [
+        32,
+        120
+      ]
+    },
+    {
+      "name": "slot_score.0.bias",
+      "shape": [
+        32
+      ]
+    },
+    {
+      "name": "slot_score.2.weight",
+      "shape": [
+        1,
+        32
+      ]
+    },
+    {
+      "name": "slot_score.2.bias",
+      "shape": [
+        1
+      ]
+    },
+    {
+      "name": "value.weight",
+      "shape": [
+        1,
+        96
+      ]
+    },
+    {
+      "name": "value.bias",
+      "shape": [
+        1
+      ]
+    }
+  ],
+  "metadata": {
+    "stage": "imitation",
+    "steps": 0,
+    "config": {
+      "out": "runs/generalist-v2",
+      "resume": null,
+      "warmstart": null,
+      "seed": 20260906,
+      "threads": 1,
+      "demo_envs": 32,
+      "demo_steps": 1024,
+      "bc_epochs": 24,
+      "envs": 64,
+      "horizon": 128,
+      "updates": 240,
+      "sequence": 16,
+      "minibatch": 32,
+      "epochs": 3,
+      "lr": 0.0001,
+      "gamma": 0.997,
+      "clip": 0.2,
+      "entropy": 0.003,
+      "target_kl": 0.03,
+      "eval_every": 20,
+      "eval_games": 80,
+      "test_games": 240
+    }
+  }
+}

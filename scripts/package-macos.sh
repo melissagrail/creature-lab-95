@@ -7,6 +7,8 @@ mkdir -p "$bundle/Contents/MacOS"
 cp build/creature_lab "$bundle/Contents/MacOS/creature_lab"
 mkdir -p "$bundle/Contents/Resources/tinikami"
 cp assets/tinikami/*.rgba "$bundle/Contents/Resources/tinikami/"
+mkdir -p "$bundle/Contents/Resources/models"
+cp models/*.tbrain "$bundle/Contents/Resources/models/"
 cat > "$bundle/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -15,8 +17,8 @@ cat > "$bundle/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIdentifier</key><string>org.creaturelab.workbench</string>
 <key>CFBundleName</key><string>Tinikami</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>7</string>
-<key>CFBundleShortVersionString</key><string>0.7.0</string>
+<key>CFBundleVersion</key><string>8</string>
+<key>CFBundleShortVersionString</key><string>0.8.0</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 PLIST

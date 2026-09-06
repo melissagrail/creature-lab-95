@@ -94,6 +94,22 @@ int32_t cr_scripted(void *w, int32_t agent, int32_t *out) {
     std::copy(values, values + 5, out);
     return 0;
 }
+int32_t cr_batch_scripted(void *const *worlds, size_t count, const int32_t *styles,
+                          int32_t *actions) {
+    if (!worlds || !styles || !actions || count > 65536)
+        return -1;
+    for (size_t i = 0; i < count; ++i)
+        if (!worlds[i] || styles[i * 2] < 0 || styles[i * 2] > 3 || styles[i * 2 + 1] < 0 ||
+            styles[i * 2 + 1] > 3)
+            return -1;
+    for (size_t i = 0; i < count; ++i)
+        for (int p = 0; p < 2; ++p) {
+            auto a = scripted(*static_cast<World *>(worlds[i]), p, styles[i * 2 + p]);
+            int32_t values[] = {a.mx, a.my, a.ax, a.ay, a.ability};
+            std::copy(values, values + 5, actions + i * 10 + p * 5);
+        }
+    return 0;
+}
 int32_t cr_command(void *w, int32_t a, int32_t g) {
     if (!w || a < 0 || a > 1 || g < 0 || g > 3)
         return -1;

@@ -46,7 +46,7 @@ Global 0–12: time/2700, rain/1000, resultant wind x/24, wetness/1000, native t
 
 `Batch` is a dependency-free ctypes bridge. It owns reusable output buffers; copy them before the next step when storing experience. NumPy can view these via `np.ctypeslib.as_array`. Separate worlds/batches may run on different workers; do not concurrently mutate one handle. The native batch loop is serial and allocation-free per tick. Snapshots/hashes allocate temporary buffers and are not necessary on every training tick.
 
-`policy.py` demonstrates a 82,627-parameter recurrent network. It pools masked entities/history, encodes the actual move and announced enemy move descriptors, uses a 96-wide GRU, and scores each slot by combining its token with the recurrent state. This avoids pooling away which descriptor belongs to which action. We test inference, masks, quantization, native submission and gradients. Weights are random. No learner, trained checkpoint, or claim of convergence is included.
+`policy.py` defines the 86,755-parameter recurrent network used by the apprentice. It pools masked entities/history, encodes the actual move and announced enemy move descriptors, uses a 96-wide GRU, and scores each slot by combining its token with the recurrent state. This avoids pooling away which descriptor belongs to which action. The network also receives the enemy token explicitly. `train.py` adds recurrent PPO and `models/apprentice.pt` contains a selected trained checkpoint. Tests cover inference, masks, quantization, native parity, episode boundaries and gradients. [Learning results and limits](alpha/learning.md).
 
 `gym_env.py` adds a checked Gymnasium interface for a custom hybrid-action learner versus a scripted opponent. Action space is a Dict with continuous `motion[4]` and Discrete `ability`; observation space is the structured Dict above. Not every off-the-shelf PPO implementation supports hybrid Dict actions. Use the reference heads in a suitable learner, or adapt intentionally; do not silently discretize aim/motion and assume equivalent gameplay. [Gymnasium's environment API](https://gymnasium.farama.org/api/env/) defines the reset/step and termination contracts used here.
 
@@ -54,7 +54,7 @@ Keep recurrent state per creature/arena. Reset memory between fights. A simulati
 
 ## Renderer / Unity boundary
 
-The SDL workbench reads native C++ state directly. A future Unity client should use C ABI render-state/event buffers added as a versioned presentation adapter, not decode C++ object layout or drive damage from Unity physics/animation. The core, content, actions and snapshots already remain independent of the renderer. Production Unity bindings, model export/runtime packaging and networking are not implemented.
+The SDL workbench reads native C++ state directly. A future Unity client should use C ABI render-state/event buffers added as a versioned presentation adapter, not decode C++ object layout or drive damage from Unity physics/animation. The core, content, actions and snapshots already remain independent of the renderer. The native model export/runtime is implemented separately. Production Unity bindings and networking remain future work.
 
 Inference should stay local. Training can later run in a local Python sidecar or authenticated remote worker. Hold weights fixed during an episode; evaluate candidates on historical opponents and species-specific scenarios before atomic between-fight promotion. Per-creature adapters, signed registry entries, replay queues and rollback are still future services.
 
@@ -74,3 +74,12 @@ The actor tensor remains 3,620 floats. Global column 6 now encodes arena ID /5. 
 Arena IDs: 0 Stone Garden, 1 Moss Grove, 2 Open Meadow, 3 Moon Court, 4 Frost Steps, 5 Cinder Basin. All cover, surface kinds, currents and transformations still use the existing public entity rows. The three new maps fit the existing four-obstacle / sixteen-surface capacities. The base energy and move contracts are unchanged. [Layouts and presentation](alpha/gardens.md).
 
 Tile choice, rotation and soft blending are deterministic presentation functions. They never advance the simulation RNG, enter observations or participate in collision. The native garden receives const state; both skins and repeated captures preserve identical world hashes on all six arenas.
+
+
+## Optional trained controller (alpha 0.8)
+
+The simulation and its v7 observation schema are unchanged. [The learning guide](alpha/learning.md) specifies brain format 2, the opponent-relative action decoder, recurrent PPO, checkpoint selection and measured results. `include/creature/brain_api.h` provides a separate C-compatible API for `libtinibrain`. `tb_forward` returns 107 floats: four means, six masked ability logits, one critic value and 96 next-memory values. `tb_action` emits the canonical five-integer action and updates caller-owned memory. Create/destroy one model handle, keep memory separately per actor, and zero it at a new episode. The immutable loaded model may be shared for inference with separate buffers.
+
+`python/native_brain.py` is a dependency-free ctypes wrapper. Set `TINIBRAIN_LIB` for a non-Make library location, alongside `CREATURE_LIB` for the core. Playing the native viewer needs neither Python nor PyTorch. Training is offline against scripted opponents; interactive guidance/praise does not update these shipped weights.
+
+The core adds `cr_batch_scripted`: two style IDs (0–3) per world, ten returned action integers per world. It validates all styles and handles before writing the output. This is a teacher/opponent API; its actions never replace the learner's chosen action.

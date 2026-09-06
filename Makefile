@@ -6,13 +6,15 @@ CORE := src/sim.cpp src/content.cpp
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Darwin)
 LIB := $(BUILD)/libcreature.dylib
+BRAINLIB := $(BUILD)/libtinibrain.dylib
 SHARED := -dynamiclib
 else
 LIB := $(BUILD)/libcreature.so
+BRAINLIB := $(BUILD)/libtinibrain.so
 SHARED := -shared
 endif
 .PHONY: all core test viewer clean
-all: core viewer
+all: core viewer brain
 $(BUILD):
 	mkdir -p $(BUILD)
 core: $(LIB) $(BUILD)/sim_tests $(BUILD)/benchmark
@@ -23,12 +25,13 @@ $(BUILD)/sim_tests: $(CORE) tests/sim_tests.cpp include/creature/sim.hpp | $(BUI
 $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/benchmark.cpp -o $@
 viewer: $(BUILD)/creature_lab
-$(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) client/main.cpp $$(sdl2-config --cflags --libs) -o $@
-test: core $(BUILD)/environment_tests
+$(BUILD)/creature_lab: $(CORE) client/main.cpp agents/brain.cpp include/creature/brain.hpp include/creature/brain_api.h client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp client/main.cpp $$(sdl2-config --cflags --libs) -o $@
+test: core $(BUILD)/environment_tests $(BUILD)/brain_tests
 	python3 scripts/compile_content.py --check
 	$(BUILD)/sim_tests
 	$(BUILD)/environment_tests
+	$(BUILD)/brain_tests models/apprentice.tbrain
 	python3 python/smoke.py
 clean:
 	rm -rf $(BUILD)
@@ -46,3 +49,14 @@ $(BUILD)/counterplay: $(CORE) tests/counterplay.cpp include/creature/sim.hpp | $
 
 $(BUILD)/environment_tests: $(CORE) tests/environment_tests.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/environment_tests.cpp -o $@
+
+.PHONY: brain
+brain: $(BRAINLIB)
+$(BRAINLIB): agents/brain.cpp src/content.cpp include/creature/brain.hpp include/creature/brain_api.h include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -fPIC $(SHARED) agents/brain.cpp src/content.cpp -o $@
+
+$(BUILD)/brain_tests: $(CORE) agents/brain.cpp tests/brain_tests.cpp include/creature/brain.hpp include/creature/brain_api.h include/creature/replay.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp tests/brain_tests.cpp -o $@
+
+$(BUILD)/brain_eval: $(CORE) agents/brain.cpp tests/brain_eval.cpp include/creature/brain.hpp include/creature/brain_api.h | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp tests/brain_eval.cpp -o $@

@@ -1,10 +1,12 @@
-# Tinikami — spirit garden alpha 0.7
+# Tinikami — learning alpha 0.8
 
-A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
+A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. An 86,755-parameter trained generalist now pilots A by default, with native C++ inference and separate recurrent memory per actor. The included learner uses an imitation warm start followed by PPO.
 
-![Cinder Basin — quieter ground, bright combat](docs/alpha/gardens.png)
+![A trained apprentice in Tinikami](docs/alpha/learning.png)
 
 ## Start here
+
+- **[Play and train the apprentice](docs/alpha/learning.md)** — native inference, pilot switches, PPO, checkpoints and held-out results.
 
 - **[Readable gardens and six arenas](docs/alpha/gardens.md)** — value hierarchy, varied tiling, three new layouts and current validation.
 
@@ -17,7 +19,7 @@ A deterministic C++ creature-combat engine with **40 playable species, 160 signa
 - **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
 - **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
 - **[Current six-arena diagnostic](reports/gardens-v7-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/gardens.md#validation)**.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/learning.md#verification)**.
 
 ## Build and play
 
@@ -47,6 +49,7 @@ Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on
 
 ## Skin and workbench controls
 
+- **B / V:** toggle learned/scripted pilots for A/B. **F6:** reload the checkpoint and restart. `Train.command` continues training and exports the best validated checkpoint.
 - **F2:** switch Tinikami / Windows 95 without resetting the fight. **H:** toggle collision geometry in the Tinikami skin.
 - The Tinikami skin is the default. `./build/creature_lab --skin debug` opens the original workbench. Both show the same simulation.
 - Every spirit has **100 energy**, shared by four arts and dodge. Cards show energy costs, cooldowns, and recharge state. Movement is free.
@@ -90,10 +93,11 @@ The dependency-free Python batch API exposes both creatures, legal actions, sema
 ```sh
 python3 -m venv .venv
 .venv/bin/pip install -r python/requirements-ml.txt
-.venv/bin/python python/policy.py
+.venv/bin/python tests/learning_tests.py models/apprentice.pt
+.venv/bin/python python/train.py --resume models/apprentice.pt --out runs/continued
 .venv/bin/python python/gym_env.py
 ```
 
-The 82,627-parameter recurrent model scores actual move tokens, with continuous motion/aim and masked ability selection. The Gymnasium wrapper supports a custom hybrid-action learner. Both have integration tests; **no trained policy or RL learner is shipped**. Unity presentation, persistent individual adaptation, campaign/economy and online services remain future work. The engine/content is playable alpha; competitive balance needs human and trained-agent evidence.
+The 86,755-parameter recurrent model scores actual move tokens, with continuous movement/aim and masked ability selection. `python/train.py` implements recurrent PPO; `python/export_brain.py` writes the portable native controller. The shipped model scores **23.75%** on 480 native held-out games versus **8.02%** for imitation alone. [Protocol and limitations](reports/rl-v8-summary.md). The Gymnasium wrapper also supports other hybrid-action learners. Unity presentation, persistent individual adaptation, self-play leagues, campaign/economy and online services remain future work. The engine/content is playable alpha; competitive balance needs human and trained-agent evidence.
 
 MIT licensed; original placeholder creatures and pixel font, no franchise assets.

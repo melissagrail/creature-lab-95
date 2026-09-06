@@ -31,4 +31,17 @@ with tempfile.TemporaryDirectory(prefix='viewer-check-', dir=root/'build') as tm
         assert images[0] != images[1] != images[2], 'Skin/overlay did not change presentation'
         states.append(hashes[0])
     assert len(set(states)) == 6, 'Arena selection did not change simulation'
-print('Viewer: six arenas, both skins, geometry, reproducible tiles, all 40 sprites preserve state')
+    for arena in range(6):
+        for a,b in [('scripted','scripted'),('scripted','learned'),('learned','learned')]:
+            hashes=[]
+            for skin in ('debug','tinikami'):
+                capture=Path(tmp)/f'pilots-{arena}-{a}-{b}-{skin}'
+                result=subprocess.run([str(exe),'--arena',str(arena),'--pilot-a',a,'--pilot-b',b,
+                    '--skin',skin,'--frames','1','--preview-ticks','300','--captures',str(capture)],
+                    env=dict(os.environ,SDL_VIDEODRIVER='dummy'),text=True,capture_output=True,check=True,cwd=root)
+                hashes.append(re.search(r'Render state ([0-9a-f]+)',result.stdout).group(1))
+            assert hashes[0]==hashes[1], 'Pilot configuration depends on skin'
+    invalid=subprocess.run([str(exe),'--brain',str(Path(tmp)/'missing.tbrain'),'--pilot-a','learned','--frames','1'],
+        env=dict(os.environ,SDL_VIDEODRIVER='dummy'),text=True,capture_output=True,cwd=root)
+    assert invalid.returncode==2 and 'Cannot enable learned pilot' in invalid.stderr
+print('Viewer: six arenas, both skins, every pilot configuration, geometry, reproducible tiles and 40 sprites preserve state; missing explicit brain fails closed')

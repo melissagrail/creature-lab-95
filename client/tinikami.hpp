@@ -42,8 +42,8 @@ struct Atlas {
                     int value = prop ? 25 + lum * 55 / 100 : 106 + (lum - 128) * 24 / 100;
                     for (int channel = 0; channel < 3; ++channel)
                         p[channel] = uint8_t(
-                            std::clamp(value + (int(p[channel]) - lum) * (prop ? 65 : 55) / 100, prop ? 25 : 45,
-                                       prop ? 180 : 150));
+                            std::clamp(value + (int(p[channel]) - lum) * (prop ? 65 : 55) / 100,
+                                       prop ? 25 : 45, prop ? 180 : 150));
                 }
         }
         texture =
@@ -252,6 +252,7 @@ struct View {
     int catalog_target, catalog_page, weather, speed, wind_power;
     uint32_t seed;
     std::string note;
+    bool learned_a, learned_b, brain_ready;
 };
 void draw(const World &w, const View &v) {
     rect(0, 0, 1100, 780, night);
@@ -262,7 +263,13 @@ void draw(const World &w, const View &v) {
     tag(10, 382, 53, 94, "SPEED " + num(v.speed) + "X");
     tag(30, 482, 53, 154, "H / HITBOXES", v.hitboxes);
     tag(29, 858, 24, 208, "F2 / SWITCH TO WORKBENCH");
-    label(742, 68, "READABLE GARDENS / ALPHA 0.7", moss, 1);
+    tag(31, 646, 53, 128,
+        v.manual      ? "A: HUMAN [M]"
+        : v.learned_a ? "A: LEARNED [B]"
+                      : "A: SCRIPT [B]",
+        v.learned_a && !v.manual);
+    tag(32, 782, 53, 128, v.learned_b ? "B: LEARNED [V]" : "B: SCRIPT [V]", v.learned_b);
+    label(934, 68, "ALPHA 0.8", moss, 1);
     tag(1, 24, 93, 88, v.paused ? "RESUME [P]" : "PAUSE [P]", v.paused);
     tag(3, 118, 93, 82, "RESET [R]");
     tag(4, 206, 93, 118, v.manual ? "YOU + SPIRIT" : "WATCH SPIRITS", v.manual);

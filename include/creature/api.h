@@ -28,6 +28,9 @@ CR_API int32_t cr_reset(void *, uint32_t seed, int32_t weather);
 CR_API int32_t cr_step(void *, const int32_t *actions10, int32_t *features20, int32_t *status4);
 CR_API int32_t cr_observe(void *, int32_t agent, float *output, size_t count);
 CR_API int32_t cr_scripted(void *, int32_t agent, int32_t *action5);
+// Batched teacher/opponent policy: two styles (0..3) per world, ten action integers per world.
+CR_API int32_t cr_batch_scripted(void *const *worlds, size_t count, const int32_t *styles,
+                                 int32_t *actions);
 CR_API int32_t cr_command(void *, int32_t agent, int32_t guidance);
 CR_API size_t cr_snapshot(void *, uint8_t *output, size_t capacity);
 CR_API int32_t cr_restore(void *, const uint8_t *, size_t size);

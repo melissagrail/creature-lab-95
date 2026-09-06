@@ -1,3 +1,5 @@
+> Historical alpha 0.7 visual/layout release. These gardens remain current; [alpha 0.8](learning.md) adds trained pilots and the latest verification.
+
 # Readable gardens — alpha 0.7
 
 The garden now uses a deliberate visual hierarchy: a quiet floor, readable terrain and cover, distinct spirit silhouettes, then bright active arts. The three original arenas receive new presentation; three additional layouts change the cover and ground that the engine simulates. Energy, moves and creature stats retain the v6 tuning.

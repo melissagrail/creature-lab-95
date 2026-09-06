@@ -1,4 +1,4 @@
-"""Optional lightweight PyTorch policy reference; weights are initially RANDOM.
+"""Optional lightweight PyTorch policy reference; weights are initially RANDOM unless loaded from a checkpoint.
 
 No torch dependency in the engine, viewer or ctypes bridge. Install separately:
     python -m pip install -r python/requirements-ml.txt
@@ -14,6 +14,8 @@ from creature import OBS_SIZE, SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE, 
 class CreaturePolicy(nn.Module):
     """Masked entity/move/history encoders + 96-wide recurrent individual brain.
 
+    Format 2: explicit enemy token plus pooled public entities. Motion/aim heads
+    use the opponent-relative frame; learning.py rotates them to world actions.
     obs: [batch,3620], memory: [batch,96]. For episodes/branches, manage memory
     explicitly; it does not belong to the deterministic physics snapshot.
     """
@@ -22,7 +24,7 @@ class CreaturePolicy(nn.Module):
         self.entity = nn.Sequential(nn.Linear(ENTITY_SIZE-1, 32), nn.Tanh())
         self.move = nn.Sequential(nn.Linear(MOVE_SIZE, 24), nn.Tanh())
         self.event = nn.Sequential(nn.Linear(7, 24), nn.Tanh())
-        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + 32 + 24 + 24 + 32 + 24, 96), nn.Tanh())
+        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + ENTITY_SIZE-1 + 32 + 24 + 24 + 32 + 24, 96), nn.Tanh())
         self.memory = nn.GRUCell(96, 96)
         self.motion = nn.Linear(96, 4)
         self.noop = nn.Linear(96, 1)
@@ -38,7 +40,7 @@ class CreaturePolicy(nn.Module):
         entities = obs[:, SLICES["entities"]].reshape(-1, ENTITY_COUNT, ENTITY_SIZE)
         moves = obs[:, SLICES["moves"]].reshape(-1, 5, MOVE_SIZE)
         history = obs[:, SLICES["history"]].reshape(-1, 24, 8)
-        x = torch.cat((obs[:, SLICES["self"]],
+        x = torch.cat((obs[:, SLICES["self"]], entities[:, 0, :-1],
                        self.pool(self.entity(entities[:, :, :-1]), entities[:, :, -1:]),
                        self.move(moves).mean(1),
                        self.pool(self.event(history[:, :, :7]), history[:, :, 7:8]),
@@ -71,10 +73,9 @@ def main():
         motion, ability, log_prob, value, hidden = policy.sample(obs, memory)
         assert hidden.shape == (8, 96) and motion.shape == (8, 4)
         assert torch.isfinite(log_prob).all()
-        actions = []
-        for values, skill in zip(motion.detach().tolist(), ability.tolist()):
-            actions.extend(quantize(values[:2], values[2:], skill))
-        batch.step(actions)
+        from learning import world_actions
+        actions = world_actions(motion.detach().numpy(), ability.numpy(), obs.numpy())
+        batch.step(actions.reshape(-1).tolist())
         # Exercise gradients using synthetic advantages, without claiming learning.
         loss = -(log_prob * torch.linspace(-1, 1, 8)).mean() + value.square().mean()
         loss.backward()
