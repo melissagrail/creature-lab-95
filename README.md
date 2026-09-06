@@ -1,10 +1,12 @@
-# Creature Lab 95 — elements alpha 0.5
+# Tinikami — spirit garden alpha 0.6
 
-A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and a deliberately simple native Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
+A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
 
-![Water currents and ice](docs/alpha/elements.png)
+![Tinikami spirit garden](docs/alpha/tinikami.png)
 
 ## Start here
+
+- **[Tinikami art and energy pacing](docs/alpha/tinikami.md)** — the new skin, spirit book, energy contracts and measured pacing.
 
 - **[Water, ice, mud and oil](docs/alpha/elements.md)** — currents, brittle ice, fuel propagation and terrain-creating moves.
 - **[Original terrain and wind systems](docs/alpha/terrain.md)** — reactive surfaces, timed vector fields, move interactions and the neutral wind vane.
@@ -12,8 +14,8 @@ A deterministic C++ creature-combat engine with **40 playable species, 160 signa
 - **[Core design and combat rules](docs/alpha/design.md)** — eight gameplay axes, counterplay, resource economy, the bloom objective, alpha boundaries.
 - **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
 - **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
-- **[Current terrain balance diagnostic](reports/elements-v5-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/elements.md#validation)**.
+- **[Current energy balance diagnostic](reports/energy-v6-balance.md)** — full matrix, aggregate rates and worst pairings.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/tinikami.md#validation)**.
 
 ## Build and play
 
@@ -41,7 +43,11 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 
 Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on Windows). The Python bridge can use `CREATURE_LIB=/absolute/path/to/library` for non-Make layouts.
 
-## Workbench controls
+## Skin and workbench controls
+
+- **F2:** switch Tinikami / Windows 95 without resetting the fight. **H:** toggle collision geometry in the Tinikami skin.
+- The Tinikami skin is the default. `./build/creature_lab --skin debug` opens the original workbench. Both show the same simulation.
+- Every spirit has **100 energy**, shared by four arts and dodge. Cards show energy costs, cooldowns, and recharge state. Movement is free.
 
 - **Tab / Roster:** browse 40 species, select for A or B. The `-` / `+` controls cycle either side.
 - **P:** pause/resume. **N:** one decision (three simulation ticks). **R:** restart seed.
@@ -63,6 +69,7 @@ The bloom wins at 600 uncontested control points, with a one-second capture prep
 ## Test, simulate, tune
 
 ```sh
+python3 tests/viewer_smoke.py      # both skins + all 40 sprites preserve state
 make test                         # content validation + native + Python FFI
 make build/tournament
 ./build/tournament 36 reports/matches.csv 3000
@@ -70,9 +77,9 @@ python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 python3 python/rollout.py --arenas 256 --decisions 1000
 ```
 
-The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Elements v5 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
+The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Energy v6 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
 
-Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v5; old prototype saves/models fail compatibility checks.
+Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v6; old prototype saves/models fail compatibility checks.
 
 ## RL integration
 

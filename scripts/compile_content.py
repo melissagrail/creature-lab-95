@@ -12,7 +12,7 @@ raw=(ROOT/'content/roster.json').read_bytes();data=json.loads(raw);species=data[
 moves=[]
 for i,s in enumerate(species):
  assert s['id']==i and s['passive']==PASSIVES[i] and len(s['moves'])==4
- assert 80<=s['hp']<=180 and 100<=s['speed']<=210 and 250<=s['radius']<=700 and 2<=s['regen']<=12 and 70<=s['mass']<=200
+ assert 80<=s['hp']<=180 and 85<=s['speed']<=210 and 250<=s['radius']<=700 and 2<=s['regen']<=12 and 70<=s['mass']<=200
  assert 1<=s['turn_degrees']<=20 and all(1<=s[k]<=100 for k in ['strafe','backward'])
  assert all(1<=s[k]<=6 for k in ['acceleration','braking']) and 50<=s['dodge_speed']<=150
  assert 50<=s['wind_affinity']<=300
@@ -53,7 +53,7 @@ else:(ROOT/'src/content.cpp').write_text(cpp)
 doc=['# Alpha species field guide','', 'All 40 species and 160 signature moves below are executable content. Shared dodge is slot 5. Times are simulation ticks at 30 Hz; range/radius are game units. Axis scores are design intent, not measured power.','', '| # | Species | Role | Passive | HP | Speed (units/s) |', '|---|---|---|---|---:|---:|']
 for s in species:doc.append(f"| {s['id']+1} | [{s['name']}](#{s['name'].lower()}) | {s['role']} | {s['passive']} | {s['hp']} | {s['speed']*30/1024:.2f} |")
 for s in species:
- doc+=['',f"## {s['name']}",'',s['identity'],'',f"**Body:** {s['hp']} HP; {s['speed']*30/1024:.2f} units/s; {s['radius']/1024:.2f} collider radius; mass {s['mass']}; stamina regeneration {s['regen']*30}/s.",'',f"**Locomotion:** turns {s['turn_degrees']*30} degrees/s; strafe {s['strafe']}%; reverse {s['backward']}%; acceleration divisor {s['acceleration']}; braking divisor {s['braking']}; dodge speed {s['dodge_speed']}%; wind affinity {s['wind_affinity']}%.",'',f"**Winning pattern:** {s['loop']}",'',f"**Counterplay:** {s['counterplay']}",'',f"**Learning test:** {s['learning_test']}",'', '**Axes (1–5):** '+', '.join(f'{a} {v}' for a,v in zip(data['axes'],s['axes']))+'.','', '| Slot / move | Form | Damage | Startup / active / recovery | CD / stamina | Range / radius | Effects |','|---|---|---:|---|---|---|---|']
+ doc+=['',f"## {s['name']}",'',s['identity'],'',f"**Body:** {s['hp']} HP; {s['speed']*30/1024:.2f} units/s; {s['radius']/1024:.2f} collider radius; mass {s['mass']}; base energy regeneration when eligible {s['regen']*30}/s.",'',f"**Locomotion:** turns {s['turn_degrees']*30} degrees/s; strafe {s['strafe']}%; reverse {s['backward']}%; acceleration divisor {s['acceleration']}; braking divisor {s['braking']}; dodge speed {s['dodge_speed']}%; wind affinity {s['wind_affinity']}%.",'',f"**Winning pattern:** {s['loop']}",'',f"**Counterplay:** {s['counterplay']}",'',f"**Learning test:** {s['learning_test']}",'', '**Axes (1–5):** '+', '.join(f'{a} {v}' for a,v in zip(data['axes'],s['axes']))+'.','', '| Slot / move | Form | Damage | Startup / active / recovery | CD / energy | Range / radius | Effects |','|---|---|---:|---|---|---|---|']
  for j,m in enumerate(s['moves']):
   effects=', '.join(f'{f}={m[f]}' for f in FIELDS if f not in ['startup','active','recovery','cooldown','cost','damage','range','radius','period','shots','spread'] and m[f]) or 'none'
   if m['shots']>1:effects+=f", shots={m['shots']}"

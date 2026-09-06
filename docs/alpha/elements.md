@@ -1,3 +1,5 @@
+> Historical v5 terrain release. Terrain interactions remain in v6; [Tinikami](tinikami.md) updates pacing, energy, visuals and validation.
+
 # Elements alpha 0.5
 
 Water, ice, mud and oil create reusable terrain decisions. The C++ engine owns every interaction; the renderer draws public state and the model receives semantic surface tokens. The existing wind field, steam, brush, charged water and wind vane remain active. See the [wind foundation](terrain.md) for its controls.

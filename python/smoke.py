@@ -32,7 +32,7 @@ with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
     env.reset(0, 77, 2, species=(12,27), arena=1)
     for _ in range(100):
         env.step(env.scripted_actions())
-    assert env.hash(0)==0x78b43d0560ba4a49
+    assert env.hash(0)==0xdd03362d679bb37a
     print(f"Python golden {env.hash(0):016x}")
 fork.close()  # Idempotent.
 try:

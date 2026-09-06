@@ -1,0 +1,4280 @@
+{
+  "baseline": "fa20e45 / v0.5.0-alpha.1",
+  "rules_version": 6,
+  "content_hash": "223a8716",
+  "golden": "dd03362d679bb37a",
+  "body_speed_percent": 85,
+  "signature_cost_multiplier": 1.25,
+  "signature_startup_multiplier": 1.35,
+  "signature_recovery_multiplier": 1.25,
+  "signature_cooldown_multiplier": 1.25,
+  "signature_speed_percent": 85,
+  "cost_rounding": "ceil to 10 internal units",
+  "cooldown_rounding": "ceil to 3 ticks, at least complete cast duration",
+  "energy_contract": {
+    "capacity": 1000,
+    "lock_on_accept_ticks": 24,
+    "eligible_phases": [
+      "Idle",
+      "Recovery"
+    ],
+    "interrupt_lock_min_ticks": 12,
+    "saltcrab_guard_bonus_per_tick": 7,
+    "clockfin_alternation_refund": 70,
+    "coppergecko_third_cast_refund": 120
+  },
+  "changes": [
+    {
+      "species": "Cinderfox",
+      "body": {
+        "speed": {
+          "before": 170,
+          "after": 145
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Kindlebite",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Wickshot",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Flare Step",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Ash Circle",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Brambleback",
+      "body": {
+        "speed": {
+          "before": 124,
+          "after": 105
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Briar Club",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Rootfurrow",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 290,
+              "after": 246
+            }
+          }
+        },
+        {
+          "name": "Bramble Garden",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Barkskin",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Glasswing",
+      "body": {
+        "speed": {
+          "before": 151,
+          "after": 128
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Needle Ray",
+          "changes": {
+            "startup": {
+              "before": 24,
+              "after": 33
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Glass Shards",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Wing Slip",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 135,
+              "after": 171
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        },
+        {
+          "name": "Repulsion",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Voltjack",
+      "body": {
+        "speed": {
+          "before": 169,
+          "after": 144
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Spark Pin",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Arc Fang",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Discharge",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        },
+        {
+          "name": "Static Screen",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Miretoad",
+      "body": {
+        "speed": {
+          "before": 135,
+          "after": 115
+        },
+        "regen": {
+          "before": 7,
+          "after": 6
+        }
+      },
+      "moves": [
+        {
+          "name": "Venom Tongue",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Spitball",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 320,
+              "after": 272
+            }
+          }
+        },
+        {
+          "name": "Mire Pool",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Digest",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 180,
+              "after": 225
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Basaltusk",
+      "body": {
+        "speed": {
+          "before": 125,
+          "after": 106
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Stone Tusk",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Fault Ram",
+          "changes": {
+            "startup": {
+              "before": 13,
+              "after": 18
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 440,
+              "after": 374
+            }
+          }
+        },
+        {
+          "name": "Quarry Hook",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Bedrock",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Rimehare",
+      "body": {
+        "speed": {
+          "before": 190,
+          "after": 162
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Icicle",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 500,
+              "after": 425
+            }
+          }
+        },
+        {
+          "name": "Snowshoe",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 8,
+              "after": 10
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Frost Lace",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Whiteout",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Gloamcat",
+      "body": {
+        "speed": {
+          "before": 180,
+          "after": 153
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Backfang",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Dusk Needle",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Night Pounce",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 440,
+              "after": 374
+            }
+          }
+        },
+        {
+          "name": "Crossfade",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 135,
+              "after": 171
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Ironmoth",
+      "body": {
+        "speed": {
+          "before": 146,
+          "after": 124
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Steel Dust",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Mirror Carapace",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 90,
+              "after": 114
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Shear Wing",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Magnet Wake",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Tidecoil",
+      "body": {
+        "speed": {
+          "before": 154,
+          "after": 131
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Undertow",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Tidal Bite",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Rain Basin",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Surge",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Quillrat",
+      "body": {
+        "speed": {
+          "before": 167,
+          "after": 142
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Barb Shot",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 390,
+              "after": 331
+            }
+          }
+        },
+        {
+          "name": "Caltrop",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 10,
+              "after": 13
+            },
+            "cooldown": {
+              "before": 81,
+              "after": 102
+            },
+            "cost": {
+              "before": 150,
+              "after": 190
+            }
+          }
+        },
+        {
+          "name": "Needle Fence",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Panic Quills",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Sunstag",
+      "body": {
+        "speed": {
+          "before": 163,
+          "after": 139
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Sun Antler",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Daybreak",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Golden Bound",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Renew",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 165,
+              "after": 207
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Gravemole",
+      "body": {
+        "speed": {
+          "before": 153,
+          "after": 130
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Grave Claw",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Burrow",
+          "changes": {
+            "startup": {
+              "before": 12,
+              "after": 17
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 135,
+              "after": 171
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        },
+        {
+          "name": "Upheaval",
+          "changes": {
+            "startup": {
+              "before": 16,
+              "after": 22
+            },
+            "recovery": {
+              "before": 10,
+              "after": 13
+            },
+            "cooldown": {
+              "before": 81,
+              "after": 102
+            },
+            "cost": {
+              "before": 150,
+              "after": 190
+            }
+          }
+        },
+        {
+          "name": "Tunnel Rush",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Prismray",
+      "body": {
+        "speed": {
+          "before": 151,
+          "after": 128
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Prism Dart",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 490,
+              "after": 416
+            }
+          }
+        },
+        {
+          "name": "Split Spectrum",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Refraction",
+          "changes": {
+            "startup": {
+              "before": 20,
+              "after": 27
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Prism Fold",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 150,
+              "after": 189
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Thornmantis",
+      "body": {
+        "speed": {
+          "before": 173,
+          "after": 147
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Open Seam",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Harvest Cut",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 48,
+              "after": 60
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Thorn Leap",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Razor Guard",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Mosswarden",
+      "body": {
+        "speed": {
+          "before": 127,
+          "after": 108
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Moss Fist",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Seed Bomb",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 300,
+              "after": 255
+            }
+          }
+        },
+        {
+          "name": "Shelter Grove",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Living Wall",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Galecrest",
+      "body": {
+        "speed": {
+          "before": 181,
+          "after": 154
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Feather Fan",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 480,
+              "after": 408
+            }
+          }
+        },
+        {
+          "name": "Gust Lance",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Jetstream",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 500,
+              "after": 425
+            }
+          }
+        },
+        {
+          "name": "Windwright",
+          "changes": {
+            "startup": {
+              "before": 21,
+              "after": 29
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 240,
+              "after": 300
+            },
+            "cost": {
+              "before": 320,
+              "after": 400
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Ashram",
+      "body": {
+        "speed": {
+          "before": 158,
+          "after": 134
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Blood Horn",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 60,
+              "after": 80
+            }
+          }
+        },
+        {
+          "name": "Cinder Charge",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Fury",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Last Ember",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Clockfin",
+      "body": {
+        "speed": {
+          "before": 155,
+          "after": 132
+        },
+        "regen": {
+          "before": 4,
+          "after": 3
+        }
+      },
+      "moves": [
+        {
+          "name": "Tick",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 24,
+              "after": 30
+            },
+            "cost": {
+              "before": 100,
+              "after": 130
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Tock",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 57,
+              "after": 72
+            },
+            "cost": {
+              "before": 200,
+              "after": 250
+            }
+          }
+        },
+        {
+          "name": "Second Hand",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 51,
+              "after": 66
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Windup Key",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Nullurchin",
+      "body": {
+        "speed": {
+          "before": 130,
+          "after": 111
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Null Spine",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Mute Line",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Deadwater",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Void Shell",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Waxwyrm",
+      "body": {
+        "speed": {
+          "before": 137,
+          "after": 116
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Wax Glob",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 330,
+              "after": 280
+            }
+          }
+        },
+        {
+          "name": "Candle Sentry",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 180,
+              "after": 225
+            },
+            "cost": {
+              "before": 260,
+              "after": 330
+            },
+            "speed": {
+              "before": 310,
+              "after": 263
+            }
+          }
+        },
+        {
+          "name": "Hot Seal",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Wax Jacket",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Ribbonape",
+      "body": {
+        "speed": {
+          "before": 172,
+          "after": 146
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Ribbon Throw",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 370,
+              "after": 314
+            }
+          }
+        },
+        {
+          "name": "Tail Snap",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Acrobat",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 420,
+              "after": 357
+            }
+          }
+        },
+        {
+          "name": "Silk Whorl",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Saltcrab",
+      "body": {
+        "speed": {
+          "before": 123,
+          "after": 105
+        }
+      },
+      "moves": [
+        {
+          "name": "Salt Pinch",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        },
+        {
+          "name": "Brine Cannon",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            },
+            "speed": {
+              "before": 350,
+              "after": 297
+            }
+          }
+        },
+        {
+          "name": "Closed Shell",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 132,
+              "after": 165
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Scuttle",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 330,
+              "after": 280
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Nectarbat",
+      "body": {
+        "speed": {
+          "before": 177,
+          "after": 150
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Siphon Fang",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Nectar Needle",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Swoop",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Night Bloom",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Bellox",
+      "body": {
+        "speed": {
+          "before": 142,
+          "after": 121
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Clapper",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 21,
+              "after": 27
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Bell Wave",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Peal Rush",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Resonant Shell",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Anvilnewt",
+      "body": {
+        "speed": {
+          "before": 139,
+          "after": 118
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Hammer Tongue",
+          "changes": {
+            "startup": {
+              "before": 9,
+              "after": 13
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Forged Bolt",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Temper",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Anvil Fall",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Duneskink",
+      "body": {
+        "speed": {
+          "before": 190,
+          "after": 162
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Sandlash",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Dune Dart",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Sand Sprint",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 470,
+              "after": 399
+            }
+          }
+        },
+        {
+          "name": "Dust Kick",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Kelpwidow",
+      "body": {
+        "speed": {
+          "before": 143,
+          "after": 122
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Kelp Harpoon",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 390,
+              "after": 331
+            }
+          }
+        },
+        {
+          "name": "Reel In",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Tangle Bed",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Leg Sweep",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Pyrelisk",
+      "body": {
+        "speed": {
+          "before": 147,
+          "after": 125
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Heat Lance",
+          "changes": {
+            "startup": {
+              "before": 20,
+              "after": 27
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Coal Fan",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Furnace",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Vent",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Mooncalf",
+      "body": {
+        "speed": {
+          "before": 147,
+          "after": 125
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Moon Tap",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Lunar Shield",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 111,
+              "after": 141
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Moonbeam",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Orbit",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Coppergecko",
+      "body": {
+        "speed": {
+          "before": 163,
+          "after": 139
+        },
+        "regen": {
+          "before": 4,
+          "after": 3
+        }
+      },
+      "moves": [
+        {
+          "name": "Copper Ping",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 24,
+              "after": 30
+            },
+            "cost": {
+              "before": 70,
+              "after": 90
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Coil Cannon",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 69,
+              "after": 87
+            },
+            "cost": {
+              "before": 260,
+              "after": 330
+            }
+          }
+        },
+        {
+          "name": "Springwire",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Capacitor",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Orchardboar",
+      "body": {
+        "speed": {
+          "before": 137,
+          "after": 116
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Root Tusk",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Falling Fruit",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 310,
+              "after": 263
+            }
+          }
+        },
+        {
+          "name": "Orchard",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Harvest Run",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Inkheron",
+      "body": {
+        "speed": {
+          "before": 161,
+          "after": 137
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Ink Needle",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Ink Cloud",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Brushstroke",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Takeoff",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 135,
+              "after": 171
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Hooklynx",
+      "body": {
+        "speed": {
+          "before": 167,
+          "after": 142
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Trail Dart",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Hookline",
+          "changes": {
+            "startup": {
+              "before": 20,
+              "after": 27
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Claim Claw",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Hunting Bound",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Slagjaw",
+      "body": {
+        "speed": {
+          "before": 147,
+          "after": 125
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Corrosive Bite",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Acid Spit",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Slag Trail",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 105,
+              "after": 132
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Jawbreaker",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Dewotter",
+      "body": {
+        "speed": {
+          "before": 178,
+          "after": 151
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Dew Dart",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 470,
+              "after": 399
+            }
+          }
+        },
+        {
+          "name": "River Cut",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Waterwheel",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        },
+        {
+          "name": "Fresh Spring",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 180,
+              "after": 225
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Echofin",
+      "body": {
+        "speed": {
+          "before": 156,
+          "after": 133
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Sonar Tap",
+          "changes": {
+            "startup": {
+              "before": 9,
+              "after": 13
+            },
+            "recovery": {
+              "before": 8,
+              "after": 10
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Echo Fan",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Bass Ring",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        },
+        {
+          "name": "Silent Beat",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 120,
+              "after": 150
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Latchspider",
+      "body": {
+        "speed": {
+          "before": 162,
+          "after": 138
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Silk Dart",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Webway",
+          "changes": {
+            "startup": {
+              "before": 15,
+              "after": 21
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 90,
+              "after": 114
+            },
+            "cost": {
+              "before": 210,
+              "after": 270
+            }
+          }
+        },
+        {
+          "name": "Latch",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        },
+        {
+          "name": "Skitter",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 400,
+              "after": 340
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Flintroc",
+      "body": {
+        "speed": {
+          "before": 145,
+          "after": 123
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Flint Cannon",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 580,
+              "after": 493
+            }
+          }
+        },
+        {
+          "name": "Stone Scatter",
+          "changes": {
+            "startup": {
+              "before": 10,
+              "after": 14
+            },
+            "recovery": {
+              "before": 11,
+              "after": 14
+            },
+            "cooldown": {
+              "before": 36,
+              "after": 45
+            },
+            "cost": {
+              "before": 130,
+              "after": 170
+            },
+            "speed": {
+              "before": 430,
+              "after": 365
+            }
+          }
+        },
+        {
+          "name": "Backdraft",
+          "changes": {
+            "startup": {
+              "before": 14,
+              "after": 19
+            },
+            "recovery": {
+              "before": 15,
+              "after": 19
+            },
+            "cooldown": {
+              "before": 75,
+              "after": 96
+            },
+            "cost": {
+              "before": 170,
+              "after": 220
+            }
+          }
+        },
+        {
+          "name": "Ridge Hop",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 13,
+              "after": 17
+            },
+            "cooldown": {
+              "before": 165,
+              "after": 207
+            },
+            "cost": {
+              "before": 230,
+              "after": 290
+            }
+          }
+        }
+      ]
+    },
+    {
+      "species": "Oathhound",
+      "body": {
+        "speed": {
+          "before": 143,
+          "after": 122
+        },
+        "regen": {
+          "before": 6,
+          "after": 5
+        }
+      },
+      "moves": [
+        {
+          "name": "Oath Fang",
+          "changes": {
+            "startup": {
+              "before": 6,
+              "after": 9
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 27,
+              "after": 36
+            },
+            "cost": {
+              "before": 90,
+              "after": 120
+            }
+          }
+        },
+        {
+          "name": "Sworn Guard",
+          "changes": {
+            "startup": {
+              "before": 3,
+              "after": 5
+            },
+            "recovery": {
+              "before": 9,
+              "after": 12
+            },
+            "cooldown": {
+              "before": 96,
+              "after": 120
+            },
+            "cost": {
+              "before": 160,
+              "after": 200
+            }
+          }
+        },
+        {
+          "name": "Intercept",
+          "changes": {
+            "startup": {
+              "before": 8,
+              "after": 11
+            },
+            "recovery": {
+              "before": 14,
+              "after": 18
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            },
+            "speed": {
+              "before": 380,
+              "after": 323
+            }
+          }
+        },
+        {
+          "name": "Judgment",
+          "changes": {
+            "startup": {
+              "before": 18,
+              "after": 25
+            },
+            "recovery": {
+              "before": 17,
+              "after": 22
+            },
+            "cooldown": {
+              "before": 66,
+              "after": 84
+            },
+            "cost": {
+              "before": 190,
+              "after": 240
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "dodge": {
+    "recovery": {
+      "before": 8,
+      "after": 12
+    },
+    "cooldown": {
+      "before": 36,
+      "after": 48
+    },
+    "cost": {
+      "before": 240,
+      "after": 200
+    },
+    "speed": {
+      "before": 410,
+      "after": 350
+    }
+  },
+  "iterations_720_match_probe": [
+    {
+      "candidate": "initial strict commitment lock",
+      "mean_seconds": 74.2525,
+      "casts_per_minute": 18.8972,
+      "decision": "Rejected: excessive waiting and timeouts; full matrix mean 73.66s."
+    },
+    {
+      "candidate": "A: eligible idle only, 0.4s lock after end, 15 energy/s common regen",
+      "mean_seconds": 54.1935,
+      "casts_per_minute": 26.5914
+    },
+    {
+      "candidate": "B: higher costs and 18 energy/s common regen",
+      "mean_seconds": 54.2481,
+      "casts_per_minute": 28.1745
+    },
+    {
+      "candidate": "C: old costs and 12 energy/s common regen",
+      "mean_seconds": 45.4856,
+      "casts_per_minute": 26.8428
+    },
+    {
+      "candidate": "D: A with half recovery regeneration",
+      "mean_seconds": 54.236,
+      "casts_per_minute": 27.5532
+    },
+    {
+      "candidate": "E: A with full recovery regeneration and no completion lock",
+      "mean_seconds": 45.6696,
+      "casts_per_minute": 32.3017,
+      "decision": "Selected structure; restored Saltcrab guard bonus to 7 and reduced Coppergecko refund to 120 after matchup diagnostic."
+    },
+    {
+      "candidate": "Final",
+      "metrics": {
+        "rules": 6,
+        "content_hash": 574261014,
+        "matches": 720,
+        "mean_duration_seconds": 46.239,
+        "casts_per_spirit_minute": 32.314,
+        "below_dodge_cost_percent": 45.0899,
+        "mean_displayed_energy": 24.1184
+      }
+    }
+  ]
+}

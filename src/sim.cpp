@@ -429,12 +429,13 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             }
             b.hp -= m.health_cost;
             b.energy -= m.cost;
+            b.energy_delay = 24;
             result.features[i].spent += m.cost;
             b.cooldown[slot] = m.cooldown;
             if (s.passive == Cadence && b.last_slot >= 0 && slot != b.last_slot)
                 b.energy = std::min(1000, b.energy + 70);
             if (s.passive == Recycle && ++b.counter % 3 == 0)
-                b.energy = std::min(1000, b.energy + 180);
+                b.energy = std::min(1000, b.energy + 120);
             if (s.passive == Rhythm) {
                 b.meter = b.idle_ticks >= 21 && b.idle_ticks <= 42 ? std::min(60, b.meter + 20) : 0;
             }
@@ -974,6 +975,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         if (m.kind == Lunge && t.move >= 0 && phase(t) == Startup && !t.cc_resist && !armor) {
             event(w, Interrupted, p.source, p.target, t.move, 0, t.pos);
             t.move = t.slot = -1;
+            t.energy_delay = std::max(t.energy_delay, 12);
             t.age = 0;
             t.stun = 6;
             t.cc_resist = 75;
@@ -1022,8 +1024,9 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         for (auto &c : b.cooldown)
             if (c)
                 c--;
-        int regen = s.regen + (s.passive == Reservoir && b.guard ? 7 : 0);
-        b.energy = std::min(1000, b.energy + regen);
+        b.energy = std::min(1000, b.energy + energy_regen(b));
+        if (b.energy_delay)
+            --b.energy_delay;
         auto dec = [](int32_t &t) {
             if (t)
                 t--;
@@ -1347,9 +1350,12 @@ Action scripted(const World &w, int i, int style) {
                 score += 8;
             if (s.passive == Magazine && m.damage && b.meter < 60 && distance > 3500)
                 viable = false;
-            if (b.guidance == Conserve && m.cost > 150)
+            if (b.guidance == Conserve && m.cost > 220)
                 viable = false;
-            if (viable && score > best) {
+            if (b.energy - m.cost < Moves[160].cost && e.hp > m.damage && !danger &&
+                b.guidance != Attack)
+                score -= 45;
+            if (viable && score > best && score > 0) {
                 best = score;
                 ability = slot + 1;
                 chosen = aim;
@@ -1364,6 +1370,12 @@ Action scripted(const World &w, int i, int style) {
     if (ability >= 1 && ability <= 4 && dot(unit(chosen), b.aim) < Q * Q * 97 / 100)
         ability = 0;
     return {movement.x, movement.y, chosen.x, chosen.y, ability};
+}
+// Internal energy units are tenths of a displayed point. Movement never costs energy.
+int energy_regen(const Body &b) {
+    const auto &s = Roster[b.species];
+    int base = !b.energy_delay && (b.move < 0 || phase(b) == Recovery) ? s.regen : 0;
+    return base + (s.passive == Reservoir && b.guard ? 7 : 0);
 }
 Observation observe(const World &w, int i) {
     Observation o;
@@ -1486,6 +1498,8 @@ Observation observe(const World &w, int i) {
     p[38] = float(int64_t(e.locked.y) * b.aim.x - int64_t(e.locked.x) * b.aim.y) / (Q * Q);
     p[39] = float(es.wind_affinity) / 300;
     p[40] = float(ground_kind(w, e.pos)) / 8;
+    p[41] = float(e.energy) / 1000;
+    p[42] = float(e.energy_delay) / 24;
     for (int j = 0; j < 4; j++)
         if (w.obstacles[j].radius)
             entity(1 + j, 2, w.obstacles[j].pos, {}, w.obstacles[j].radius, 0, 0, -1, 0, 0, 0);
@@ -1620,6 +1634,9 @@ Observation observe(const World &w, int i) {
     o.global[26] = float(w.vane_capture[i]) / 45;
     o.global[27] = float(w.vane_capture[1 - i]) / 45;
     o.global[28] = float(w.vane_enabled);
+    o.global[29] = float(b.energy_delay) / 24;
+    o.global[30] = float(energy_regen(b)) / 12;
+    o.global[31] = float(energy_regen(e)) / 12;
     auto mask = action_mask(w, i);
     for (int j = 0; j < 6; j++)
         o.mask[j] = float(mask[j]);
@@ -1674,6 +1691,7 @@ template <class F> static void fields(World &w, F f) {
         f(b.aim_scale);
         f(b.hp);
         f(b.energy);
+        f(b.energy_delay);
         f(b.radius);
         f(b.move);
         f(b.slot);
@@ -1800,14 +1818,14 @@ static bool valid(const World &w) {
             b.move < -1 || b.move >= MoveCount || b.slot < -1 || b.slot > 4 || b.last_slot < -1 ||
             b.last_slot > 4 || b.hp < 0 || b.hp > Roster[b.species].hp ||
             b.radius != Roster[b.species].radius || b.energy < 0 || b.energy > 1000 ||
-            !pos(b.pos) || !vel(b.vel) || !vel(b.aim) || !vel(b.locked) || b.age < 0 ||
-            b.age > 120 || b.aim_scale < 0 || b.aim_scale > Q || b.meter < 0 || b.meter > 1000 ||
-            b.counter < 0 || b.counter > 10000 || b.poison_stacks < 0 || b.poison_stacks > 5 ||
-            b.control < 0 || b.control > 600 || b.capture < 0 || b.capture > MaxTicks ||
-            b.hit_mask < 0 || b.hit_mask >= (1 << (ZoneCount + 2)) || b.burn_owner < 0 ||
-            b.burn_owner > 1 || b.poison_owner < 0 || b.poison_owner > 1 || b.mark_owner < 0 ||
-            b.mark_owner > 1 || b.guidance < 0 || b.guidance > 3 || b.guidance_age < 0 ||
-            b.guidance_age > 900)
+            b.energy_delay < 0 || b.energy_delay > 24 || !pos(b.pos) || !vel(b.vel) ||
+            !vel(b.aim) || !vel(b.locked) || b.age < 0 || b.age > 120 || b.aim_scale < 0 ||
+            b.aim_scale > Q || b.meter < 0 || b.meter > 1000 || b.counter < 0 ||
+            b.counter > 10000 || b.poison_stacks < 0 || b.poison_stacks > 5 || b.control < 0 ||
+            b.control > 600 || b.capture < 0 || b.capture > MaxTicks || b.hit_mask < 0 ||
+            b.hit_mask >= (1 << (ZoneCount + 2)) || b.burn_owner < 0 || b.burn_owner > 1 ||
+            b.poison_owner < 0 || b.poison_owner > 1 || b.mark_owner < 0 || b.mark_owner > 1 ||
+            b.guidance < 0 || b.guidance > 3 || b.guidance_age < 0 || b.guidance_age > 900)
             return false;
         const int timers[] = {b.stun,      b.burn,          b.haste,      b.poison,
                               b.slow,      b.root,          b.silence,    b.wound,

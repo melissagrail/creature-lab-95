@@ -22,11 +22,11 @@ All passive state is in the deterministic world and snapshots. Public meters/cou
 | Mosswarden | Heal 3 each second while within an owned field | Evict it; wounds halve the healing |
 | Galecrest | 240% wind affinity: amplify both tailwind assistance and headwind penalty | Choose heading; wind is no longer an unconditional speed buff |
 | Ashram | Up to +12 direct damage proportional to missing HP | Deny the final exchange; self-cost remains real |
-| Clockfin | Casting a different slot from the previous one refunds 70 stamina | Interrupt the sequence or force repeated defense |
+| Clockfin | Casting a different slot from the previous one refunds 70 internal energy (7 displayed) | Interrupt the sequence or force repeated defense |
 | Nullurchin | Direct contacts remove twice as much shield per blocked damage | HP is not doubled damage; only shields suffer extra depletion |
 | Waxwyrm | Turrets have 45 HP instead of 32 | Explicitly aim at the setup |
 | Ribbonape | +2 on its returning-projectile contacts; return phase resets hit eligibility | Reposition to steer the return and avoid the second pass |
-| Saltcrab | +7 stamina regeneration per tick during guard | Its defensive downtime funds the next offense |
+| Saltcrab | +7 internal energy per guard tick, including during the base regeneration lock | Its defensive downtime funds the next offense |
 | Nectarbat | Heal 20% of actual direct HP damage, minimum 1 per damaging contact | Shields, misses and wounds deny sustain |
 | Bellox | Every third direct contact adds 12 damage | Track contacts, not casts; a miss doesn't advance it |
 | Anvilnewt | +7 direct damage while shielded | Strip the shield before committing |
@@ -34,7 +34,7 @@ All passive state is in the deterministic world and snapshots. Public meters/cou
 | Kelpwidow | Direct contacts beyond 3.42 units apply a 24-tick slow | Cross through the favored distance band decisively |
 | Pyrelisk | Casts add 20 heat, max 100; direct hits add heat/10; speed falls by heat/3 percent; loses 1 heat per 6 ticks | Heat is strength coupled to exposure. Vent clears it |
 | Mooncalf | Shield absorption stores up to 20 retaliation; next direct hit adds up to 15 and consumes it | Stop feeding the shield or bait the payoff |
-| Coppergecko | Every third cast refunds 180 stamina | A cast-counter economy, distinct from Clockfin's alternation economy |
+| Coppergecko | Every third cast refunds 120 internal energy (12 displayed) | A cast-counter economy, distinct from Clockfin's alternation economy |
 | Orchardboar | Natural expiry of an owned field heals 9 | The payout is delayed; KO or wounds can deny its value |
 | Inkheron | Owned ordinary fields consume hostile projectiles inside their footprint | Cover is not stealth and does not stop beams or melee |
 | Hooklynx | +5 direct damage against a marked target | The explicit claw payoff also consumes its owner's mark |

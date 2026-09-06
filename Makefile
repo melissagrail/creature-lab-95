@@ -23,7 +23,7 @@ $(BUILD)/sim_tests: $(CORE) tests/sim_tests.cpp include/creature/sim.hpp | $(BUI
 $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/benchmark.cpp -o $@
 viewer: $(BUILD)/creature_lab
-$(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp include/creature/sim.hpp | $(BUILD)
+$(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp client/tinikami.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) client/main.cpp $$(sdl2-config --cflags --libs) -o $@
 test: core $(BUILD)/environment_tests
 	python3 scripts/compile_content.py --check

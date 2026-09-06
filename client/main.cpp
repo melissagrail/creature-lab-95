@@ -117,8 +117,10 @@ void meter(int x, int y, int w, int value, int max, SDL_Color c) {
     rect(x + 2, y + 2, (w - 4) * std::clamp(value, 0, max) / max, 8, c);
 }
 } // namespace
+#include "tinikami.hpp"
 int main(int argc, char **argv) {
     SDL_SetMainReady();
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         std::cerr << SDL_GetError() << '\n';
         return 1;
@@ -140,6 +142,8 @@ int main(int argc, char **argv) {
     SDL_RenderSetLogicalSize(r, 1100, 780);
     SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
     bool run = true, paused = false, manual = false, playback = false, catalog = false;
+    bool spirit_skin = true, hitboxes = false;
+    std::filesystem::path art_directory;
     int species_a = 0, species_b = 1, arena = 0, catalog_target = 0, catalog_page = 0;
     int weather = 0, speed = 1, ability = 0, pending_guidance = -1, feedback = 0, wind_power = 100;
     uint32_t seed = 42;
@@ -163,7 +167,15 @@ int main(int argc, char **argv) {
     int frames_limit = 0, preview_ticks = 0;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
-        if (a == "--frames" && i + 1 < argc)
+        if (a == "--skin" && i + 1 < argc)
+            spirit_skin = std::string(argv[++i]) != "debug";
+        else if (a == "--hitboxes")
+            hitboxes = true;
+        else if (a == "--assets" && i + 1 < argc)
+            art_directory = argv[++i];
+        else if (a == "--catalog-page" && i + 1 < argc)
+            catalog_page = std::clamp(std::stoi(argv[++i]), 0, 3);
+        else if (a == "--frames" && i + 1 < argc)
             frames_limit = std::stoi(argv[++i]);
         else if (a == "--preview-ticks" && i + 1 < argc)
             preview_ticks = std::clamp(std::stoi(argv[++i]), 0, MaxTicks);
@@ -179,6 +191,34 @@ int main(int argc, char **argv) {
         } else if (a == "--captures" && i + 1 < argc)
             captures = argv[++i];
     }
+    if (art_directory.empty()) {
+        char *base = SDL_GetBasePath();
+        std::filesystem::path path = base ? base : ".";
+        if (path.filename().empty())
+            path = path.parent_path();
+        SDL_free(base);
+        auto bundled = path.parent_path() / "Resources" / "tinikami";
+        if (std::filesystem::exists(bundled / "spirits.rgba"))
+            art_directory = bundled;
+        for (int depth = 0; art_directory.empty() && depth < 6; ++depth) {
+            auto candidate = path / "assets" / "tinikami";
+            if (std::filesystem::exists(candidate / "spirits.rgba"))
+                art_directory = candidate;
+            path = path.parent_path();
+        }
+        if (art_directory.empty())
+            art_directory = "assets/tinikami";
+    }
+    bool art_ready = tinikami::load(art_directory);
+    if (!art_ready) {
+        tinikami::free();
+        spirit_skin = false;
+        note = "ART NOT FOUND / USE --assets PATH / DEBUG SKIN ACTIVE";
+        std::cerr << note << '\n';
+    } else
+        note = "F2 CHANGE SKIN / H HITBOXES / TAB SPIRIT BOOK / M TAKE CONTROL";
+    SDL_SetWindowTitle(window,
+                       spirit_skin ? "Tinikami - Spirit Garden" : "Tinikami - Creature Lab 95");
     reset(w, seed, weather, species_a, species_b, arena);
     for (int t = 0; t < preview_ticks; t += DecisionTicks)
         step(w, {scripted(w, 0), scripted(w, 1)}, std::min(DecisionTicks, preview_ticks - t));
@@ -226,6 +266,15 @@ int main(int argc, char **argv) {
             return;
         }
         switch (id) {
+        case 29:
+            if (art_ready)
+                spirit_skin = !spirit_skin;
+            SDL_SetWindowTitle(window, spirit_skin ? "Tinikami - Spirit Garden"
+                                                   : "Tinikami - Creature Lab 95");
+            break;
+        case 30:
+            hitboxes = !hitboxes;
+            break;
         case 0:
             run = false;
             break;
@@ -435,6 +484,10 @@ int main(int argc, char **argv) {
                 auto k = e.key.keysym.sym;
                 if (k == SDLK_ESCAPE)
                     run = false;
+                else if (k == SDLK_F2)
+                    act(29);
+                else if (k == SDLK_h)
+                    act(30);
                 else if (k == SDLK_TAB)
                     act(24);
                 else if (k == SDLK_l)
@@ -487,390 +540,404 @@ int main(int argc, char **argv) {
         if (single)
             advance();
         buttons.clear();
-        rect(0, 0, 1100, 780, {0, 112, 112, 255});
-        panel(10, 10, 1080, 760);
-        rect(14, 14, 1072, 26, {0, 0, 128, 255});
-        label(22, 20, "CREATURE LAB 95", white, 2);
-        label(720, 23, "40 SPECIES / ELEMENTS ALPHA 0.5", white, 1);
-        panel(1058, 18, 22, 18);
-        buttons.push_back({{1058, 18, 22, 18}, "X", 0});
-        label(1064, 22, "X", black, 1);
-        label(24, 50, "FILE   SIMULATION   INSPECT   HELP", black, 1);
-        label(768, 50, "30 HZ WORLD / 10 HZ BRAIN", dark, 1);
-        button(1, 24, 70, 86, paused ? "RESUME [P]" : "PAUSE [P]", paused);
-        button(2, 116, 70, 86, "STEP [N]");
-        button(3, 208, 70, 86, "RESET [R]");
-        button(4, 300, 70, 130, manual ? "HUMAN + BOT [M]" : "BOT + BOT [M]", manual);
-        button(5, 436, 70, 126,
-               weather == 0   ? "WEATHER: CLEAR"
-               : weather == 1 ? "WEATHER: WIND"
-                              : "WEATHER: RAIN");
-        button(10, 568, 70, 68, "SPEED " + num(speed) + "X");
-        button(17, 642, 70, 78, "NEW SEED");
-        button(6, 744, 70, 96, "SNAPSHOT F5");
-        button(7, 846, 70, 96, "FORK F9");
-        button(8, 948, 70, 116, "SAVE REPLAY");
-        panel(24, 108, 696, 36, true);
-        button(20, 28, 112, 24, "-");
-        button(21, 300, 112, 24, "+");
-        label(65, 122, "A / " + std::string(Roster[species_a].name), blue, 1);
-        button(22, 352, 112, 24, "-");
-        button(23, 622, 112, 24, "+");
-        label(388, 122, "B / " + std::string(Roster[species_b].name), orange, 1);
-        button(24, 654, 112, 62, "ROSTER");
-        panel(22, 156, 700, 526, true);
-        SDL_Rect arena_clip{AX, AY, 24 * S, 18 * S};
-        SDL_RenderSetClipRect(r, &arena_clip);
-        rect(AX, AY, 24 * S, 18 * S, {227, 228, 207, 255});
-        for (int x = 0; x <= 24; x++)
-            line(AX + x * S, AY, AX + x * S, AY + 18 * S, {211, 212, 194, 255});
-        for (int y = 0; y <= 18; y++)
-            line(AX, AY + y * S, AX + 24 * S, AY + y * S, {211, 212, 194, 255});
-        if (w.wetness) {
-            rect(AX, AY, 24 * S, 18 * S, {80, 137, 168, uint8_t(w.wetness / 14)});
-            for (int j = 0; j < 24; j++) {
-                int x = AX + (j * 83 + w.tick * 2) % 690, y = AY + (j * 71 + w.tick * 4) % 515;
-                line(x, y, x + 3, y + 7, {120, 155, 173, 255});
+        if (spirit_skin) {
+            tinikami::draw(w, {paused, manual, playback, catalog, hitboxes, catalog_target,
+                               catalog_page, weather, speed, wind_power, seed, note});
+        } else {
+            rect(0, 0, 1100, 780, {0, 112, 112, 255});
+            panel(10, 10, 1080, 760);
+            rect(14, 14, 1072, 26, {0, 0, 128, 255});
+            label(22, 20, "CREATURE LAB 95", white, 2);
+            label(720, 23, "F2 TINIKAMI / ENERGY ALPHA 0.6", white, 1);
+            panel(1058, 18, 22, 18);
+            buttons.push_back({{1058, 18, 22, 18}, "X", 0});
+            label(1064, 22, "X", black, 1);
+            label(24, 50, "FILE   SIMULATION   INSPECT   HELP", black, 1);
+            label(768, 50, "30 HZ WORLD / 10 HZ BRAIN", dark, 1);
+            button(1, 24, 70, 86, paused ? "RESUME [P]" : "PAUSE [P]", paused);
+            button(2, 116, 70, 86, "STEP [N]");
+            button(3, 208, 70, 86, "RESET [R]");
+            button(4, 300, 70, 130, manual ? "HUMAN + BOT [M]" : "BOT + BOT [M]", manual);
+            button(5, 436, 70, 126,
+                   weather == 0   ? "WEATHER: CLEAR"
+                   : weather == 1 ? "WEATHER: WIND"
+                                  : "WEATHER: RAIN");
+            button(10, 568, 70, 68, "SPEED " + num(speed) + "X");
+            button(17, 642, 70, 78, "NEW SEED");
+            button(6, 744, 70, 96, "SNAPSHOT F5");
+            button(7, 846, 70, 96, "FORK F9");
+            button(8, 948, 70, 116, "SAVE REPLAY");
+            panel(24, 108, 696, 36, true);
+            button(20, 28, 112, 24, "-");
+            button(21, 300, 112, 24, "+");
+            label(65, 122, "A / " + std::string(Roster[species_a].name), blue, 1);
+            button(22, 352, 112, 24, "-");
+            button(23, 622, 112, 24, "+");
+            label(388, 122, "B / " + std::string(Roster[species_b].name), orange, 1);
+            button(24, 654, 112, 62, "ROSTER");
+            panel(22, 156, 700, 526, true);
+            SDL_Rect arena_clip{AX, AY, 24 * S, 18 * S};
+            SDL_RenderSetClipRect(r, &arena_clip);
+            rect(AX, AY, 24 * S, 18 * S, {227, 228, 207, 255});
+            for (int x = 0; x <= 24; x++)
+                line(AX + x * S, AY, AX + x * S, AY + 18 * S, {211, 212, 194, 255});
+            for (int y = 0; y <= 18; y++)
+                line(AX, AY + y * S, AX + 24 * S, AY + y * S, {211, 212, 194, 255});
+            if (w.wetness) {
+                rect(AX, AY, 24 * S, 18 * S, {80, 137, 168, uint8_t(w.wetness / 14)});
+                for (int j = 0; j < 24; j++) {
+                    int x = AX + (j * 83 + w.tick * 2) % 690, y = AY + (j * 71 + w.tick * 4) % 515;
+                    line(x, y, x + 3, y + 7, {120, 155, 173, 255});
+                }
             }
-        }
-        Vec wind = wind_vector(w);
-        for (auto &g : w.surfaces)
-            if (g.life) {
-                SDL_Color palette[] = {
-                    {0, 0, 0, 0},        {40, 120, 190, 255}, {90, 165, 210, 255},
-                    {54, 110, 48, 255},  {205, 74, 25, 255},  {155, 160, 165, 255},
-                    {155, 120, 18, 255}, {120, 85, 45, 255},  {75, 60, 105, 255}};
-                auto c = palette[g.kind];
-                worldcircle(g.pos, g.radius, {c.r, c.g, c.b, 65}, true);
-                worldcircle(g.pos, g.radius, c);
-                for (int n = -1; n <= 1; n++) {
-                    Vec center = g.pos + Vec{0, n * g.radius / 2};
-                    if (g.kind == Brush) {
-                        worldline(center - Vec{250, 250}, center + Vec{250, 250}, c);
-                        worldline(center + Vec{-250, 250}, center + Vec{250, -250}, c);
-                    } else if (g.kind == ChargedWater) {
-                        worldline(center + Vec{-350, -120}, center, yellow);
-                        worldline(center, center + Vec{300, 150}, yellow);
-                    } else
-                        worldline(center - Vec{g.radius / 2, 0}, center + Vec{g.radius / 2, 0}, c);
-                }
-                label(sx(g.pos.x) - int(std::string(surface_name(g.kind)).size()) * 3,
-                      sy(g.pos.y + g.radius / 2) - 3, surface_name(g.kind), c, 1);
-                if ((g.kind == Water || g.kind == ChargedWater) && length(g.flow)) {
-                    arrow(g.pos + Vec{0, -g.radius / 2}, g.flow, 600 + length(g.flow) * 15, blue);
-                }
-                if (g.effect_timer || g.owner >= 0)
-                    label(sx(g.pos.x) - 12, sy(g.pos.y + g.radius / 2) + 10,
-                          num((g.effect_timer ? g.effect_timer : g.life) / 30) + "S", dark, 1);
-            }
-        // Every sample is the same uniform vector; animation conveys flow, not hidden variation.
-        if (length(wind))
-            for (int gy = 1; gy < 18; gy += 3)
-                for (int gx = 1; gx < 24; gx += 3) {
-                    Vec center{gx * Q, gy * Q};
-                    center = center + scale(wind, (w.tick % 30), 1);
-                    arrow(center, wind, 350 + length(wind) * 30, {50, 95, 115, 120});
-                }
-        if (w.vane_enabled) {
-            worldcircle(w.vane_pos, 950, {90, 100, 115, 255});
-            arrow(w.vane_pos, wind.x || wind.y ? wind : Vec{Q, 0}, 900, blue);
-            label(sx(w.vane_pos.x) + 35, sy(w.vane_pos.y) - 3, "VANE", blue, 1);
-            label(sx(w.vane_pos.x) - 45, sy(w.vane_pos.y) + 34,
-                  w.vane_cooldown ? "RECHARGE " + num((w.vane_cooldown + 29) / 30) + "S"
-                                  : "HOLD 1.5S / AIM",
-                  dark, 1);
-            if (w.vane_capture[0] || w.vane_capture[1])
-                meter(sx(w.vane_pos.x) - 24, sy(w.vane_pos.y) + 20, 48,
-                      std::max(w.vane_capture[0], w.vane_capture[1]), 45,
-                      w.vane_capture[0] ? blue : orange);
-        }
-        worldcircle({12 * Q, 9 * Q}, 2500, {40, 140, 90, 35}, true);
-        worldcircle({12 * Q, 9 * Q}, 2500, green);
-        label(sx(12 * Q) - 15, sy(9 * Q) - 3, "BLOOM", green, 1);
-        if (w.tick >= 1800)
-            worldcircle({12 * Q, 9 * Q}, 12 * Q - (w.tick - 1800) * 7 * Q / 900, orange);
-        for (auto &z : w.zones)
-            if (z.life) {
-                auto &m = Moves[z.move];
-                SDL_Color zone_color = m.kind == Trap ? SDL_Color{140, 65, 160, 255}
-                                       : m.heal       ? green
-                                                      : orange;
-                worldcircle(z.pos, m.radius, {zone_color.r, zone_color.g, zone_color.b, 50}, true);
-                worldcircle(z.pos, m.radius, zone_color);
-                label(sx(z.pos.x) - 15, sy(z.pos.y) - 3,
-                      m.kind == Turret ? "SENTRY"
-                      : m.kind == Trap ? "TRAP"
-                                       : "FIELD",
-                      zone_color, 1);
-                if (z.hp)
-                    meter(sx(z.pos.x) - 16, sy(z.pos.y) - 22, 32, z.hp, 45, green);
-            }
-        for (auto &o : w.obstacles) {
-            if (!o.radius)
-                continue;
-            worldcircle(o.pos + Vec{100, 130}, o.radius, {130, 131, 120, 255}, true);
-            worldcircle(o.pos, o.radius, {158, 159, 148, 255}, true);
-            worldcircle(o.pos, o.radius, black);
-            line(sx(o.pos.x) - 17, sy(o.pos.y) - 16, sx(o.pos.x) + 8, sy(o.pos.y) - 23, white);
-            label(sx(o.pos.x) - 12, sy(o.pos.y) - 3, "ROCK", black, 1);
-        }
-        for (int i = 0; i < 2; i++) {
-            auto &b = w.bodies[i];
-            SDL_Color team = i ? orange : blue;
-            Phase ph = phase(b);
-            if (b.move >= 0 && (ph == Startup || ph == Active)) {
-                const auto &m = Moves[b.move];
-                SDL_Color c = ph == Startup ? yellow : orange;
-                if (m.wind_strength) {
-                    arrow(b.pos, b.locked, 2200, c);
-                    label(sx(b.pos.x) - 24, sy(b.pos.y) + 40,
-                          "WIND " + num(m.wind_strength * b.aim_scale / Q), c, 1);
-                }
-                if (m.surface) {
-                    Vec place = (m.kind == Field || m.kind == Trap || m.kind == Turret)
-                                    ? target_point(w, i, b.move)
-                                    : b.pos;
-                    if (m.kind == Bolt)
-                        place = b.pos + scale(b.locked, m.range);
-                    worldcircle(place, m.surface_radius, c);
-                    label(sx(place.x) - 15, sy(place.y) - 18, surface_name(m.surface), c, 1);
-                }
-                Vec end = b.pos + scale(b.locked, m.range);
-                if (m.kind == Melee || m.kind == Lunge) {
-                    Vec center = b.pos + scale(b.locked, m.range / 2);
-                    worldcircle(center, m.radius, {c.r, c.g, c.b, 50}, true);
-                    worldcircle(center, m.radius, c);
-                    if (m.kind == Lunge) {
-                        int remaining =
-                            ph == Startup ? m.active : std::max(0, m.startup + m.active - b.age);
-                        corridor(center, center + scale(b.locked, m.speed * remaining), m.radius,
-                                 c);
+            Vec wind = wind_vector(w);
+            for (auto &g : w.surfaces)
+                if (g.life) {
+                    SDL_Color palette[] = {
+                        {0, 0, 0, 0},        {40, 120, 190, 255}, {90, 165, 210, 255},
+                        {54, 110, 48, 255},  {205, 74, 25, 255},  {155, 160, 165, 255},
+                        {155, 120, 18, 255}, {120, 85, 45, 255},  {75, 60, 105, 255}};
+                    auto c = palette[g.kind];
+                    worldcircle(g.pos, g.radius, {c.r, c.g, c.b, 65}, true);
+                    worldcircle(g.pos, g.radius, c);
+                    for (int n = -1; n <= 1; n++) {
+                        Vec center = g.pos + Vec{0, n * g.radius / 2};
+                        if (g.kind == Brush) {
+                            worldline(center - Vec{250, 250}, center + Vec{250, 250}, c);
+                            worldline(center + Vec{-250, 250}, center + Vec{250, -250}, c);
+                        } else if (g.kind == ChargedWater) {
+                            worldline(center + Vec{-350, -120}, center, yellow);
+                            worldline(center, center + Vec{300, 150}, yellow);
+                        } else
+                            worldline(center - Vec{g.radius / 2, 0}, center + Vec{g.radius / 2, 0},
+                                      c);
                     }
-                } else if (m.kind == Evade || m.kind == Blink) {
-                    int distance = m.kind == Evade
-                                       ? m.speed * Roster[b.species].dodge_speed / 100 * m.active
-                                       : m.range;
-                    corridor(b.pos, b.pos + scale(b.locked, distance), b.radius, green);
-                    worldline(b.pos, b.pos + scale(b.locked, distance), green);
-                } else if (m.kind == Bolt || m.kind == Beam) {
-                    for (int shot = 0; shot < m.shots; shot++) {
-                        Vec dir =
-                            unit(b.locked + scale(Vec{-b.locked.y, b.locked.x},
-                                                  (2 * shot - (m.shots - 1)) * m.spread, 2 * Q));
-                        Vec begin = b.pos + scale(dir, m.min_range),
-                            finish = b.pos + scale(dir, m.range);
-                        corridor(begin, finish, m.radius, c);
-                        worldline(begin, finish, {c.r, c.g, c.b, 100});
+                    label(sx(g.pos.x) - int(std::string(surface_name(g.kind)).size()) * 3,
+                          sy(g.pos.y + g.radius / 2) - 3, surface_name(g.kind), c, 1);
+                    if ((g.kind == Water || g.kind == ChargedWater) && length(g.flow)) {
+                        arrow(g.pos + Vec{0, -g.radius / 2}, g.flow, 600 + length(g.flow) * 15,
+                              blue);
                     }
-                } else if (m.kind == Nova) {
-                    worldcircle(b.pos, m.radius, c);
-                    if (m.min_range)
-                        worldcircle(b.pos, m.min_range, dark);
-                } else if (m.kind == Field || m.kind == Trap || m.kind == Turret) {
-                    end = target_point(w, i, b.move);
-                    worldcircle(end, m.radius, {c.r, c.g, c.b, 35}, true);
-                    worldcircle(end, m.radius, c);
-                    worldline(b.pos, end, {c.r, c.g, c.b, 100});
-                } else
-                    worldcircle(b.pos, b.radius + 180, c);
-            }
-            if (b.shield)
-                worldcircle(b.pos, b.radius + 100, blue);
-            if (b.guard)
-                arc(b.pos, b.aim, b.radius + 240, std::acos(1. / 3.), white);
-            if (b.haste)
-                worldcircle(b.pos, b.radius + 240, green);
-            if (b.burn)
-                worldcircle(b.pos, b.radius + 140, orange);
-            worldcircle(b.pos + Vec{80, 120}, b.radius, {110, 110, 100, 120}, true);
-            worldcircle(b.pos, b.radius, team, true);
-            worldcircle(b.pos, b.radius, black);
-            // A broad nose and rear shoulder make orientation legible at normal zoom.
-            Vec nose = b.pos + scale(b.aim, b.radius + 280);
-            Vec shoulder = b.pos - scale(b.aim, b.radius / 3);
-            Vec side = scale(Vec{-b.aim.y, b.aim.x}, b.radius * 3 / 4);
-            worldline(shoulder + side, nose, white);
-            worldline(shoulder - side, nose, white);
-            worldline(shoulder + side, shoulder - side, black);
-            arc(b.pos, b.aim, b.radius + 100, .65, white);
-            label(sx(b.pos.x) - 3, sy(b.pos.y) - 3, i ? "B" : "A", black, 1);
-            meter(sx(b.pos.x) - 24, sy(b.pos.y) - 34, 48, b.hp, Roster[b.species].hp, green);
-            std::string state = phase_name(ph);
-            if (b.move >= 0) {
-                const auto &m = Moves[b.move];
-                int mobility = ph == Startup  ? m.move_start
-                               : ph == Active ? m.move_active
-                                              : m.move_recovery;
-                if (mobility == 0 && ph != Recovery && m.kind != Evade && m.kind != Lunge &&
-                    m.kind != Blink) {
-                    // Ground braces stay fixed while a planted attack commits.
-                    worldline(b.pos + side - scale(b.aim, 300), b.pos + side + scale(b.aim, 300),
-                              black);
-                    worldline(b.pos - side - scale(b.aim, 300), b.pos - side + scale(b.aim, 300),
-                              black);
-                    state = "PLANTED " + state;
+                    if (g.effect_timer || g.owner >= 0)
+                        label(sx(g.pos.x) - 12, sy(g.pos.y + g.radius / 2) + 10,
+                              num((g.effect_timer ? g.effect_timer : g.life) / 30) + "S", dark, 1);
                 }
-                if (m.kind == Evade)
-                    state = ph == Active ? "SIDESTEP" : state;
-                int total = ph == Startup ? m.startup : ph == Active ? m.active : m.recovery;
-                int elapsed = ph == Startup  ? b.age
-                              : ph == Active ? b.age - m.startup
-                                             : b.age - m.startup - m.active;
-                meter(sx(b.pos.x) - 24, sy(b.pos.y) - 20, 48, total - elapsed, total,
-                      ph == Startup  ? yellow
-                      : ph == Active ? orange
-                                     : dark);
-            }
-            label(sx(b.pos.x) - int(state.size()) * 3, sy(b.pos.y) + 27, state,
-                  ph == Startup ? orange : dark, 1);
-        }
-        // The cursor indicates requested aim; the creature's nose is authoritative facing.
-        if (manual && !catalog) {
-            int mx, my;
-            SDL_GetMouseState(&mx, &my);
-            float lx, ly;
-            SDL_RenderWindowToLogical(r, mx, my, &lx, &ly);
-            if (lx >= AX && lx < AX + 24 * S && ly >= AY && ly < AY + 18 * S) {
-                line(int(lx) - 6, int(ly), int(lx) + 6, int(ly), blue);
-                line(int(lx), int(ly) - 6, int(lx), int(ly) + 6, blue);
-            }
-        }
-        for (auto &p : w.projectiles)
-            if (p.life) {
-                worldcircle(p.pos, (Moves[p.move].kind == Turret ? 160 : Moves[p.move].radius) + 60,
-                            orange, true);
-                worldcircle(p.pos, Moves[p.move].kind == Turret ? 160 : Moves[p.move].radius,
-                            yellow);
-            }
-        SDL_RenderSetClipRect(r, nullptr);
-        if (w.terminal || w.truncated) {
-            panel(170, 362, 400, 92);
-            label(190, 380,
-                  w.truncated     ? "TIME LIMIT VERDICT"
-                  : w.winner < 0  ? "DRAW"
-                  : w.winner == 0 ? "CREATURE A WINS"
-                                  : "CREATURE B WINS",
-                  blue, 2);
-            label(192, 416, "RESET TO PLAY / SAVE REPLAY TO INSPECT", black, 1);
-        } else if (paused) {
-            panel(285, 164, 170, 26);
-            label(300, 173, "PAUSED / N TO STEP", black, 1);
-        }
-        panel(30, 164, 210, 74, true);
-        label(38, 172, "UNIFORM WIND / Z-X CAST POWER", blue, 1);
-        label(38, 188, "BASE (" + num(w.wind_base.x) + "," + num(w.wind_base.y) + ")", dark, 1);
-        for (int owner = 0; owner < 2; owner++) {
-            const auto &g = w.winds[owner];
-            label(38, 202 + owner * 14,
-                  std::string(owner ? "B " : "A ") + "(" + num(g.force.x) + "," + num(g.force.y) +
-                      ") " + num((g.life + 29) / 30) + "S",
-                  owner ? orange : blue, 1);
-        }
-        label(28, 696,
-              "BLOOM  A " + num(w.bodies[0].control) + " / B " + num(w.bodies[1].control) +
-                  "  WIND (" + num(wind.x) + "," + num(wind.y) +
-                  ")  A:" + num((w.winds[0].life + 29) / 30) +
-                  "S B:" + num((w.winds[1].life + 29) / 30) + "S",
-              green, 1);
-        button(28, 550, 690, 168,
-               arena == 0   ? "ARENA: PILLARS [L]"
-               : arena == 1 ? "ARENA: GROVE [L]"
-                            : "ARENA: OPEN [L]");
-        label(28, 714,
-              "TICK " + num(w.tick) + "  SEED " + num(seed) +
-                  "  WIND CAST [Z/X]: " + num(wind_power) + "%  TAB: ROSTER",
-              dark, 1);
-        panel(738, 108, 330, 220, true);
-        label(752, 121, "CREATURE INSPECTOR", blue, 2);
-        for (int i = 0; i < 2; i++) {
-            auto &b = w.bodies[i];
-            int y = 151 + i * 80;
-            label(752, y, std::string(i ? "B / " : "A / ") + Roster[b.species].name,
-                  i ? orange : blue, 1);
-            label(918, y, manual && i == 0 ? "HUMAN" : "SCRIPTED", dark, 1);
-            meter(752, y + 17, 196, b.hp, Roster[b.species].hp, green);
-            label(958, y + 19, "HP " + num(b.hp), black, 1);
-            meter(752, y + 34, 196, b.energy, 1000, blue);
-            label(958, y + 36, "EN " + num(b.energy / 10), black, 1);
-            label(752, y + 67,
-                  "TURN " + num(Roster[b.species].turn_degrees * 30) + "  SIDE " +
-                      num(Roster[b.species].strafe) + "%  BACK " + num(Roster[b.species].backward) +
-                      "%",
-                  dark, 1);
-            label(752, y + 53,
-                  b.move < 0 ? "READY"
-                             : std::string(Moves[b.move].name) + " / " + phase_name(phase(b)),
-                  black, 1);
-        }
-        label(752, 311,
-              "METER " + num(w.bodies[0].meter) + " SHIELD " + num(w.bodies[0].shield) + " WET " +
-                  num(w.wetness / 10) + "%",
-              dark, 1);
-        panel(738, 338, 330, 148, true);
-        label(752, 350, "MOVE PALETTE / A", blue, 1);
-        auto mask = action_mask(w, 0);
-        for (int j = 0; j < 5; j++) {
-            int y = 370 + j * 21;
-            buttons.push_back({{750, y - 3, 305, 20}, "MOVE", 50 + j});
-            label(752, y, (j == 4 ? "SPC " : num(j + 1) + "   ") + move_for(w.bodies[0], j).name,
-                  mask[j + 1] ? black : dark, 1);
-            label(942, y,
-                  w.bodies[0].cooldown[j] ? "CD " + num(w.bodies[0].cooldown[j]) + "T"
-                                          : (j == 4                                ? "MOVE DODGE"
-                                             : move_for(w.bodies[0], j).move_start ? "MOBILE"
-                                                                                   : "PLANT"),
-                  mask[j + 1] ? green : dark, 1);
-        }
-        panel(738, 496, 330, 100);
-        label(752, 507, "TRAINER GUIDANCE", blue, 1);
-        button(11, 750, 522, 72, "ATTACK");
-        button(12, 828, 522, 72, "RETREAT");
-        button(13, 906, 522, 80, "CONSERVE");
-        button(14, 992, 522, 64, "FREE");
-        button(15, 750, 558, 96, "PRAISE +");
-        button(16, 852, 558, 104, "CORRECT -");
-        button(9, 962, 558, 94, "LOAD REPLAY");
-        panel(738, 606, 330, 120, true);
-        label(752, 618, "EVENT MONITOR", blue, 1);
-        const char *names[] = {"",          "START",   "RELEASE",  "HIT",       "DODGE",
-                               "INTERRUPT", "KO",      "GUIDANCE", "POOL FULL", "END",
-                               "HEAL",      "SHIELD",  "CAPTURE",  "PARRY",     "STATUS",
-                               "WALL SLAM", "TERRAIN", "WIND"};
-        for (int j = 0; j < std::min(6, w.event_count); j++) {
-            auto &v = w.events[(w.event_head - 1 - j + HistoryCount) % HistoryCount];
-            label(752, 638 + j * 13,
-                  num(v.tick) + "  " + (v.actor ? "B " : "A ") + names[v.kind] +
-                      (v.amount ? " " + num(v.amount) : ""),
-                  black, 1);
-        }
-        panel(22, 738, 1046, 22, true);
-        label(30, 746, note, black, 1);
-        label(950, 746, playback ? "REPLAY" : manual ? "MANUAL" : "AUTOPLAY", blue, 1);
-        if (catalog) {
-            buttons.clear();
-            panel(80, 105, 940, 615);
-            rect(84, 109, 932, 28, {0, 0, 128, 255});
-            label(96, 116, "SPECIES CATALOG / 40 EXECUTABLE KITS", white, 2);
-            button(25, 98, 149, 160, catalog_target == 0 ? "SELECT FOR: A" : "SELECT FOR: B");
-            button(26, 718, 149, 88, "PREVIOUS");
-            button(27, 812, 149, 88, "NEXT");
-            button(24, 908, 149, 94, "CLOSE");
-            label(285, 159, "PAGE " + num(catalog_page + 1) + " / 4", black, 1);
-            for (int j = 0; j < 10; j++) {
-                int id = catalog_page * 10 + j, y = 191 + j * 47;
-                auto &sp = Roster[id];
-                button(100 + id, 98, y, 196, num(id + 1) + " " + sp.name);
-                label(314, y + 3, sp.role, blue, 1);
-                label(314, y + 18,
-                      "HP " + num(sp.hp) + "  TURN " + num(sp.turn_degrees * 30) + "  SIDE " +
-                          num(sp.strafe) + "%  BACK " + num(sp.backward) + "%",
+            // Every sample is the same uniform vector; animation conveys flow, not hidden
+            // variation.
+            if (length(wind))
+                for (int gy = 1; gy < 18; gy += 3)
+                    for (int gx = 1; gx < 24; gx += 3) {
+                        Vec center{gx * Q, gy * Q};
+                        center = center + scale(wind, (w.tick % 30), 1);
+                        arrow(center, wind, 350 + length(wind) * 30, {50, 95, 115, 120});
+                    }
+            if (w.vane_enabled) {
+                worldcircle(w.vane_pos, 950, {90, 100, 115, 255});
+                arrow(w.vane_pos, wind.x || wind.y ? wind : Vec{Q, 0}, 900, blue);
+                label(sx(w.vane_pos.x) + 35, sy(w.vane_pos.y) - 3, "VANE", blue, 1);
+                label(sx(w.vane_pos.x) - 45, sy(w.vane_pos.y) + 34,
+                      w.vane_cooldown ? "RECHARGE " + num((w.vane_cooldown + 29) / 30) + "S"
+                                      : "HOLD 1.5S / AIM",
                       dark, 1);
+                if (w.vane_capture[0] || w.vane_capture[1])
+                    meter(sx(w.vane_pos.x) - 24, sy(w.vane_pos.y) + 20, 48,
+                          std::max(w.vane_capture[0], w.vane_capture[1]), 45,
+                          w.vane_capture[0] ? blue : orange);
             }
-            label(
-                98, 681,
-                "EACH SPECIES: FOUR SIGNATURE MOVES + SHARED DODGE. SELECTING RESTARTS THE FIGHT.",
-                black, 1);
-        }
+            worldcircle({12 * Q, 9 * Q}, 2500, {40, 140, 90, 35}, true);
+            worldcircle({12 * Q, 9 * Q}, 2500, green);
+            label(sx(12 * Q) - 15, sy(9 * Q) - 3, "BLOOM", green, 1);
+            if (w.tick >= 1800)
+                worldcircle({12 * Q, 9 * Q}, 12 * Q - (w.tick - 1800) * 7 * Q / 900, orange);
+            for (auto &z : w.zones)
+                if (z.life) {
+                    auto &m = Moves[z.move];
+                    SDL_Color zone_color = m.kind == Trap ? SDL_Color{140, 65, 160, 255}
+                                           : m.heal       ? green
+                                                          : orange;
+                    worldcircle(z.pos, m.radius, {zone_color.r, zone_color.g, zone_color.b, 50},
+                                true);
+                    worldcircle(z.pos, m.radius, zone_color);
+                    label(sx(z.pos.x) - 15, sy(z.pos.y) - 3,
+                          m.kind == Turret ? "SENTRY"
+                          : m.kind == Trap ? "TRAP"
+                                           : "FIELD",
+                          zone_color, 1);
+                    if (z.hp)
+                        meter(sx(z.pos.x) - 16, sy(z.pos.y) - 22, 32, z.hp, 45, green);
+                }
+            for (auto &o : w.obstacles) {
+                if (!o.radius)
+                    continue;
+                worldcircle(o.pos + Vec{100, 130}, o.radius, {130, 131, 120, 255}, true);
+                worldcircle(o.pos, o.radius, {158, 159, 148, 255}, true);
+                worldcircle(o.pos, o.radius, black);
+                line(sx(o.pos.x) - 17, sy(o.pos.y) - 16, sx(o.pos.x) + 8, sy(o.pos.y) - 23, white);
+                label(sx(o.pos.x) - 12, sy(o.pos.y) - 3, "ROCK", black, 1);
+            }
+            for (int i = 0; i < 2; i++) {
+                auto &b = w.bodies[i];
+                SDL_Color team = i ? orange : blue;
+                Phase ph = phase(b);
+                if (b.move >= 0 && (ph == Startup || ph == Active)) {
+                    const auto &m = Moves[b.move];
+                    SDL_Color c = ph == Startup ? yellow : orange;
+                    if (m.wind_strength) {
+                        arrow(b.pos, b.locked, 2200, c);
+                        label(sx(b.pos.x) - 24, sy(b.pos.y) + 40,
+                              "WIND " + num(m.wind_strength * b.aim_scale / Q), c, 1);
+                    }
+                    if (m.surface) {
+                        Vec place = (m.kind == Field || m.kind == Trap || m.kind == Turret)
+                                        ? target_point(w, i, b.move)
+                                        : b.pos;
+                        if (m.kind == Bolt)
+                            place = b.pos + scale(b.locked, m.range);
+                        worldcircle(place, m.surface_radius, c);
+                        label(sx(place.x) - 15, sy(place.y) - 18, surface_name(m.surface), c, 1);
+                    }
+                    Vec end = b.pos + scale(b.locked, m.range);
+                    if (m.kind == Melee || m.kind == Lunge) {
+                        Vec center = b.pos + scale(b.locked, m.range / 2);
+                        worldcircle(center, m.radius, {c.r, c.g, c.b, 50}, true);
+                        worldcircle(center, m.radius, c);
+                        if (m.kind == Lunge) {
+                            int remaining = ph == Startup
+                                                ? m.active
+                                                : std::max(0, m.startup + m.active - b.age);
+                            corridor(center, center + scale(b.locked, m.speed * remaining),
+                                     m.radius, c);
+                        }
+                    } else if (m.kind == Evade || m.kind == Blink) {
+                        int distance = m.kind == Evade ? m.speed * Roster[b.species].dodge_speed /
+                                                             100 * m.active
+                                                       : m.range;
+                        corridor(b.pos, b.pos + scale(b.locked, distance), b.radius, green);
+                        worldline(b.pos, b.pos + scale(b.locked, distance), green);
+                    } else if (m.kind == Bolt || m.kind == Beam) {
+                        for (int shot = 0; shot < m.shots; shot++) {
+                            Vec dir = unit(b.locked + scale(Vec{-b.locked.y, b.locked.x},
+                                                            (2 * shot - (m.shots - 1)) * m.spread,
+                                                            2 * Q));
+                            Vec begin = b.pos + scale(dir, m.min_range),
+                                finish = b.pos + scale(dir, m.range);
+                            corridor(begin, finish, m.radius, c);
+                            worldline(begin, finish, {c.r, c.g, c.b, 100});
+                        }
+                    } else if (m.kind == Nova) {
+                        worldcircle(b.pos, m.radius, c);
+                        if (m.min_range)
+                            worldcircle(b.pos, m.min_range, dark);
+                    } else if (m.kind == Field || m.kind == Trap || m.kind == Turret) {
+                        end = target_point(w, i, b.move);
+                        worldcircle(end, m.radius, {c.r, c.g, c.b, 35}, true);
+                        worldcircle(end, m.radius, c);
+                        worldline(b.pos, end, {c.r, c.g, c.b, 100});
+                    } else
+                        worldcircle(b.pos, b.radius + 180, c);
+                }
+                if (b.shield)
+                    worldcircle(b.pos, b.radius + 100, blue);
+                if (b.guard)
+                    arc(b.pos, b.aim, b.radius + 240, std::acos(1. / 3.), white);
+                if (b.haste)
+                    worldcircle(b.pos, b.radius + 240, green);
+                if (b.burn)
+                    worldcircle(b.pos, b.radius + 140, orange);
+                worldcircle(b.pos + Vec{80, 120}, b.radius, {110, 110, 100, 120}, true);
+                worldcircle(b.pos, b.radius, team, true);
+                worldcircle(b.pos, b.radius, black);
+                // A broad nose and rear shoulder make orientation legible at normal zoom.
+                Vec nose = b.pos + scale(b.aim, b.radius + 280);
+                Vec shoulder = b.pos - scale(b.aim, b.radius / 3);
+                Vec side = scale(Vec{-b.aim.y, b.aim.x}, b.radius * 3 / 4);
+                worldline(shoulder + side, nose, white);
+                worldline(shoulder - side, nose, white);
+                worldline(shoulder + side, shoulder - side, black);
+                arc(b.pos, b.aim, b.radius + 100, .65, white);
+                label(sx(b.pos.x) - 3, sy(b.pos.y) - 3, i ? "B" : "A", black, 1);
+                meter(sx(b.pos.x) - 24, sy(b.pos.y) - 34, 48, b.hp, Roster[b.species].hp, green);
+                std::string state = phase_name(ph);
+                if (b.move >= 0) {
+                    const auto &m = Moves[b.move];
+                    int mobility = ph == Startup  ? m.move_start
+                                   : ph == Active ? m.move_active
+                                                  : m.move_recovery;
+                    if (mobility == 0 && ph != Recovery && m.kind != Evade && m.kind != Lunge &&
+                        m.kind != Blink) {
+                        // Ground braces stay fixed while a planted attack commits.
+                        worldline(b.pos + side - scale(b.aim, 300),
+                                  b.pos + side + scale(b.aim, 300), black);
+                        worldline(b.pos - side - scale(b.aim, 300),
+                                  b.pos - side + scale(b.aim, 300), black);
+                        state = "PLANTED " + state;
+                    }
+                    if (m.kind == Evade)
+                        state = ph == Active ? "SIDESTEP" : state;
+                    int total = ph == Startup ? m.startup : ph == Active ? m.active : m.recovery;
+                    int elapsed = ph == Startup  ? b.age
+                                  : ph == Active ? b.age - m.startup
+                                                 : b.age - m.startup - m.active;
+                    meter(sx(b.pos.x) - 24, sy(b.pos.y) - 20, 48, total - elapsed, total,
+                          ph == Startup  ? yellow
+                          : ph == Active ? orange
+                                         : dark);
+                }
+                label(sx(b.pos.x) - int(state.size()) * 3, sy(b.pos.y) + 27, state,
+                      ph == Startup ? orange : dark, 1);
+            }
+            // The cursor indicates requested aim; the creature's nose is authoritative facing.
+            if (manual && !catalog) {
+                int mx, my;
+                SDL_GetMouseState(&mx, &my);
+                float lx, ly;
+                SDL_RenderWindowToLogical(r, mx, my, &lx, &ly);
+                if (lx >= AX && lx < AX + 24 * S && ly >= AY && ly < AY + 18 * S) {
+                    line(int(lx) - 6, int(ly), int(lx) + 6, int(ly), blue);
+                    line(int(lx), int(ly) - 6, int(lx), int(ly) + 6, blue);
+                }
+            }
+            for (auto &p : w.projectiles)
+                if (p.life) {
+                    worldcircle(p.pos,
+                                (Moves[p.move].kind == Turret ? 160 : Moves[p.move].radius) + 60,
+                                orange, true);
+                    worldcircle(p.pos, Moves[p.move].kind == Turret ? 160 : Moves[p.move].radius,
+                                yellow);
+                }
+            SDL_RenderSetClipRect(r, nullptr);
+            if (w.terminal || w.truncated) {
+                panel(170, 362, 400, 92);
+                label(190, 380,
+                      w.truncated     ? "TIME LIMIT VERDICT"
+                      : w.winner < 0  ? "DRAW"
+                      : w.winner == 0 ? "CREATURE A WINS"
+                                      : "CREATURE B WINS",
+                      blue, 2);
+                label(192, 416, "RESET TO PLAY / SAVE REPLAY TO INSPECT", black, 1);
+            } else if (paused) {
+                panel(285, 164, 170, 26);
+                label(300, 173, "PAUSED / N TO STEP", black, 1);
+            }
+            panel(30, 164, 210, 74, true);
+            label(38, 172, "UNIFORM WIND / Z-X CAST POWER", blue, 1);
+            label(38, 188, "BASE (" + num(w.wind_base.x) + "," + num(w.wind_base.y) + ")", dark, 1);
+            for (int owner = 0; owner < 2; owner++) {
+                const auto &g = w.winds[owner];
+                label(38, 202 + owner * 14,
+                      std::string(owner ? "B " : "A ") + "(" + num(g.force.x) + "," +
+                          num(g.force.y) + ") " + num((g.life + 29) / 30) + "S",
+                      owner ? orange : blue, 1);
+            }
+            label(28, 696,
+                  "BLOOM  A " + num(w.bodies[0].control) + " / B " + num(w.bodies[1].control) +
+                      "  WIND (" + num(wind.x) + "," + num(wind.y) +
+                      ")  A:" + num((w.winds[0].life + 29) / 30) +
+                      "S B:" + num((w.winds[1].life + 29) / 30) + "S",
+                  green, 1);
+            button(28, 550, 690, 168,
+                   arena == 0   ? "ARENA: PILLARS [L]"
+                   : arena == 1 ? "ARENA: GROVE [L]"
+                                : "ARENA: OPEN [L]");
+            label(28, 714,
+                  "TICK " + num(w.tick) + "  SEED " + num(seed) +
+                      "  WIND CAST [Z/X]: " + num(wind_power) + "%  TAB: ROSTER",
+                  dark, 1);
+            panel(738, 108, 330, 220, true);
+            label(752, 121, "CREATURE INSPECTOR", blue, 2);
+            for (int i = 0; i < 2; i++) {
+                auto &b = w.bodies[i];
+                int y = 151 + i * 80;
+                label(752, y, std::string(i ? "B / " : "A / ") + Roster[b.species].name,
+                      i ? orange : blue, 1);
+                label(918, y, manual && i == 0 ? "HUMAN" : "SCRIPTED", dark, 1);
+                meter(752, y + 17, 196, b.hp, Roster[b.species].hp, green);
+                label(958, y + 19, "HP " + num(b.hp), black, 1);
+                meter(752, y + 34, 196, b.energy, 1000, blue);
+                label(958, y + 36, "EN " + num(b.energy / 10), black, 1);
+                label(752, y + 67,
+                      "TURN " + num(Roster[b.species].turn_degrees * 30) + "  SIDE " +
+                          num(Roster[b.species].strafe) + "%  BACK " +
+                          num(Roster[b.species].backward) + "%",
+                      dark, 1);
+                label(752, y + 53,
+                      b.move < 0 ? "READY"
+                                 : std::string(Moves[b.move].name) + " / " + phase_name(phase(b)),
+                      black, 1);
+            }
+            label(752, 311,
+                  "METER " + num(w.bodies[0].meter) + " SHIELD " + num(w.bodies[0].shield) +
+                      " WET " + num(w.wetness / 10) + "%",
+                  dark, 1);
+            panel(738, 338, 330, 148, true);
+            label(752, 350, "MOVE PALETTE / A", blue, 1);
+            auto mask = action_mask(w, 0);
+            for (int j = 0; j < 5; j++) {
+                int y = 370 + j * 21;
+                buttons.push_back({{750, y - 3, 305, 20}, "MOVE", 50 + j});
+                label(752, y,
+                      (j == 4 ? "SPC " : num(j + 1) + "   ") + move_for(w.bodies[0], j).name,
+                      mask[j + 1] ? black : dark, 1);
+                label(910, y, num(move_for(w.bodies[0], j).cost / 10) + "E", blue, 1);
+                label(942, y,
+                      w.bodies[0].energy < move_for(w.bodies[0], j).cost ? "LOW ENERGY"
+                      : w.bodies[0].cooldown[j] ? "CD " + num(w.bodies[0].cooldown[j]) + "T"
+                                                : (j == 4 ? "MOVE DODGE"
+                                                   : move_for(w.bodies[0], j).move_start ? "MOBILE"
+                                                                                         : "PLANT"),
+                      mask[j + 1] ? green : dark, 1);
+            }
+            panel(738, 496, 330, 100);
+            label(752, 507, "TRAINER GUIDANCE", blue, 1);
+            button(11, 750, 522, 72, "ATTACK");
+            button(12, 828, 522, 72, "RETREAT");
+            button(13, 906, 522, 80, "CONSERVE");
+            button(14, 992, 522, 64, "FREE");
+            button(15, 750, 558, 96, "PRAISE +");
+            button(16, 852, 558, 104, "CORRECT -");
+            button(9, 962, 558, 94, "LOAD REPLAY");
+            panel(738, 606, 330, 120, true);
+            label(752, 618, "EVENT MONITOR", blue, 1);
+            const char *names[] = {"",          "START",   "RELEASE",  "HIT",       "DODGE",
+                                   "INTERRUPT", "KO",      "GUIDANCE", "POOL FULL", "END",
+                                   "HEAL",      "SHIELD",  "CAPTURE",  "PARRY",     "STATUS",
+                                   "WALL SLAM", "TERRAIN", "WIND"};
+            for (int j = 0; j < std::min(6, w.event_count); j++) {
+                auto &v = w.events[(w.event_head - 1 - j + HistoryCount) % HistoryCount];
+                label(752, 638 + j * 13,
+                      num(v.tick) + "  " + (v.actor ? "B " : "A ") + names[v.kind] +
+                          (v.amount ? " " + num(v.amount) : ""),
+                      black, 1);
+            }
+            panel(22, 738, 1046, 22, true);
+            label(30, 746, note, black, 1);
+            label(950, 746, playback ? "REPLAY" : manual ? "MANUAL" : "AUTOPLAY", blue, 1);
+            if (catalog) {
+                buttons.clear();
+                panel(80, 105, 940, 615);
+                rect(84, 109, 932, 28, {0, 0, 128, 255});
+                label(96, 116, "SPECIES CATALOG / 40 EXECUTABLE KITS", white, 2);
+                button(25, 98, 149, 160, catalog_target == 0 ? "SELECT FOR: A" : "SELECT FOR: B");
+                button(26, 718, 149, 88, "PREVIOUS");
+                button(27, 812, 149, 88, "NEXT");
+                button(24, 908, 149, 94, "CLOSE");
+                label(285, 159, "PAGE " + num(catalog_page + 1) + " / 4", black, 1);
+                for (int j = 0; j < 10; j++) {
+                    int id = catalog_page * 10 + j, y = 191 + j * 47;
+                    auto &sp = Roster[id];
+                    button(100 + id, 98, y, 196, num(id + 1) + " " + sp.name);
+                    label(314, y + 3, sp.role, blue, 1);
+                    label(314, y + 18,
+                          "HP " + num(sp.hp) + "  TURN " + num(sp.turn_degrees * 30) + "  SIDE " +
+                              num(sp.strafe) + "%  BACK " + num(sp.backward) + "%",
+                          dark, 1);
+                }
+                label(98, 681,
+                      "EACH SPECIES: FOUR SIGNATURE MOVES + SHARED DODGE. SELECTING RESTARTS THE "
+                      "FIGHT.",
+                      black, 1);
+            }
+        } // Debug skin
         rendered++;
         if (frames_limit && rendered >= frames_limit) {
             int capture_w, capture_h;
@@ -879,11 +946,13 @@ int main(int argc, char **argv) {
                                                             SDL_PIXELFORMAT_ARGB8888);
             SDL_RenderReadPixels(r, nullptr, s->format->format, s->pixels, s->pitch);
             SDL_SaveBMP(s, (captures + "/viewer.bmp").c_str());
+            std::cout << "Render state " << std::hex << hash(w) << std::dec << "\n";
             SDL_FreeSurface(s);
             run = false;
         }
         SDL_RenderPresent(r);
     }
+    tinikami::free();
     SDL_DestroyRenderer(r);
     SDL_DestroyWindow(window);
     SDL_Quit();

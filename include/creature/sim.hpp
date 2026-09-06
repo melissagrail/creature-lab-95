@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32, ZoneCount = 16,
               HistoryCount = 64;
-constexpr uint32_t RulesVersion = 5, ObservationVersion = 5;
+constexpr uint32_t RulesVersion = 6, ObservationVersion = 6;
 struct Vec {
     int32_t x = 0, y = 0;
 };
@@ -121,8 +121,9 @@ struct Body {
     int32_t meter = 0, counter = 0, passive_timer = 0, last_slot = -1, idle_ticks = 0,
             stationary = 0, control = 0, capture = 0;
     std::array<int32_t, 5> cooldown{};
-    int32_t guidance = Free, guidance_age = 0, surface_mask = 0;
+    int32_t guidance = Free, guidance_age = 0, surface_mask = 0, energy_delay = 0;
 };
+int energy_regen(const Body &);
 struct Projectile {
     Vec pos{}, vel{}, origin{};
     int32_t life = 0, owner = 0, move = 0, age = 0, hit_mask = 0, bounces = 0, returning = 0,

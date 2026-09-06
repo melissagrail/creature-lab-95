@@ -135,6 +135,64 @@ int main() {
                 CHECK(length(wet.bodies[0].pos - origin) == 0);
             }
     }
+    // Shared-energy opportunity costs: exact payment, finite reserve, and breathing windows.
+    for (int sp = 0; sp < SpeciesCount; ++sp) {
+        World energy = locomotion_world(sp);
+        energy.bodies[0].energy = 500;
+        World moving = energy;
+        for (int t = 0; t < 10; ++t) {
+            step(energy, {}, 1);
+            step(moving, {{{Q, 0, Q, 0, 0}, {}}}, 1);
+        }
+        CHECK(energy.bodies[0].energy == std::min(1000, 500 + 10 * Roster[sp].regen));
+        CHECK(energy.bodies[0].energy == moving.bodies[0].energy); // Locomotion is free.
+        energy = locomotion_world(sp);
+        auto &body = energy.bodies[0];
+        const auto &m = move_for(body, 0);
+        body.energy = m.cost - 1;
+        CHECK(!action_mask(energy, 0)[1]);
+        step(energy, {{{0, 0, Q, 0, 1}, {}}}, 1);
+        CHECK(body.move == -1 && body.cooldown[0] == 0 && body.energy_delay == 0);
+        body.energy = m.cost;
+        CHECK(action_mask(energy, 0)[1]);
+        cast(energy, 0);
+        CHECK(body.energy == 0 && body.energy_delay == 23);
+        CHECK(!action_mask(energy, 0)[5]); // Same pool pays for emergency dodge.
+        CHECK(observe(energy, 1).entities[41] == 0);
+        CHECK(observe(energy, 0).global[29] == 23.f / 24);
+        auto bytes = snapshot(energy);
+        World copy;
+        CHECK(restore(copy, bytes.data(), bytes.size()));
+        CHECK(hash(copy) == hash(energy));
+    }
+    {
+        World energy = locomotion_world(0);
+        cast(energy, 0);
+        const int paid = energy.bodies[0].energy;
+        advance(energy, 23);
+        CHECK(energy.bodies[0].energy_delay == 0);
+        CHECK(energy.bodies[0].energy == paid);
+        step(energy, {}, 1);
+        CHECK(energy.bodies[0].energy == paid + Roster[0].regen);
+        CHECK(observe(energy, 0).global[30] == float(Roster[0].regen) / 12);
+        World cannon = locomotion_world(2);
+        cast(cannon, 0);
+        int cannon_paid = cannon.bodies[0].energy;
+        advance(cannon, 24);
+        CHECK(cannon.bodies[0].energy_delay == 0 && phase(cannon.bodies[0]) == Startup);
+        CHECK(cannon.bodies[0].energy == cannon_paid && energy_regen(cannon.bodies[0]) == 0);
+        auto before = hash(energy);
+        World bad = energy;
+        bad.bodies[0].energy_delay = 25;
+        auto bytes = snapshot(bad);
+        CHECK(!restore(energy, bytes.data(), bytes.size()) && hash(energy) == before);
+        World guard = locomotion_world(22);
+        guard.bodies[0].energy = 500;
+        guard.bodies[0].energy_delay = 10;
+        guard.bodies[0].guard = 20;
+        step(guard, {}, 1);
+        CHECK(guard.bodies[0].energy == 507); // Guard passive bypasses the base lock.
+    }
     // Every authored move: request, resource cost, telegraph, release, cooldown, snapshot.
     for (int species = 0; species < 40; species++)
         for (int slot = 0; slot < 5; slot++) {
@@ -145,7 +203,7 @@ int main() {
             cast(w, slot);
             CHECK(w.bodies[0].move == id);
             CHECK(w.bodies[0].cooldown[slot] == m.cooldown - 1);
-            CHECK(w.bodies[0].energy == 1000 - m.cost + Roster[species].regen ||
+            CHECK(w.bodies[0].energy == 1000 - m.cost ||
                   (species == 30 && w.bodies[0].counter % 3 == 0));
             CHECK(phase(w.bodies[0]) == Startup || m.startup == 1);
             advance(w, m.startup);
@@ -230,7 +288,7 @@ int main() {
     // No early hit, one contact per action, attacks trade and double KO is a draw.
     a = duel();
     cast(a, 0);
-    advance(a, 4);
+    advance(a, Moves[0].startup - 1);
     CHECK(a.bodies[1].hp == Roster[26].hp);
     advance(a, 2);
     int damaged = a.bodies[1].hp;
@@ -240,7 +298,7 @@ int main() {
     a = duel(14, 14);
     a.bodies[0].hp = a.bodies[1].hp = 10;
     step(a, {{{0, 0, Q, 0, 1}, {0, 0, -Q, 0, 1}}});
-    advance(a, 7);
+    advance(a, Moves[56].startup + 1);
     CHECK(a.terminal && a.winner == -1);
     // Minimum range, evasion, guard, shieldbreaking, CC lockout and cleanse.
     a = duel(2);
@@ -285,7 +343,7 @@ int main() {
     // Destructible turret and trap, expiry, bank shot and return-hit lifetime.
     a = duel(20);
     cast(a, 1);
-    advance(a, 19);
+    advance(a, Moves[81].startup);
     CHECK(a.zones[0].hp == 45);
     a.bodies[1].pos = a.zones[0].pos;
     for (int k = 0; k < 4; k++) {
@@ -351,7 +409,7 @@ int main() {
     CHECK(step(a, {}, 1).features[0].dealt == Moves[41].damage + 8); // Trapper
     a = duel(11);
     cast(a, 3);
-    advance(a, 4);
+    advance(a, Moves[47].startup);
     CHECK(a.bodies[0].haste > 50); // Renewal
     a = duel(12);
     a.bodies[0].meter = 100;
@@ -379,7 +437,7 @@ int main() {
     a = duel(18);
     a.bodies[0].last_slot = 1;
     cast(a, 0);
-    CHECK(a.bodies[0].energy == 974); // Cadence: 1000-100+70+4
+    CHECK(a.bodies[0].energy == 1000 - Moves[72].cost + 70); // Cadence refund bypasses rest lock
     a = duel(19);
     a.bodies[1].shield = 30;
     a.bodies[1].shield_timer = 60;
@@ -387,7 +445,7 @@ int main() {
     CHECK(a.bodies[1].shield == 30 - 2 * D); // Nullify
     a = duel(20);
     cast(a, 1);
-    advance(a, 19);
+    advance(a, Moves[81].startup);
     CHECK(a.zones[0].hp == 45); // Architect
     a = duel(21);
     CHECK(impact(a, 0, 84).features[0].dealt == Moves[84].damage + 2); // Returner
@@ -395,7 +453,7 @@ int main() {
     a.bodies[0].energy = 500;
     a.bodies[0].guard = 20;
     step(a, {}, 1);
-    CHECK(a.bodies[0].energy == 510); // Reservoir
+    CHECK(a.bodies[0].energy == 500 + Roster[22].regen + 7); // Reservoir
     a = duel(23);
     a.bodies[0].hp -= 10;
     impact(a);
@@ -424,7 +482,7 @@ int main() {
     a.bodies[0].counter = 2;
     a.bodies[0].energy = 500;
     cast(a, 0);
-    CHECK(a.bodies[0].energy == 614); // Recycle
+    CHECK(a.bodies[0].energy == 500 - Moves[120].cost + 120); // Recycle
     a = duel(31);
     a.bodies[0].hp -= 20;
     a.zones[0] = {{4 * Q, 4 * Q}, 1, 0, 126, 1, 0};
@@ -465,7 +523,10 @@ int main() {
     a.bodies[1].cooldown[0] = 99;
     command(a, 1, Retreat);
     auto oo = observe(a, 0);
-    CHECK(o.self == oo.self && o.entities == oo.entities && o.history == oo.history);
+    CHECK(o.self == oo.self && o.history == oo.history);
+    CHECK(oo.entities[41] == 7.f / 1000); // Energy is now public; cooldown/guidance remain private.
+    oo.entities[41] = o.entities[41];
+    CHECK(o.entities == oo.entities);
     // Objective rewards territory; contest blocks capture and timeout is separate.
     a = duel();
     a.objective = 1;
@@ -488,7 +549,7 @@ int main() {
     for (auto &p : a.projectiles)
         p = {{2 * Q, 2 * Q}, {}, {2 * Q, 2 * Q}, 60, 0, 1, 0, 0, 0, 0};
     cast(a, 1);
-    advance(a, 12);
+    advance(a, Moves[1].startup);
     CHECK(a.overflow == 1);
     // Seeded random action soak exercises arbitrary timing rather than only pilot choices.
     for (int sp = 0; sp < 40; sp++) {
@@ -537,6 +598,6 @@ int main() {
     reset(a, 77, 2, 12, 27, 1);
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
-    CHECK(hash(a) == 0x78b43d0560ba4a49ull);
+    CHECK(hash(a) == 0xdd03362d679bb37aull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

@@ -18,6 +18,6 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
       - run: make all test
       - run: make build/tournament && ./build/tournament 1 reports/ci-smoke.csv
-      - run: SDL_VIDEODRIVER=dummy ./build/creature_lab --frames 3
+      - run: python3 tests/viewer_smoke.py
       - run: c++ -std=c++17 -O1 -g -fsanitize=address,undefined -Iinclude src/sim.cpp src/content.cpp tests/sim_tests.cpp -o build/sanitized && ./build/sanitized
       - run: c++ -std=c++17 -O1 -g -fsanitize=address,undefined -Iinclude src/sim.cpp src/content.cpp tests/environment_tests.cpp -o build/environment_sanitized && ./build/environment_sanitized
