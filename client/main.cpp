@@ -5,6 +5,7 @@
 #include "font.hpp"
 #include <SDL.h>
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -117,6 +118,33 @@ void meter(int x, int y, int w, int value, int max, SDL_Color c) {
     panel(x, y, w, 12, true);
     rect(x + 2, y + 2, (w - 4) * std::clamp(value, 0, max) / max, 8, c);
 }
+bool parse_personality(const std::string &text, Personality &value, int &preset) {
+    for (int i = 0; i < PersonalityCount; ++i) {
+        std::string name = personality_name(i);
+        std::transform(name.begin(), name.end(), name.begin(),
+                       [](unsigned char c) { return char(std::tolower(c)); });
+        if (name == text) {
+            value = personality_preset(i);
+            preset = i;
+            return true;
+        }
+    }
+    std::istringstream in(text);
+    char c1 = 0, c2 = 0;
+    Personality candidate{};
+    if (!(in >> candidate[0] >> c1 >> candidate[1] >> c2 >> candidate[2]) || c1 != ',' || c2 != ',')
+        return false;
+    in >> std::ws;
+    if (!in.eof())
+        return false;
+    for (float x : candidate)
+        if (!std::isfinite(x) || std::abs(x) > 1)
+            return false;
+    value = candidate;
+    preset = -1;
+    return true;
+}
+
 } // namespace
 #include "tinikami.hpp"
 int main(int argc, char **argv) {
@@ -145,13 +173,15 @@ int main(int argc, char **argv) {
     bool run = true, paused = false, manual = false, playback = false, catalog = false;
     bool spirit_skin = true, hitboxes = false;
     std::filesystem::path art_directory, brain_path;
-    Brain brain;
+    Brain brain, champion;
     std::array<BrainMemory, 2> brain_memory{}, saved_brain_memory{};
-    std::array<bool, 2> learned{false, false}, saved_learned{};
+    std::array<bool, 2> learned{false, false}, saved_learned{}, baseline{}, saved_baseline{};
+    std::array<Personality, 2> personalities{}, saved_personalities{};
+    std::array<int, 2> personality_ids{}, saved_personality_ids{};
     std::array<int, 2> requested_pilot{-1, 0};
     bool explicit_brain = false, saved_brain_valid = false;
     uint64_t saved_brain_world = 0;
-    uint32_t saved_brain_id = 0;
+    uint32_t saved_brain_id = 0, saved_champion_id = 0;
     int species_a = 0, species_b = 1, arena = 0, catalog_target = 0, catalog_page = 0;
     int weather = 0, speed = 1, ability = 0, pending_guidance = -1, feedback = 0, wind_power = 100;
     uint32_t seed = 42;
@@ -175,17 +205,42 @@ int main(int argc, char **argv) {
     int frames_limit = 0, preview_ticks = 0;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
-        if (a == "--brain" && i + 1 < argc) {
+        if ((a == "--personality-seed-a" || a == "--personality-seed-b") && i + 1 < argc) {
+            int side = a.back() == 'a' ? 0 : 1;
+            try {
+                size_t end = 0;
+                std::string input = argv[++i];
+                auto value = std::stoull(input, &end);
+                if (end != input.size() || value > 0xffffffffu)
+                    throw std::invalid_argument("seed");
+                personalities[side] = personality_from_seed(uint32_t(value));
+                personality_ids[side] = -1;
+                requested_pilot[side] = 1;
+            } catch (...) {
+                std::cerr << "Individual seed must be a uint32\n";
+                return 2;
+            }
+        } else if ((a == "--personality-a" || a == "--personality-b" || a == "--traits-a" ||
+                    a == "--traits-b") &&
+                   i + 1 < argc) {
+            int side = a.back() == 'a' ? 0 : 1;
+            if (!parse_personality(argv[++i], personalities[side], personality_ids[side])) {
+                std::cerr << "Personality must be steady, aggressive, skittish, patient, "
+                             "territorial, or three values in [-1,1]\n";
+                return 2;
+            }
+            requested_pilot[side] = 1;
+        } else if (a == "--brain" && i + 1 < argc) {
             brain_path = argv[++i];
             explicit_brain = true;
         } else if ((a == "--pilot-a" || a == "--pilot-b") && i + 1 < argc) {
             int side = a == "--pilot-a" ? 0 : 1;
             std::string pilot = argv[++i];
-            if (pilot != "learned" && pilot != "scripted") {
-                std::cerr << "Pilot must be learned or scripted\n";
+            if (pilot != "learned" && pilot != "scripted" && pilot != "baseline") {
+                std::cerr << "Pilot must be learned, baseline or scripted\n";
                 return 2;
             }
-            requested_pilot[side] = pilot == "learned";
+            requested_pilot[side] = pilot == "baseline" ? 2 : pilot == "learned";
         } else if (a == "--seed" && i + 1 < argc)
             seed = uint32_t(std::stoul(argv[++i]));
         else if (a == "--skin" && i + 1 < argc)
@@ -262,18 +317,36 @@ int main(int argc, char **argv) {
         SDL_Quit();
         return 2;
     }
-    for (int i = 0; i < 2; ++i)
-        learned[i] = brain_ready && (requested_pilot[i] == 1 || (i == 0 && requested_pilot[i] < 0));
+    if (brain_ready && brain.format() == 2 && personalities != std::array<Personality, 2>{}) {
+        std::cerr << "Format-2 brains support only the steady personality\n";
+        return 2;
+    }
+    std::filesystem::path champion_path = brain_path.parent_path() / "champion.tbrain";
+    std::string champion_error;
+    bool champion_ready = champion.load(champion_path.string(), champion_error);
+    if (!champion_ready && (requested_pilot[0] == 2 || requested_pilot[1] == 2)) {
+        std::cerr << "Cannot enable baseline pilot: " << champion_error << "\n";
+        return 2;
+    }
+    for (int i = 0; i < 2; ++i) {
+        baseline[i] = champion_ready && (requested_pilot[i] == 2 ||
+                                         (i == 0 && requested_pilot[i] < 0 && !explicit_brain));
+        learned[i] =
+            baseline[i] ||
+            (brain_ready && (requested_pilot[i] == 1 || (i == 0 && requested_pilot[i] < 0)));
+    }
     if (brain_ready) {
         std::cout << "Brain " << std::hex << brain.checksum() << std::dec
                   << " / NATIVE INFERENCE\n";
-        note = "B / V SWITCH PILOTS   F6 RELOAD BRAIN   M TAKE CONTROL   TAB SPIRIT BOOK";
+        note = "B/V PILOTS   J/K TEMPERAMENT   F6 RELOAD BRAIN   M HUMAN   TAB SPIRIT BOOK";
     }
     auto pilot_actions = [&]() {
         std::array<Action, 2> actions;
         for (int i = 0; i < 2; ++i)
             actions[i] = learned[i] && !(i == 0 && manual)
-                             ? brain.action(observe(w, i), brain_memory[i])
+                             ? (baseline[i] ? champion : brain)
+                                   .action(observe(w, i), brain_memory[i],
+                                           baseline[i] ? Personality{} : personalities[i])
                              : scripted(w, i);
         return actions;
     };
@@ -316,6 +389,7 @@ int main(int argc, char **argv) {
         if (id >= 50 && id < 55) {
             if (!playback) {
                 manual = true;
+                brain_memory[0] = {};
                 ability = id - 49;
             }
             return;
@@ -325,6 +399,28 @@ int main(int argc, char **argv) {
             return;
         }
         switch (id) {
+        case 34:
+        case 35: {
+            if (playback) {
+                note = "REPLAY USES RECORDED ACTIONS / START A NEW EPISODE";
+                break;
+            }
+            if (brain.format() != 3) {
+                note = "TEMPERAMENT NEEDS A FORMAT-3 BRAIN / F6 RELOAD";
+                break;
+            }
+            int side = id - 34;
+            personality_ids[side] = (personality_ids[side] + 1) % PersonalityCount;
+            personalities[side] = personality_preset(personality_ids[side]);
+            brain_memory[side] = {};
+            learned[side] = true;
+            baseline[side] = false;
+            if (side == 0)
+                manual = false;
+            note = std::string(side ? "B / " : "A / ") + personality_name(personality_ids[side]) +
+                   " / LEARNED PILOT / FRESH MEMORY";
+            break;
+        }
         case 31:
         case 32: {
             if (playback) {
@@ -336,16 +432,42 @@ int main(int argc, char **argv) {
                 break;
             }
             int side = id - 31;
-            learned[side] = !learned[side];
+            if (!learned[side]) {
+                learned[side] = true;
+                baseline[side] = false;
+            } else if (!baseline[side] && champion.ready())
+                baseline[side] = true;
+            else {
+                learned[side] = false;
+                baseline[side] = false;
+            }
             brain_memory[side] = {};
             if (side == 0)
                 manual = false;
             note = std::string(side ? "B" : "A") +
-                   (learned[side] ? " / TRAINED APPRENTICE / FRESH MEMORY" : " / SCRIPTED PILOT");
+                   (baseline[side]  ? " / FOCUSED BASELINE / FRESH MEMORY"
+                    : learned[side] ? " / TEMPERAMENT BRAIN / FRESH MEMORY"
+                                    : " / SCRIPTED PILOT");
             break;
         }
-        case 33:
-            if (brain.load(brain_path.string(), brain_error)) {
+        case 33: {
+            Brain candidate;
+            bool compatible = candidate.load(brain_path.string(), brain_error);
+            if (compatible && candidate.format() == 2 &&
+                personalities != std::array<Personality, 2>{}) {
+                compatible = false;
+                brain_error = "LEGACY MODEL NEEDS STEADY TEMPERAMENTS";
+            }
+            if (compatible) {
+                Brain new_champion;
+                if (champion.ready() &&
+                    !new_champion.load(champion_path.string(), champion_error)) {
+                    note = "BASELINE RELOAD FAILED / " + champion_error;
+                    break;
+                }
+                brain = std::move(candidate);
+                if (new_champion.ready())
+                    champion = std::move(new_champion);
                 learned[0] = true;
                 manual = false;
                 restart();
@@ -353,6 +475,7 @@ int main(int argc, char **argv) {
             } else
                 note = "BRAIN RELOAD FAILED / " + brain_error;
             break;
+        }
         case 29:
             if (art_ready)
                 spirit_skin = !spirit_skin;
@@ -389,9 +512,13 @@ int main(int argc, char **argv) {
             saved = snapshot(w);
             saved_brain_memory = brain_memory;
             saved_learned = learned;
+            saved_baseline = baseline;
+            saved_personalities = personalities;
+            saved_personality_ids = personality_ids;
             saved_brain_valid = !playback;
             saved_brain_world = hash(w);
             saved_brain_id = brain.checksum();
+            saved_champion_id = champion.checksum();
             {
                 std::ofstream f(captures + "/snapshot.crs", std::ios::binary);
                 f.write(reinterpret_cast<const char *>(saved.data()), saved.size());
@@ -418,9 +545,13 @@ int main(int argc, char **argv) {
                 pending_guidance = -1;
                 feedback = 0;
                 if (saved_brain_valid && saved_brain_world == hash(w) &&
-                    saved_brain_id == brain.checksum()) {
+                    saved_brain_id == brain.checksum() &&
+                    saved_champion_id == champion.checksum()) {
                     brain_memory = saved_brain_memory;
                     learned = saved_learned;
+                    baseline = saved_baseline;
+                    personalities = saved_personalities;
+                    personality_ids = saved_personality_ids;
                     note = "FORK RESTORED / BRAIN MEMORY RESTORED / NEW REPLAY BRANCH";
                 } else {
                     brain_memory = {};
@@ -592,6 +723,10 @@ int main(int argc, char **argv) {
                     act(31);
                 else if (k == SDLK_v)
                     act(32);
+                else if (k == SDLK_j)
+                    act(34);
+                else if (k == SDLK_k)
+                    act(35);
                 else if (k == SDLK_F6)
                     act(33);
                 else if (k == SDLK_h)
@@ -651,22 +786,26 @@ int main(int argc, char **argv) {
         if (spirit_skin) {
             tinikami::draw(w, {paused, manual, playback, catalog, hitboxes, catalog_target,
                                catalog_page, weather, speed, wind_power, seed, note, learned[0],
-                               learned[1], brain.ready()});
+                               learned[1], brain.ready(), personality_ids, baseline});
         } else {
             rect(0, 0, 1100, 780, {0, 112, 112, 255});
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / LEARNING ALPHA 0.8", white, 1);
+            label(720, 23, "F2 TINIKAMI / TEMPERAMENT ALPHA 0.9", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);
             label(24, 50, "FILE   SIMULATION   INSPECT   HELP", black, 1);
             button(31, 350, 41, 162,
-                   manual       ? "A: HUMAN [M]"
-                   : learned[0] ? "A: APPRENTICE [B]"
-                                : "A: SCRIPTED [B]");
-            button(32, 522, 41, 162, learned[1] ? "B: APPRENTICE [V]" : "B: SCRIPTED [V]");
+                   manual        ? "A: HUMAN [M]"
+                   : baseline[0] ? "A: BASELINE [B]"
+                   : learned[0]  ? "A: SPIRIT [B]"
+                                 : "A: SCRIPTED [B]");
+            button(32, 522, 41, 162,
+                   baseline[1]  ? "B: BASELINE [V]"
+                   : learned[1] ? "B: SPIRIT [V]"
+                                : "B: SCRIPTED [V]");
             label(768, 50, "30 HZ WORLD / 10 HZ BRAIN", dark, 1);
             button(1, 24, 70, 86, paused ? "RESUME [P]" : "PAUSE [P]", paused);
             button(2, 116, 70, 86, "STEP [N]");
@@ -961,7 +1100,11 @@ int main(int argc, char **argv) {
                 int y = 151 + i * 80;
                 label(752, y, std::string(i ? "B / " : "A / ") + Roster[b.species].name,
                       i ? orange : blue, 1);
-                label(918, y, manual && i == 0 ? "HUMAN" : "SCRIPTED", dark, 1);
+                label(918, y,
+                      manual && i == 0 ? "HUMAN"
+                      : learned[i]     ? "LEARNED"
+                                       : "SCRIPTED",
+                      dark, 1);
                 meter(752, y + 17, 196, b.hp, Roster[b.species].hp, green);
                 label(958, y + 19, "HP " + num(b.hp), black, 1);
                 meter(752, y + 34, 196, b.energy, 1000, blue);
@@ -1007,15 +1150,17 @@ int main(int argc, char **argv) {
             button(15, 750, 558, 96, "PRAISE +");
             button(16, 852, 558, 104, "CORRECT -");
             button(9, 962, 558, 94, "LOAD REPLAY");
-            panel(738, 606, 330, 120, true);
-            label(752, 618, "EVENT MONITOR", blue, 1);
+            button(34, 742, 605, 152, std::string(personality_name(personality_ids[0])) + " [J]");
+            button(35, 902, 605, 158, std::string(personality_name(personality_ids[1])) + " [K]");
+            panel(738, 636, 330, 96, true);
+            label(752, 643, "EVENT MONITOR", blue, 1);
             const char *names[] = {"",          "START",   "RELEASE",  "HIT",       "DODGE",
                                    "INTERRUPT", "KO",      "GUIDANCE", "POOL FULL", "END",
                                    "HEAL",      "SHIELD",  "CAPTURE",  "PARRY",     "STATUS",
                                    "WALL SLAM", "TERRAIN", "WIND"};
-            for (int j = 0; j < std::min(6, w.event_count); j++) {
+            for (int j = 0; j < std::min(5, w.event_count); j++) {
                 auto &v = w.events[(w.event_head - 1 - j + HistoryCount) % HistoryCount];
-                label(752, 638 + j * 13,
+                label(752, 658 + j * 13,
                       num(v.tick) + "  " + (v.actor ? "B " : "A ") + names[v.kind] +
                           (v.amount ? " " + num(v.amount) : ""),
                       black, 1);

@@ -1,12 +1,12 @@
-# Tinikami — learning alpha 0.8
+# Tinikami — temperament alpha 0.9
 
-A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. An 86,755-parameter trained generalist now pilots A by default, with native C++ inference and separate recurrent memory per actor. The included learner uses an imitation warm start followed by PPO.
+A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. A trained baseline pilots A by default. A separate temperament controller supports aggressive, skittish, patient, territorial and custom individuals. The 89,959-parameter architecture uses learned species embeddings, ability-conditioned controls, native C++ inference and separate recurrent memory per actor.
 
-![A trained apprentice in Tinikami](docs/alpha/learning.png)
+![Individual temperaments in Tinikami](docs/alpha/temperament.png)
 
 ## Start here
 
-- **[Play and train the apprentice](docs/alpha/learning.md)** — native inference, pilot switches, PPO, checkpoints and held-out results.
+- **[Stronger pilots and temperament](docs/alpha/temperament.md)** — baseline and spirit pilots, individual seeds, species fine-tuning and measured behavior.
 
 - **[Readable gardens and six arenas](docs/alpha/gardens.md)** — value hierarchy, varied tiling, three new layouts and current validation.
 
@@ -19,7 +19,7 @@ A deterministic C++ creature-combat engine with **40 playable species, 160 signa
 - **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
 - **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
 - **[Current six-arena diagnostic](reports/gardens-v7-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/learning.md#verification)**.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/temperament.md#native-integration-and-compatibility)**.
 
 ## Build and play
 
@@ -49,7 +49,7 @@ Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on
 
 ## Skin and workbench controls
 
-- **B / V:** toggle learned/scripted pilots for A/B. **F6:** reload the checkpoint and restart. `Train.command` continues training and exports the best validated checkpoint.
+- **B / V:** cycle scripted / spirit / baseline pilots for A/B. **J / K:** choose a temperament and activate the spirit pilot. **F6:** reload models and restart. `Train.command` improves the baseline; `Train Spirits.command` continues temperament training.
 - **F2:** switch Tinikami / Windows 95 without resetting the fight. **H:** toggle collision geometry in the Tinikami skin.
 - The Tinikami skin is the default. `./build/creature_lab --skin debug` opens the original workbench. Both show the same simulation.
 - Every spirit has **100 energy**, shared by four arts and dodge. Cards show energy costs, cooldowns, and recharge state. Movement is free.
@@ -98,6 +98,6 @@ python3 -m venv .venv
 .venv/bin/python python/gym_env.py
 ```
 
-The 86,755-parameter recurrent model scores actual move tokens, with continuous movement/aim and masked ability selection. `python/train.py` implements recurrent PPO; `python/export_brain.py` writes the portable native controller. The shipped model scores **23.75%** on 480 native held-out games versus **8.02%** for imitation alone. [Protocol and limitations](reports/rl-v8-summary.md). The Gymnasium wrapper also supports other hybrid-action learners. Unity presentation, persistent individual adaptation, self-play leagues, campaign/economy and online services remain future work. The engine/content is playable alpha; competitive balance needs human and trained-agent evidence.
+The 89,959-parameter recurrent model uses learned species embeddings, three temperament inputs and ability-conditioned movement/aim. The selected controller scores **37.60%** on 1,440 fresh native games versus **22.85%** for v8; 27 of 40 species improved on this cohort. Patient retains more energy, while some other temperament differences remain subtle in complete fights. [Full results and species breakdown](reports/rl-v9-summary.md). `python/train.py` supports generalist and individual/species fine-tuning. Unity presentation, automatic in-game adaptation, a self-play league, campaign/economy and online services remain future work.
 
 MIT licensed; original placeholder creatures and pixel font, no franchise assets.

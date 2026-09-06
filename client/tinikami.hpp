@@ -253,6 +253,8 @@ struct View {
     uint32_t seed;
     std::string note;
     bool learned_a, learned_b, brain_ready;
+    std::array<int, 2> personality_ids;
+    std::array<bool, 2> baseline;
 };
 void draw(const World &w, const View &v) {
     rect(0, 0, 1100, 780, night);
@@ -264,12 +266,17 @@ void draw(const World &w, const View &v) {
     tag(30, 482, 53, 154, "H / HITBOXES", v.hitboxes);
     tag(29, 858, 24, 208, "F2 / SWITCH TO WORKBENCH");
     tag(31, 646, 53, 128,
-        v.manual      ? "A: HUMAN [M]"
-        : v.learned_a ? "A: LEARNED [B]"
-                      : "A: SCRIPT [B]",
+        v.manual        ? "A: HUMAN [M]"
+        : v.baseline[0] ? "A: BASELINE [B]"
+        : v.learned_a   ? "A: SPIRIT [B]"
+                        : "A: SCRIPT [B]",
         v.learned_a && !v.manual);
-    tag(32, 782, 53, 128, v.learned_b ? "B: LEARNED [V]" : "B: SCRIPT [V]", v.learned_b);
-    label(934, 68, "ALPHA 0.8", moss, 1);
+    tag(32, 782, 53, 128,
+        v.baseline[1] ? "B: BASELINE [V]"
+        : v.learned_b ? "B: SPIRIT [V]"
+                      : "B: SCRIPT [V]",
+        v.learned_b);
+    label(934, 68, "ALPHA 0.9", moss, 1);
     tag(1, 24, 93, 88, v.paused ? "RESUME [P]" : "PAUSE [P]", v.paused);
     tag(3, 118, 93, 82, "RESET [R]");
     tag(4, 206, 93, 118, v.manual ? "YOU + SPIRIT" : "WATCH SPIRITS", v.manual);
@@ -458,6 +465,12 @@ void draw(const World &w, const View &v) {
                             : b.move >= 0   ? "CASTING / REGEN PAUSED"
                                             : "BREATH " + seconds(b.energy_delay) + "S";
         label(753, y + 108, state, moss, 1);
+        bool active = (i ? v.learned_b : v.learned_a && !v.manual) && !v.baseline[i];
+        tag(34 + i, 915, y + 96, 143,
+            v.playback
+                ? "RECORDED"
+                : std::string(personality_name(v.personality_ids[i])) + (i ? " [K]" : " [J]"),
+            active && !v.playback);
     }
     frame(738, 365, 330, 226);
     label(751, 380, "A / CHOOSE YOUR MOMENT", ink, 1);

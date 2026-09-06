@@ -1,70 +1,97 @@
-"""Optional lightweight PyTorch policy reference; weights are initially RANDOM unless loaded from a checkpoint.
-
-No torch dependency in the engine, viewer or ctypes bridge. Install separately:
-    python -m pip install -r python/requirements-ml.txt
-    python python/policy.py
-
-This is an integration/gradient smoke test, NOT a learning benchmark or trained brain.
-"""
+"""Small species- and preference-conditioned recurrent policy; training is separate from play."""
 import torch
 from torch import nn
-from creature import OBS_SIZE, SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE, SLICES, Batch, quantize
+from creature import SELF_SIZE, ENTITY_SIZE, ENTITY_COUNT, MOVE_SIZE, SLICES
+from legacy_policy import LegacyPolicy
 
+TRAITS = 3
+PRESETS = {
+    'steady': (0., 0., 0.),
+    'aggressive': (1., -.25, 0.),
+    'skittish': (-1., .4, 0.),
+    'patient': (0., 1., .25),
+    'territorial': (0., .2, 1.),
+}
 
-class CreaturePolicy(nn.Module):
-    """Masked entity/move/history encoders + 96-wide recurrent individual brain.
+def personality_from_seed(seed):
+    if not isinstance(seed,int) or not 0 <= seed <= 0xffffffff:
+        raise ValueError('Individual seed must be a uint32')
+    state=seed or 1;result=[]
+    for _ in range(3):
+        state=(state ^ (state << 13)) & 0xffffffff
+        state=state ^ (state >> 17)
+        state=(state ^ (state << 5)) & 0xffffffff
+        result.append((state % 2049 - 1024) / 1024.)
+    return tuple(result)
 
-    Format 2: explicit enemy token plus pooled public entities. Motion/aim heads
-    use the opponent-relative frame; learning.py rotates them to world actions.
-    obs: [batch,3620], memory: [batch,96]. For episodes/branches, manage memory
-    explicitly; it does not belong to the deterministic physics snapshot.
+class CreaturePolicy(LegacyPolicy):
+    """Format 3. Species embeddings, persistent temperament and ability-conditioned controls.
+
+    Personality is [aggression, reserve, territory], each in [-1,1], supplied separately
+    from the unchanged public simulation observation. Recurrent memory is still 96 floats.
     """
+    brain_format = 3
+
     def __init__(self):
         super().__init__()
-        self.entity = nn.Sequential(nn.Linear(ENTITY_SIZE-1, 32), nn.Tanh())
-        self.move = nn.Sequential(nn.Linear(MOVE_SIZE, 24), nn.Tanh())
-        self.event = nn.Sequential(nn.Linear(7, 24), nn.Tanh())
-        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + ENTITY_SIZE-1 + 32 + 24 + 24 + 32 + 24, 96), nn.Tanh())
-        self.memory = nn.GRUCell(96, 96)
-        self.motion = nn.Linear(96, 4)
-        self.noop = nn.Linear(96, 1)
-        self.slot_score = nn.Sequential(nn.Linear(96+24, 32), nn.Tanh(), nn.Linear(32, 1))
-        self.value = nn.Linear(96, 1)
-        self.log_std = nn.Parameter(torch.full((4,), -.7))
+        self.encoder = nn.Sequential(nn.Linear(272, 96), nn.Tanh())
+        self.species = nn.Embedding(40, 12)
+        self.slot_motion = nn.Linear(32, 4)
+        nn.init.normal_(self.species.weight, std=.2)
+        nn.init.zeros_(self.slot_motion.weight)
+        nn.init.zeros_(self.slot_motion.bias)
 
-    @staticmethod
-    def pool(values, mask):
-        return (values * mask).sum(1) / mask.sum(1).clamp_min(1)
-
-    def forward(self, obs, memory):
-        entities = obs[:, SLICES["entities"]].reshape(-1, ENTITY_COUNT, ENTITY_SIZE)
-        moves = obs[:, SLICES["moves"]].reshape(-1, 5, MOVE_SIZE)
-        history = obs[:, SLICES["history"]].reshape(-1, 24, 8)
-        x = torch.cat((obs[:, SLICES["self"]], entities[:, 0, :-1],
-                       self.pool(self.entity(entities[:, :, :-1]), entities[:, :, -1:]),
-                       self.move(moves).mean(1),
-                       self.pool(self.event(history[:, :, :7]), history[:, :, 7:8]),
-                       obs[:, SLICES["global_"]], self.move(obs[:, SLICES["announced"]])), dim=-1)
+    def forward(self, obs, memory, personality=None):
+        if personality is None:
+            personality = obs.new_zeros((len(obs), TRAITS))
+        entities = obs[:, SLICES['entities']].reshape(-1, ENTITY_COUNT, ENTITY_SIZE)
+        moves = obs[:, SLICES['moves']].reshape(-1, 5, MOVE_SIZE)
+        history = obs[:, SLICES['history']].reshape(-1, 24, 8)
+        own_id = (obs[:,22]*39).round().long().clamp(0,39)
+        enemy_id = (entities[:,0,20]*39).round().long().clamp(0,39)
+        move_latent = self.move(moves)
+        x = torch.cat((obs[:, SLICES['self']], entities[:,0,:-1],
+            self.pool(self.entity(entities[:,:,:-1]), entities[:,:,-1:]), move_latent.mean(1),
+            self.pool(self.event(history[:,:,:7]), history[:,:,7:8]),
+            obs[:, SLICES['global_']], self.move(obs[:, SLICES['announced']]),
+            self.species(own_id), self.species(enemy_id), personality), dim=-1)
         hidden = self.memory(self.encoder(x), memory)
-        # Score each move using its actual descriptor, preserving slot identity.
-        slot_latent = torch.cat((hidden[:,None,:].expand(-1,5,-1), self.move(moves)), dim=-1)
-        logits = torch.cat((self.noop(hidden), self.slot_score(slot_latent).squeeze(-1)), dim=-1)
-        logits = logits.masked_fill(obs[:, SLICES["mask"]] < .5, -1e9)
-        return self.motion(hidden), logits, self.value(hidden).squeeze(-1), hidden
+        slots = torch.cat((hidden[:,None,:].expand(-1,5,-1), move_latent), dim=-1)
+        latent = self.slot_score[1](self.slot_score[0](slots))
+        logits = torch.cat((self.noop(hidden), self.slot_score[2](latent).squeeze(-1)), dim=-1)
+        logits = logits.masked_fill(obs[:, SLICES['mask']] < .5, -1e9)
+        base = self.motion(hidden)
+        motion = torch.cat((base[:,None,:], base[:,None,:] + self.slot_motion(latent)), dim=1)
+        return motion, logits, self.value(hidden).squeeze(-1), hidden
 
-    def sample(self, obs, memory, deterministic=False):
-        mean, logits, value, hidden = self(obs, memory)
-        normal = torch.distributions.Normal(mean, self.log_std.exp())
-        categorical = torch.distributions.Categorical(logits=logits)
-        # Non-reparameterized samples for a score-function policy-gradient estimator.
-        raw = mean if deterministic else normal.sample()
-        ability = logits.argmax(-1) if deterministic else categorical.sample()
-        motion = raw.tanh()
-        log_prob = (normal.log_prob(raw) - torch.log(1 - motion.square() + 1e-6)).sum(-1)
-        return motion, ability, log_prob + categorical.log_prob(ability), value, hidden
+    def sample(self, obs, memory, deterministic=False, personality=None):
+        from learning import distribution
+        motion, ability, _, lp, value, hidden, _ = distribution(
+            self, obs, memory, deterministic=deterministic, personality=personality)
+        return motion, ability, lp, value, hidden
 
+
+def upgrade(legacy):
+    """Preserve the v2 neutral function before training, up to floating-point summation."""
+    if getattr(legacy, 'brain_format', 2) == 3:
+        return legacy
+    policy = CreaturePolicy()
+    state = policy.state_dict()
+    for name, tensor in legacy.state_dict().items():
+        if name == 'encoder.0.weight':
+            state[name].zero_()
+            state[name][:,:245] = tensor
+        else:
+            state[name] = tensor
+    policy.load_state_dict(state)
+    return policy
+
+
+def selected_motion(mean, ability):
+    return mean if mean.ndim == 2 else mean[torch.arange(len(mean), device=mean.device), ability]
 
 def main():
+    from creature import Batch
     torch.manual_seed(7)
     policy = CreaturePolicy()
     with Batch(4) as batch:

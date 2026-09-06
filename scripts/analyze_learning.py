@@ -16,12 +16,12 @@ for name,label in labels.items():
   pair=[r for r in rows if int(r['case'])==case]
   assert len(pair)==2 and {int(r['seat']) for r in pair}=={0,1}
  assert {int(r['arena']) for r in rows}==set(range(6)) and not summary[name]['overflow']
-manifest=json.loads((root/'models/apprentice.json').read_text())
+manifest=json.loads((root/'models/baselines/apprentice-v8.json').read_text())
 log=[json.loads(line) for line in (report/'rl-v8-learning.jsonl').read_text().splitlines()]
 summary['run']=dict(selected_steps=manifest['metadata']['steps'],total_steps=max(r.get('steps',0) for r in log),
    demonstration_transitions=next(r['transitions'] for r in log if r['stage']=='demonstrations'),
    parameters=manifest['parameters'],native_model_bytes=manifest['bytes'],model_checksum=manifest['checksum'],
-   model_sha256=hashlib.sha256((root/'models/apprentice.tbrain').read_bytes()).hexdigest(),
+   model_sha256=hashlib.sha256((root/'models/baselines/apprentice-v8.tbrain').read_bytes()).hexdigest(),
    native_source_sha256=hashlib.sha256((root/'agents/brain.cpp').read_bytes()).hexdigest(),
    simulation_source_sha256=hashlib.sha256((root/'src/sim.cpp').read_bytes()).hexdigest())
 (report/'rl-v8-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
@@ -38,7 +38,7 @@ lines+=['','Score is 1 for a win, 0.5 for a draw and 0 for a loss. All four runs
  '## Reproduce','', '```sh','make core brain build/brain_eval',
  './build/brain_eval models/baselines/random.tbrain reports/rl-v8-random.csv 240 1900000000',
  './build/brain_eval models/baselines/imitation.tbrain reports/rl-v8-imitation.csv 240 1900000000',
- './build/brain_eval models/apprentice.tbrain reports/rl-v8-ppo.csv 240 1900000000',
+ './build/brain_eval models/baselines/apprentice-v8.tbrain reports/rl-v8-ppo.csv 240 1900000000',
  './build/brain_eval scripted reports/rl-v8-scripted.csv 240 1900000000',
  'python3 scripts/analyze_learning.py','```','',
  'Raw CSVs, the selected checkpoint, both baseline checkpoints, training configuration and the complete accepted-run log are included. The JSON report records hashes for the model, native controller, simulation and each input CSV. The native controller is the one used by the SDL game.','',

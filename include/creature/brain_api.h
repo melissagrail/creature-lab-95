@@ -10,6 +10,12 @@ CR_API void tb_destroy(void *brain);
 CR_API int32_t tb_forward(void *brain, const float *observation, const float *memory,
                           float *output);
 CR_API int32_t tb_action(void *brain, const float *observation, float *memory, int32_t *action);
+// Three persistent preferences in [-1,1]: aggression, energy reserve, territoriality.
+// Neutral legacy entry points above remain compatible with format-2 models.
+CR_API int32_t tb_forward_personality(void *brain, const float *observation, const float *memory,
+                                      const float *personality, float *output);
+CR_API int32_t tb_action_personality(void *brain, const float *observation, float *memory,
+                                     const float *personality, int32_t *action);
 #ifdef __cplusplus
 }
 #endif

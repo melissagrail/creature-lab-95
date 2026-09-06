@@ -8,12 +8,14 @@ import numpy as np
 import torch
 from creature import Batch, SLICES
 from learning import (CreaturePolicy,HIDDEN,export_brain,distribution,world_actions,local_teacher,
-    rewards,potential,gae,fnv,ArenaBatch,save_checkpoint,load_checkpoint)
+    rewards,potential,gae,fnv,ArenaBatch,save_checkpoint,load_checkpoint,personality_reward)
 from native_brain import NativeBrain
+from policy import selected_motion, PRESETS, upgrade, personality_from_seed
 from train import rollout,chunks
 
 def run():
     torch.set_num_threads(1);torch.manual_seed(9)
+    assert personality_from_seed(42)==(.8779296875,.509765625,-.3759765625)
     advantage,ret=gae(np.array([[1.],[2.],[3.]],np.float32),np.array([[.2],[.4],[.8]],np.float32),
                       np.array([[0.],[1.],[0.]],np.float32),np.array([99.],np.float32),gamma=.9,lam=1.)
     np.testing.assert_allclose(ret[:,0],[2.8,2,92.1],rtol=1e-5)
@@ -23,7 +25,25 @@ def run():
     r0=rewards(obs[:1],obs[1:2],np.array([False]),np.array([-1]),np.array([0]),gamma)
     r1=rewards(obs[1:2],obs[2:3],np.array([True]),np.array([0]),np.array([0]),gamma)
     np.testing.assert_allclose(r0+gamma*r1,-potential(obs[:1])+gamma*3,rtol=1e-6)
-    policy=load_checkpoint(sys.argv[1])[0] if len(sys.argv)>1 else CreaturePolicy();env=ArenaBatch(4,77)
+    # Personality creates explicit bounded preference differences; neutral preserves task reward.
+    traits=np.array([[1,-.25,0],[-1,.4,0],[0,1,.25]],np.float32)
+    assert np.all(np.abs(personality_reward(obs,traits)) <= .003*np.abs(traits).sum(-1)+1e-8)
+    assert np.all(personality_reward(obs,np.zeros_like(traits)) == 0)
+    from legacy_policy import LegacyPolicy
+    legacy=LegacyPolicy();modern=upgrade(legacy)
+    with Batch(1) as upgrade_env, torch.no_grad():
+        public=torch.tensor([list(upgrade_env.observe())]);memory=torch.zeros(1,HIDDEN)
+        old=legacy(public,memory);new=modern(public,memory)
+        for x,y in zip((old[0],*old[1:]),(new[0][:,0],*new[1:])):
+            torch.testing.assert_close(x,y,rtol=3e-6,atol=3e-6)
+    with_species=ArenaBatch(4,17,target_species=2,fixed_personality=personality_from_seed(42))
+    try:
+        np.testing.assert_allclose(with_species.learner_obs()[:,22],2/39)
+        np.testing.assert_allclose(with_species.learner_personality(),np.tile(personality_from_seed(42),(4,1)))
+        with_species.reset(0)
+        np.testing.assert_allclose(with_species.learner_obs()[0,22],2/39)
+    finally:with_species.close()
+    policy=load_checkpoint(sys.argv[1])[0] if len(sys.argv)>1 else CreaturePolicy();env=ArenaBatch(4,77,personality_rate=1. if policy.brain_format==3 else 0.)
     try:
         env.styles[:]=0
         np.testing.assert_array_equal(env.teacher().reshape(-1),list(env.batch.scripted_actions()))
@@ -42,7 +62,7 @@ def run():
         with torch.no_grad():
             for t in range(16):
                 h=h*(1-b['reset'][t,:,None])
-                _,_,_,lp,v,h,_=distribution(policy,b['obs'][t],h,b['raw'][t],b['ability'][t].long())
+                _,_,_,lp,v,h,_=distribution(policy,b['obs'][t],h,b['raw'][t],b['ability'][t].long(),personality=b['personality'][t])
                 torch.testing.assert_close(lp,b['logp'][t],atol=2e-5,rtol=2e-5)
                 torch.testing.assert_close(v,b['value'][t],atol=2e-5,rtol=2e-5)
     finally:env.close()
@@ -60,18 +80,24 @@ def run():
                 h=torch.zeros(1,HIDDEN)
                 for t in range(12):
                     o=np.asarray(batch.observe(player=player),np.float32)
-                    with torch.no_grad():mean,logits,value,next_h=policy(torch.from_numpy(o)[None],h)
+                    traits=list(PRESETS.values())[(species+t)%len(PRESETS)] if policy.brain_format==3 else (0.,0.,0.)
+                    with torch.no_grad():
+                        mean,logits,value,next_h=policy(torch.from_numpy(o)[None],h,torch.tensor([traits]))
+                        mean=selected_motion(mean,logits.argmax(-1))
                     expected=torch.cat((mean,logits,value[:,None],next_h),-1).numpy()[0]
-                    actual=np.array(native.forward(o,h.numpy()[0]),np.float32)
+                    actual=np.array(native.forward(o,h.numpy()[0],traits),np.float32)
                     np.testing.assert_allclose(actual,expected,rtol=3e-5,atol=3e-5)
                     worst=max(worst,float(np.max(np.abs(actual-expected))))
-                    actions,nh=native.action(o,h.numpy()[0])
+                    actions,nh=native.action(o,h.numpy()[0],traits)
                     target=world_actions(mean.tanh().numpy(),logits.argmax(-1).numpy(),o[None])[0]
                     np.testing.assert_allclose(actions[:4],target[:4],atol=1,rtol=0)
                     assert actions[4]==target[4] and o[SLICES['mask']][actions[4]]==1
                     action_delta=max(action_delta,int(np.max(np.abs(np.array(actions)-target))))
                     teacher=list(batch.scripted_actions());teacher[5*player:5*player+5]=actions;batch.step(teacher)
                     h=next_h;decisions+=1
+            for traits in [(0,0,float('nan')), (0,0,1.01)]:
+                try:native.forward(o,np.zeros(96),traits);raise AssertionError('Invalid personality accepted')
+                except ValueError:pass
             bad=o.copy();bad[0]=np.nan
             try:native.forward(bad,np.zeros(96));raise AssertionError('NaN observation accepted')
             except ValueError:pass

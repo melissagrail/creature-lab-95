@@ -12,19 +12,19 @@ class NativeBrain:
         self.lib=C.CDLL(os.environ.get('TINIBRAIN_LIB',str(ROOT/'build'/filename)))
         self.lib.tb_create.argtypes=[C.c_char_p];self.lib.tb_create.restype=C.c_void_p
         self.lib.tb_destroy.argtypes=[C.c_void_p];self.lib.tb_destroy.restype=None
-        self.lib.tb_forward.argtypes=[C.c_void_p,C.POINTER(F),C.POINTER(F),C.POINTER(F)];self.lib.tb_forward.restype=I
-        self.lib.tb_action.argtypes=[C.c_void_p,C.POINTER(F),C.POINTER(F),C.POINTER(I)];self.lib.tb_action.restype=I
+        self.lib.tb_forward_personality.argtypes=[C.c_void_p,C.POINTER(F),C.POINTER(F),C.POINTER(F),C.POINTER(F)];self.lib.tb_forward_personality.restype=I
+        self.lib.tb_action_personality.argtypes=[C.c_void_p,C.POINTER(F),C.POINTER(F),C.POINTER(F),C.POINTER(I)];self.lib.tb_action_personality.restype=I
         self.handle=self.lib.tb_create(os.fsencode(path))
         if not self.handle:raise ValueError('Missing, corrupt or incompatible .tbrain model')
-    def forward(self,obs,memory):
-        if not self.handle or len(obs)!=OBS_SIZE or len(memory)!=96:raise ValueError('Invalid brain input or closed model')
+    def forward(self,obs,memory,personality=(0.,0.,0.)):
+        if not self.handle or len(obs)!=OBS_SIZE or len(memory)!=96 or len(personality)!=3:raise ValueError('Invalid brain input or closed model')
         o=(F*OBS_SIZE)(*obs);h=(F*96)(*memory);out=(F*107)()
-        if self.lib.tb_forward(self.handle,o,h,out):raise ValueError('Invalid brain input')
+        if self.lib.tb_forward_personality(self.handle,o,h,(F*3)(*personality),out):raise ValueError('Invalid brain input')
         return list(out)
-    def action(self,obs,memory):
-        if not self.handle or len(obs)!=OBS_SIZE or len(memory)!=96:raise ValueError('Invalid brain input or closed model')
+    def action(self,obs,memory,personality=(0.,0.,0.)):
+        if not self.handle or len(obs)!=OBS_SIZE or len(memory)!=96 or len(personality)!=3:raise ValueError('Invalid brain input or closed model')
         o=(F*OBS_SIZE)(*obs);h=(F*96)(*memory);a=(I*5)()
-        if self.lib.tb_action(self.handle,o,h,a):raise ValueError('Invalid brain input')
+        if self.lib.tb_action_personality(self.handle,o,h,(F*3)(*personality),a):raise ValueError('Invalid brain input')
         return list(a),list(h)
     def close(self):
         if getattr(self,'handle',None):self.lib.tb_destroy(self.handle);self.handle=None

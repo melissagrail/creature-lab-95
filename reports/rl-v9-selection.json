@@ -1,0 +1,39 @@
+{
+  "method": "Highest score on the fixed 240-game validation cohort; ties prefer the temperament model.",
+  "baseline_source": "v9",
+  "models": {
+    "v9": {
+      "path": "models/apprentice.tbrain",
+      "checksum": "4a424577",
+      "sha256": "56728333148f5d35c3374aefc4c6c99adfa97b64e19955d13cbee237401748e9",
+      "validation_score": 0.4041666666666667,
+      "new_ppo_decisions": 4259840
+    },
+    "winning-only": {
+      "path": "models/baselines/winning-only-v9.tbrain",
+      "checksum": "3852470a",
+      "sha256": "c7c9e2b695017a43e40a2b15e8503926b953f7494ef2abd22b0b9bbbac844b06",
+      "validation_score": 0.3854166666666667,
+      "new_ppo_decisions": 3276800
+    },
+    "baseline": {
+      "path": "models/champion.tbrain",
+      "checksum": "4a424577",
+      "sha256": "56728333148f5d35c3374aefc4c6c99adfa97b64e19955d13cbee237401748e9",
+      "validation_score": 0.4041666666666667,
+      "new_ppo_decisions": 4259840
+    },
+    "v8": {
+      "path": "models/baselines/apprentice-v8.tbrain",
+      "checksum": "c79f418b",
+      "sha256": "3f90ba2a5aca8363782b618b45a730151275df81c17a9803c76697ec8968e18c"
+    }
+  },
+  "evaluation": {
+    "seed": 2100000000,
+    "scenarios": 720,
+    "seats": 2,
+    "grid": "crossed",
+    "selection_uses_test": false
+  }
+}

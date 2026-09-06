@@ -5,7 +5,12 @@
 #include <string>
 #include <vector>
 namespace creature {
-constexpr int BrainFormat = 2, BrainHidden = 96, BrainParameters = 86755;
+constexpr int BrainFormat = 3, BrainHidden = 96, BrainParameters = 89959;
+using Personality = std::array<float, 3>;
+constexpr int PersonalityCount = 5;
+const char *personality_name(int);
+Personality personality_preset(int);
+Personality personality_from_seed(uint32_t);
 using BrainMemory = std::array<float, BrainHidden>;
 struct BrainOutput {
     std::array<float, 4> mean{};
@@ -18,17 +23,22 @@ struct BrainOutput {
 class Brain {
     std::vector<float> weights;
     uint32_t checksum_ = 0;
+    int format_ = 0;
 
   public:
     bool load(const std::string &path, std::string &error);
     bool ready() const {
-        return weights.size() == BrainParameters;
+        return weights.size() == BrainParameters || weights.size() == 86755;
     }
     uint32_t checksum() const {
         return checksum_;
     }
-    bool forward(const Observation &, const BrainMemory &, BrainOutput &) const;
-    Action action(const Observation &, BrainMemory &) const;
+    int format() const {
+        return format_;
+    }
+    bool forward(const Observation &, const BrainMemory &, BrainOutput &,
+                 const Personality & = {}) const;
+    Action action(const Observation &, BrainMemory &, const Personality & = {}) const;
     static Action decode(const Observation &, const BrainOutput &);
 };
 } // namespace creature

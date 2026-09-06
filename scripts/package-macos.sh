@@ -17,8 +17,8 @@ cat > "$bundle/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIdentifier</key><string>org.creaturelab.workbench</string>
 <key>CFBundleName</key><string>Tinikami</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>8</string>
-<key>CFBundleShortVersionString</key><string>0.8.0</string>
+<key>CFBundleVersion</key><string>9</string>
+<key>CFBundleShortVersionString</key><string>0.9.0</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 PLIST

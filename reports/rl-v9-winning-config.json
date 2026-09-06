@@ -1,0 +1,31 @@
+{
+  "out": "runs/steady-v3",
+  "resume": null,
+  "warmstart": "models/baselines/apprentice-v8.pt",
+  "seed": 20260908,
+  "threads": 1,
+  "demo_envs": 32,
+  "demo_steps": 512,
+  "bc_epochs": 12,
+  "envs": 64,
+  "horizon": 128,
+  "updates": 400,
+  "sequence": 16,
+  "minibatch": 32,
+  "epochs": 3,
+  "lr": 7e-05,
+  "gamma": 0.9995,
+  "clip": 0.2,
+  "entropy": 0.003,
+  "target_kl": 0.03,
+  "eval_every": 40,
+  "eval_games": 240,
+  "test_games": 240,
+  "personality_rate": 0.0,
+  "style_scale": 0.003,
+  "refine_imitation": false,
+  "opponent": [
+    "models/baselines/apprentice-v8.pt"
+  ],
+  "learned_opponent_rate": 0.25
+}

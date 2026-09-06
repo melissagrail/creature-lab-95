@@ -1,5 +1,7 @@
 # The first trained apprentice — alpha 0.8
 
+This is the historical v8 release guide. See [alpha 0.9](temperament.md) for current controllers, controls and training commands.
+
 Tinikami now ships a trained recurrent controller, an imitation warm start, recurrent PPO training, native C++ inference, and evaluation against scripted opponents. The default viewer gives A the trained apprentice and B the scripted pilot. Both skins use the same controller.
 
 ![A learned spirit in the garden](learning.png)

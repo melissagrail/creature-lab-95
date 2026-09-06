@@ -60,3 +60,6 @@ $(BUILD)/brain_tests: $(CORE) agents/brain.cpp tests/brain_tests.cpp include/cre
 
 $(BUILD)/brain_eval: $(CORE) agents/brain.cpp tests/brain_eval.cpp include/creature/brain.hpp include/creature/brain_api.h | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp tests/brain_eval.cpp -o $@
+
+$(BUILD)/brain_probe: $(CORE) agents/brain.cpp tests/brain_probe.cpp include/creature/brain.hpp include/creature/brain_api.h | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp tests/brain_probe.cpp -o $@
