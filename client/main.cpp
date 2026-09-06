@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
         else if (a == "--species-b" && i + 1 < argc)
             species_b = std::clamp(std::stoi(argv[++i]), 0, 39);
         else if (a == "--arena" && i + 1 < argc)
-            arena = std::clamp(std::stoi(argv[++i]), 0, 2);
+            arena = std::clamp(std::stoi(argv[++i]), 0, ArenaCount - 1);
         else if (a == "--catalog") {
             catalog = true;
             paused = true;
@@ -407,7 +407,7 @@ int main(int argc, char **argv) {
             catalog_page = (catalog_page + 1) % 4;
             break;
         case 28:
-            arena = (arena + 1) % 3;
+            arena = (arena + 1) % ArenaCount;
             restart();
             break;
         case 17:
@@ -548,7 +548,7 @@ int main(int argc, char **argv) {
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / ENERGY ALPHA 0.6", white, 1);
+            label(720, 23, "F2 TINIKAMI / GARDENS ALPHA 0.7", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);
@@ -835,10 +835,7 @@ int main(int argc, char **argv) {
                       ")  A:" + num((w.winds[0].life + 29) / 30) +
                       "S B:" + num((w.winds[1].life + 29) / 30) + "S",
                   green, 1);
-            button(28, 550, 690, 168,
-                   arena == 0   ? "ARENA: PILLARS [L]"
-                   : arena == 1 ? "ARENA: GROVE [L]"
-                                : "ARENA: OPEN [L]");
+            button(28, 550, 690, 168, std::string(arena_name(arena)) + " [L]");
             label(28, 714,
                   "TICK " + num(w.tick) + "  SEED " + num(seed) +
                       "  WIND CAST [Z/X]: " + num(wind_power) + "%  TAB: ROSTER",

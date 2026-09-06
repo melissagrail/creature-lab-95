@@ -63,7 +63,8 @@ Phase phase(const Body &b) {
 void reset(World &w, uint32_t seed, int weather, int a, int b, int arena) {
     w = World{};
     w.rng = seed ? seed : 1;
-    w.arena = std::clamp(arena, 0, 2);
+    w.arena = std::clamp(arena, 0, ArenaCount - 1);
+    arena = w.arena;
     int jitter = int(random(w) % 2049) - 1024;
     for (int i = 0; i < 2; i++) {
         auto &body = w.bodies[i];
@@ -110,6 +111,46 @@ void reset(World &w, uint32_t seed, int weather, int a, int b, int arena) {
         w.surfaces[0].pos = {7 * Q, 4 * Q};
         w.surfaces[1].pos = {17 * Q, 14 * Q};
     }
+    // New cover and ground are invariant under a 180-degree rotation, including current direction.
+    // Cosmetic floor paths are renderer-only; these circles are authoritative geometry.
+    if (arena >= 3) {
+        w.surfaces = {};
+        auto ground = [&](int slot, Vec pos, int radius, int kind, Vec flow = Vec{}) {
+            w.surfaces[slot] = {pos, radius, kind, MaxTicks, -1, kind == Ice ? Water : kind,
+                                0,   flow};
+        };
+        if (arena == 3) {
+            w.obstacles = {Obstacle{{9 * Q, 9 * Q}, 1050}, Obstacle{{15 * Q, 9 * Q}, 1050},
+                           Obstacle{{12 * Q, 5 * Q}, 800}, Obstacle{{12 * Q, 13 * Q}, 800}};
+            ground(0, {8 * Q, 5 * Q}, 1300, Water, {12, 6});
+            ground(1, {16 * Q, 13 * Q}, 1300, Water, {-12, -6});
+            ground(2, {12 * Q, 9 * Q}, 1700, Brush);
+            ground(3, {8 * Q, 13 * Q}, 1100, Ice);
+            ground(4, {16 * Q, 5 * Q}, 1100, Ice);
+        } else if (arena == 4) {
+            w.obstacles = {Obstacle{{6 * Q, 5 * Q}, 900}, Obstacle{{18 * Q, 13 * Q}, 900},
+                           Obstacle{{10 * Q, 8 * Q}, 900}, Obstacle{{14 * Q, 10 * Q}, 900}};
+            ground(0, {7 * Q, 9 * Q}, 1800, Ice);
+            ground(1, {17 * Q, 9 * Q}, 1800, Ice);
+            ground(2, {12 * Q, 9 * Q}, 1500, Ice);
+            ground(3, {10 * Q, 4 * Q}, 1100, Water, {0, 16});
+            ground(4, {14 * Q, 14 * Q}, 1100, Water, {0, -16});
+        } else {
+            w.obstacles = {Obstacle{{10 * Q, 9 * Q}, 1500}, Obstacle{{14 * Q, 9 * Q}, 1500},
+                           Obstacle{}, Obstacle{}};
+            w.obstacles[2].radius = w.obstacles[3].radius = 0;
+            ground(0, {12 * Q, 5 * Q}, 1600, Oil);
+            ground(1, {12 * Q, 13 * Q}, 1600, Oil);
+            ground(2, {12 * Q, 9 * Q}, 1000, Brush);
+            ground(3, {6 * Q, 9 * Q}, 1100, Mud);
+            ground(4, {18 * Q, 9 * Q}, 1100, Mud);
+        }
+    }
+}
+const char *arena_name(int arena) {
+    static const char *names[ArenaCount] = {"Stone Garden", "Moss Grove",  "Open Meadow",
+                                            "Moon Court",   "Frost Steps", "Cinder Basin"};
+    return arena >= 0 && arena < ArenaCount ? names[arena] : nullptr;
 }
 void command(World &w, int a, int g) {
     if (a < 0 || a > 1 || g < 0 || g > 3 || w.terminal || w.truncated)
@@ -1611,7 +1652,7 @@ Observation observe(const World &w, int i) {
                 float(w.wetness) / 1000,
                 float(w.terminal),
                 float(w.truncated),
-                float(w.arena) / 2,
+                float(w.arena) / (ArenaCount - 1),
                 float(w.objective),
                 float(b.control) / 600,
                 float(e.control) / 600,
@@ -1791,8 +1832,8 @@ static bool valid(const World &w) {
         w.truncated < 0 || w.truncated > 1 || w.winner < -1 || w.winner > 1 || w.end_reason < 0 ||
         w.end_reason > 3 || w.event_head < 0 || w.event_head >= HistoryCount || w.event_count < 0 ||
         w.event_count > HistoryCount || w.rain < 0 || w.rain > 1000 || w.wetness < 0 ||
-        w.wetness > 1000 || w.overflow < 0 || w.overflow > 100000 || w.arena < 0 || w.arena > 2 ||
-        w.objective < 0 || w.objective > 1)
+        w.wetness > 1000 || w.overflow < 0 || w.overflow > 100000 || w.arena < 0 ||
+        w.arena >= ArenaCount || w.objective < 0 || w.objective > 1)
         return false;
     auto pos = [](Vec v) { return v.x >= -Q && v.x <= 25 * Q && v.y >= -Q && v.y <= 19 * Q; };
     auto vel = [](Vec v) { return v.x >= -2 * Q && v.x <= 2 * Q && v.y >= -2 * Q && v.y <= 2 * Q; };

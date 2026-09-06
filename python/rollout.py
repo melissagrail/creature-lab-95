@@ -4,7 +4,7 @@
 """
 import argparse
 import time
-from creature import Batch
+from creature import Batch, ARENA_COUNT
 p = argparse.ArgumentParser()
 p.add_argument('--arenas', type=int, default=256)
 p.add_argument('--decisions', type=int, default=1000)
@@ -21,7 +21,7 @@ with Batch(a.arenas, seed=42, weather=2, species=(12,27)) as batch:
             ticks += status[i * 4 + 3]
             if status[i * 4] or status[i * 4 + 1]:
                 finished += 1
-                batch.reset(i, 42 + finished * a.arenas + i, weather=t % 3, species=(i%40,(i+17)%40), arena=t%3)
+                batch.reset(i, 42 + finished * a.arenas + i, weather=t % 3, species=(i%40,(i+17)%40), arena=t%ARENA_COUNT)
 seconds = time.perf_counter() - start
 print(f'{finished} episodes; {ticks:,} physics ticks; {seconds:.3f}s')
 print(f'{a.arenas*a.decisions/seconds:,.0f} joint decisions/s including Python collection')

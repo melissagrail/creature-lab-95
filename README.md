@@ -1,12 +1,14 @@
-# Tinikami — spirit garden alpha 0.6
+# Tinikami — spirit garden alpha 0.7
 
 A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. The opponents are scripted; the future progression system is learned policy, not XP-scaled stats.
 
-![Tinikami spirit garden](docs/alpha/tinikami.png)
+![Cinder Basin — quieter ground, bright combat](docs/alpha/gardens.png)
 
 ## Start here
 
-- **[Tinikami art and energy pacing](docs/alpha/tinikami.md)** — the new skin, spirit book, energy contracts and measured pacing.
+- **[Readable gardens and six arenas](docs/alpha/gardens.md)** — value hierarchy, varied tiling, three new layouts and current validation.
+
+- **[Tinikami art and energy pacing](docs/alpha/tinikami.md)** — the spirit skin, spirit book, energy contracts and measured pacing.
 
 - **[Water, ice, mud and oil](docs/alpha/elements.md)** — currents, brittle ice, fuel propagation and terrain-creating moves.
 - **[Original terrain and wind systems](docs/alpha/terrain.md)** — reactive surfaces, timed vector fields, move interactions and the neutral wind vane.
@@ -14,8 +16,8 @@ A deterministic C++ creature-combat engine with **40 playable species, 160 signa
 - **[Core design and combat rules](docs/alpha/design.md)** — eight gameplay axes, counterplay, resource economy, the bloom objective, alpha boundaries.
 - **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
 - **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
-- **[Current energy balance diagnostic](reports/energy-v6-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/tinikami.md#validation)**.
+- **[Current six-arena diagnostic](reports/gardens-v7-balance.md)** — full matrix, aggregate rates and worst pairings.
+- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/gardens.md#validation)**.
 
 ## Build and play
 
@@ -55,7 +57,7 @@ Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on
 - Ground-targeted fields/traps/turrets land at the cursor up to their maximum cast range. The mouse requests facing; turn speed limits how quickly the body follows. Directional attacks lock physical facing at cast start. Most casts plant; the move palette labels mobile exceptions.
 - **Z / X:** decrease/increase wind-cast strength in 25% steps. Mouse sets requested heading; the field uses facing when the cast begins.
 - **Wind vane:** hold its circle uncontested for 1.5 seconds, facing the desired flow direction, to create a five-second gust.
-- **L:** cycle pillars/grove/open arena. Weather and new seed are toolbar controls. Match setting changes restart.
+- **L:** cycle Stone Garden, Moss Grove, Open Meadow, Moon Court, Frost Steps and Cinder Basin. Weather and new seed are toolbar controls. Match setting changes restart.
 - **F5 / F9:** snapshot / restore a replay branch. Save/load replay records actions, guidance, feedback and per-decision hashes.
 - Guidance is policy input; praise/correction are recorded learning annotations. They do not change physics or weights.
 
@@ -69,17 +71,17 @@ The bloom wins at 600 uncontested control points, with a one-second capture prep
 ## Test, simulate, tune
 
 ```sh
-python3 tests/viewer_smoke.py      # both skins + all 40 sprites preserve state
+python3 tests/viewer_smoke.py      # six arenas + both skins + all 40 sprites preserve state
 make test                         # content validation + native + Python FFI
 make build/tournament
-./build/tournament 36 reports/matches.csv 3000
+./build/tournament 72 reports/matches.csv 3000
 python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 python3 python/rollout.py --arenas 256 --decisions 1000
 ```
 
-The 36-seed protocol runs 56,160 matches across all 780 unordered pairs, both seats, nine map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Energy v6 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
+The 72-seed protocol runs 112,320 matches across all 780 unordered pairs, both seats, eighteen map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Gardens v7 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
 
-Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v6; old prototype saves/models fail compatibility checks.
+Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v7; old prototype saves/models fail compatibility checks.
 
 ## RL integration
 

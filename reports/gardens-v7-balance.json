@@ -1,0 +1,335 @@
+{
+  "matches": 112320,
+  "per_species": 5616,
+  "min_rate": 0.14440883190883191,
+  "max_rate": 0.9097222222222222,
+  "seat_a_win_rate": 0.5113559472934472,
+  "mean_seconds": 46.65889185660019,
+  "median_seconds": 42.1,
+  "reasons": {
+    "1": 90945,
+    "2": 10814,
+    "3": 10561
+  },
+  "overflow": 0,
+  "metadata": {
+    "rules_version": 7,
+    "observation_version": 7,
+    "content_hash": 574261014,
+    "seed_offset": 6000,
+    "seeds": 72,
+    "arena_count": 6,
+    "matches": 112320,
+    "pilot": "four scripted styles; no trained models"
+  },
+  "arenas": {
+    "0": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.5212606837606838
+    },
+    "1": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.5196047008547009
+    },
+    "2": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.5161324786324787
+    },
+    "3": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.5021367521367521
+    },
+    "4": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.5101762820512821
+    },
+    "5": {
+      "matches": 18720,
+      "seat_a_win_rate": 0.49882478632478633
+    }
+  },
+  "source_sha256": "874e5658212d080f98b6c96f08f4801a6711cc3bef440d744c9cc7b87fdbef6a",
+  "engine_sha256": "e64bdaf1681ad12d06fb84feeed15d70745ed4a8b0558f3003344823b476e9da",
+  "species": [
+    {
+      "id": 0,
+      "name": "Cinderfox",
+      "wins": 3148.5,
+      "games": 5616,
+      "rate": 0.5606303418803419
+    },
+    {
+      "id": 1,
+      "name": "Brambleback",
+      "wins": 2680.0,
+      "games": 5616,
+      "rate": 0.4772079772079772
+    },
+    {
+      "id": 2,
+      "name": "Glasswing",
+      "wins": 3704.0,
+      "games": 5616,
+      "rate": 0.6595441595441596
+    },
+    {
+      "id": 3,
+      "name": "Voltjack",
+      "wins": 1625.5,
+      "games": 5616,
+      "rate": 0.2894408831908832
+    },
+    {
+      "id": 4,
+      "name": "Miretoad",
+      "wins": 3226.0,
+      "games": 5616,
+      "rate": 0.5744301994301995
+    },
+    {
+      "id": 5,
+      "name": "Basaltusk",
+      "wins": 1973.0,
+      "games": 5616,
+      "rate": 0.35131766381766383
+    },
+    {
+      "id": 6,
+      "name": "Rimehare",
+      "wins": 3522.5,
+      "games": 5616,
+      "rate": 0.6272257834757835
+    },
+    {
+      "id": 7,
+      "name": "Gloamcat",
+      "wins": 2653.5,
+      "games": 5616,
+      "rate": 0.4724893162393162
+    },
+    {
+      "id": 8,
+      "name": "Ironmoth",
+      "wins": 2773.0,
+      "games": 5616,
+      "rate": 0.49376780626780625
+    },
+    {
+      "id": 9,
+      "name": "Tidecoil",
+      "wins": 3206.0,
+      "games": 5616,
+      "rate": 0.5708689458689459
+    },
+    {
+      "id": 10,
+      "name": "Quillrat",
+      "wins": 5109.0,
+      "games": 5616,
+      "rate": 0.9097222222222222
+    },
+    {
+      "id": 11,
+      "name": "Sunstag",
+      "wins": 2466.5,
+      "games": 5616,
+      "rate": 0.4391915954415954
+    },
+    {
+      "id": 12,
+      "name": "Gravemole",
+      "wins": 4198.5,
+      "games": 5616,
+      "rate": 0.7475961538461539
+    },
+    {
+      "id": 13,
+      "name": "Prismray",
+      "wins": 2300.0,
+      "games": 5616,
+      "rate": 0.40954415954415957
+    },
+    {
+      "id": 14,
+      "name": "Thornmantis",
+      "wins": 2556.5,
+      "games": 5616,
+      "rate": 0.45521723646723644
+    },
+    {
+      "id": 15,
+      "name": "Mosswarden",
+      "wins": 811.0,
+      "games": 5616,
+      "rate": 0.14440883190883191
+    },
+    {
+      "id": 16,
+      "name": "Galecrest",
+      "wins": 2747.0,
+      "games": 5616,
+      "rate": 0.48913817663817666
+    },
+    {
+      "id": 17,
+      "name": "Ashram",
+      "wins": 3255.5,
+      "games": 5616,
+      "rate": 0.5796830484330484
+    },
+    {
+      "id": 18,
+      "name": "Clockfin",
+      "wins": 3069.0,
+      "games": 5616,
+      "rate": 0.5464743589743589
+    },
+    {
+      "id": 19,
+      "name": "Nullurchin",
+      "wins": 2293.0,
+      "games": 5616,
+      "rate": 0.4082977207977208
+    },
+    {
+      "id": 20,
+      "name": "Waxwyrm",
+      "wins": 1880.0,
+      "games": 5616,
+      "rate": 0.33475783475783477
+    },
+    {
+      "id": 21,
+      "name": "Ribbonape",
+      "wins": 4102.0,
+      "games": 5616,
+      "rate": 0.7304131054131054
+    },
+    {
+      "id": 22,
+      "name": "Saltcrab",
+      "wins": 1185.5,
+      "games": 5616,
+      "rate": 0.21109330484330485
+    },
+    {
+      "id": 23,
+      "name": "Nectarbat",
+      "wins": 2610.5,
+      "games": 5616,
+      "rate": 0.4648326210826211
+    },
+    {
+      "id": 24,
+      "name": "Bellox",
+      "wins": 1311.0,
+      "games": 5616,
+      "rate": 0.23344017094017094
+    },
+    {
+      "id": 25,
+      "name": "Anvilnewt",
+      "wins": 1701.5,
+      "games": 5616,
+      "rate": 0.30297364672364674
+    },
+    {
+      "id": 26,
+      "name": "Duneskink",
+      "wins": 2858.0,
+      "games": 5616,
+      "rate": 0.5089031339031339
+    },
+    {
+      "id": 27,
+      "name": "Kelpwidow",
+      "wins": 3363.0,
+      "games": 5616,
+      "rate": 0.5988247863247863
+    },
+    {
+      "id": 28,
+      "name": "Pyrelisk",
+      "wins": 4161.0,
+      "games": 5616,
+      "rate": 0.7409188034188035
+    },
+    {
+      "id": 29,
+      "name": "Mooncalf",
+      "wins": 1319.5,
+      "games": 5616,
+      "rate": 0.2349537037037037
+    },
+    {
+      "id": 30,
+      "name": "Coppergecko",
+      "wins": 4077.0,
+      "games": 5616,
+      "rate": 0.7259615384615384
+    },
+    {
+      "id": 31,
+      "name": "Orchardboar",
+      "wins": 2489.5,
+      "games": 5616,
+      "rate": 0.44328703703703703
+    },
+    {
+      "id": 32,
+      "name": "Inkheron",
+      "wins": 3423.0,
+      "games": 5616,
+      "rate": 0.6095085470085471
+    },
+    {
+      "id": 33,
+      "name": "Hooklynx",
+      "wins": 4387.5,
+      "games": 5616,
+      "rate": 0.78125
+    },
+    {
+      "id": 34,
+      "name": "Slagjaw",
+      "wins": 3138.0,
+      "games": 5616,
+      "rate": 0.5587606837606838
+    },
+    {
+      "id": 35,
+      "name": "Dewotter",
+      "wins": 2325.5,
+      "games": 5616,
+      "rate": 0.41408475783475784
+    },
+    {
+      "id": 36,
+      "name": "Echofin",
+      "wins": 2189.5,
+      "games": 5616,
+      "rate": 0.38986823361823364
+    },
+    {
+      "id": 37,
+      "name": "Latchspider",
+      "wins": 3490.5,
+      "games": 5616,
+      "rate": 0.6215277777777778
+    },
+    {
+      "id": 38,
+      "name": "Flintroc",
+      "wins": 3933.0,
+      "games": 5616,
+      "rate": 0.7003205128205128
+    },
+    {
+      "id": 39,
+      "name": "Oathhound",
+      "wins": 1056.5,
+      "games": 5616,
+      "rate": 0.18812321937321938
+    }
+  ]
+}

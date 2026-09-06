@@ -11,6 +11,12 @@ uint32_t cr_content_hash() {
 uint32_t cr_observation_version() {
     return ObservationVersion;
 }
+int32_t cr_arena_count() {
+    return ArenaCount;
+}
+const char *cr_arena_name(int32_t id) {
+    return arena_name(id);
+}
 int32_t cr_species_count() {
     return SpeciesCount;
 }
@@ -20,7 +26,7 @@ const char *cr_species_name(int32_t id) {
 int32_t cr_reset_match(void *ptr, uint32_t seed, int32_t weather, int32_t a, int32_t b,
                        int32_t arena) {
     if (!ptr || a < 0 || a >= 40 || b < 0 || b >= 40 || weather < 0 || weather > 2 || arena < 0 ||
-        arena > 2)
+        arena >= ArenaCount)
         return -1;
     reset(*static_cast<World *>(ptr), seed, weather, a, b, arena);
     return 0;

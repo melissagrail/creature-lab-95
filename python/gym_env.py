@@ -8,7 +8,7 @@ Use Batch directly for self-play/vectorized training. This wrapper does not impl
 import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
-from creature import Batch, SLICES, quantize
+from creature import Batch, SLICES, quantize, ARENA_COUNT
 
 SHAPES = dict(self=(66,), entities=(69,44), moves=(5,48), announced=(48,),
               history=(24,8), global_=(32,), mask=(6,))
@@ -63,7 +63,7 @@ if __name__=='__main__':
     env=CreatureEnv(species=21,opponent=8)
     check_env(env,skip_render_check=True)
     for species in range(40):
-        obs,_=env.reset(seed=species,options={'species':species,'opponent':(species+17)%40})
+        obs,_=env.reset(seed=species,options={'species':species,'opponent':(species+17)%40,'arena':species%ARENA_COUNT})
         assert env.observation_space.contains(obs)
         for _ in range(8):
             obs,reward,terminated,truncated,info=env.step(env.action_space.sample())

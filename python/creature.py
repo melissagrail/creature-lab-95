@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+ARENA_COUNT = 6
 OBS_SIZE = 3620
 SELF_SIZE, ENTITY_COUNT, ENTITY_SIZE, MOVE_SIZE = 66, 69, 44, 48
 FEATURE_SIZE = 10
@@ -20,10 +21,13 @@ def library():
     suffix = 'dylib' if sys.platform == 'darwin' else 'dll' if sys.platform == 'win32' else 'so'
     path = Path(os.environ.get('CREATURE_LIB', ROOT / 'build' / f'libcreature.{suffix}'))
     lib = C.CDLL(str(path))
+    if lib.cr_version() != 7 or lib.cr_observation_version() != 7:
+        raise RuntimeError("Incompatible simulation / observation schema")
     signatures = {
         'cr_version': ([], C.c_uint32), 'cr_content_hash': ([], C.c_uint32),
         'cr_observation_version': ([], C.c_uint32), 'cr_species_count': ([], I),
         'cr_species_name': ([I], C.c_char_p),
+        'cr_arena_count': ([], I), 'cr_arena_name': ([I], C.c_char_p),
         'cr_reset_match': ([P, C.c_uint32, I, I, I, I], I), 'cr_observation_size': ([], I),
         'cr_create': ([C.c_uint32, I], P), 'cr_destroy': ([P], None),
         'cr_reset': ([P, C.c_uint32, I], I),
@@ -40,7 +44,7 @@ def library():
     for name, (args, result) in signatures.items():
         fn = getattr(lib, name)
         fn.argtypes, fn.restype = args, result
-    if lib.cr_version() != 6 or lib.cr_observation_version() != 6 or lib.cr_observation_size() != OBS_SIZE:
+    if lib.cr_version() != 7 or lib.cr_observation_version() != 7 or lib.cr_observation_size() != OBS_SIZE:
         raise RuntimeError('Incompatible simulation / observation schema')
     return lib
 
@@ -96,6 +100,10 @@ class Batch:
     def reset(self, index, seed, weather=0, species=(0,1), arena=0):
         if len(species)!=2 or self.lib.cr_reset_match(self._handle(index),seed,weather,*species,arena):
             raise ValueError('Invalid species, weather, or arena')
+
+    @property
+    def arena_names(self):
+        return [self.lib.cr_arena_name(i).decode() for i in range(self.lib.cr_arena_count())]
 
     @property
     def species_names(self):

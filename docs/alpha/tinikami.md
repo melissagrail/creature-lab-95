@@ -1,3 +1,5 @@
+> Historical v6 release. Energy and spirit art remain current; [Gardens v7](gardens.md) updates terrain rendering, layouts, compatibility and verification.
+
 # Tinikami alpha 0.6: energy and spirit garden
 
 Tinikami adds an illustrated spirit skin over the same deterministic C++ engine and makes energy a consequential shared budget. The original Windows 95 skin remains available. The 40 species keep their stable identities and kits; their new artwork interprets them as small nature/shrine spirits.

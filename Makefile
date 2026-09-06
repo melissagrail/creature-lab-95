@@ -23,7 +23,7 @@ $(BUILD)/sim_tests: $(CORE) tests/sim_tests.cpp include/creature/sim.hpp | $(BUI
 $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/benchmark.cpp -o $@
 viewer: $(BUILD)/creature_lab
-$(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp client/tinikami.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
+$(BUILD)/creature_lab: $(CORE) client/main.cpp client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) client/main.cpp $$(sdl2-config --cflags --libs) -o $@
 test: core $(BUILD)/environment_tests
 	python3 scripts/compile_content.py --check
@@ -39,7 +39,7 @@ content:
 $(BUILD)/tournament: $(CORE) tests/tournament.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/tournament.cpp -o $@
 balance: $(BUILD)/tournament
-	$(BUILD)/tournament 36 reports/matches.csv
+	$(BUILD)/tournament 72 reports/matches.csv
 	python3 scripts/analyze_balance.py reports/matches.csv reports/balance
 $(BUILD)/counterplay: $(CORE) tests/counterplay.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/counterplay.cpp -o $@

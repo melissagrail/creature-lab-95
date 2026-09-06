@@ -6,7 +6,7 @@ import struct
 from pathlib import Path
 from PIL import Image
 root = Path(__file__).resolve().parents[1] / 'assets/tinikami'
-for name in ('spirits', 'environment', 'effects'):
+for name in ('spirits', 'environment', 'environment-v2', 'effects'):
     im = Image.open(root / (name + '.png')).convert('RGBA')
     (root / (name + '.rgba')).write_bytes(b'TINI' + struct.pack('<II', *im.size) + im.tobytes())
     print(name, im.size)

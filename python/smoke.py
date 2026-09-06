@@ -1,5 +1,5 @@
 """FFI parity, batch independence, snapshot forks and lifecycle regression tests."""
-from creature import Batch, OBS_SIZE, quantize
+from creature import Batch, OBS_SIZE, ARENA_COUNT, SLICES, quantize
 import math
 
 with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
@@ -8,6 +8,19 @@ with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
         assert len(obs) == 8 * 2 * OBS_SIZE
         assert all(math.isfinite(x) for x in obs)
     assert len(env.species_names)==40
+    assert env.arena_names == ['Stone Garden', 'Moss Grove', 'Open Meadow', 'Moon Court', 'Frost Steps', 'Cinder Basin']
+    for arena in range(ARENA_COUNT):
+        env.reset(arena, 120, arena % 3, arena=arena)
+        assert math.isclose(env.observe(arena)[SLICES['global_'].start + 6], arena / (ARENA_COUNT - 1), abs_tol=1e-7)
+    for invalid in (-1, ARENA_COUNT):
+        before = env.hash(0)
+        try:
+            env.reset(0, 1, arena=invalid)
+            raise AssertionError('Accepted invalid map')
+        except ValueError:
+            pass
+        assert env.hash(0) == before
+        assert env.lib.cr_arena_name(invalid) is None
     data = env.snapshot(3)
     fork.restore(data)
     assert env.hash(3) == fork.hash()
@@ -32,7 +45,7 @@ with Batch(8, seed=20, weather=2) as env, Batch(1) as fork:
     env.reset(0, 77, 2, species=(12,27), arena=1)
     for _ in range(100):
         env.step(env.scripted_actions())
-    assert env.hash(0)==0xdd03362d679bb37a
+    assert env.hash(0)==0x21baacb4a80fa3b3
     print(f"Python golden {env.hash(0):016x}")
 fork.close()  # Idempotent.
 try:

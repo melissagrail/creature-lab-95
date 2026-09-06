@@ -252,10 +252,10 @@ int main() {
                 std::cerr << "Inert move: " << Roster[sp].name << " / " << m.name << "\n";
             CHECK(connected);
         }
-    // Independent worlds, content-stamped forks, every species in three arenas/weathers.
+    // Independent worlds, content-stamped forks, every species in six arenas / three weathers.
     for (int s = 0; s < 40; s++) {
         World a, b;
-        reset(a, 99 + s, s % 3, s, (s + 17) % 40, s % 3);
+        reset(a, 99 + s, s % 3, s, (s + 17) % 40, s % ArenaCount);
         b = a;
         for (int t = 0; t < 900 && !a.terminal && !a.truncated; t++) {
             std::array<Action, 2> acts{scripted(a, 0), scripted(a, 1, 1)};
@@ -553,7 +553,7 @@ int main() {
     CHECK(a.overflow == 1);
     // Seeded random action soak exercises arbitrary timing rather than only pilot choices.
     for (int sp = 0; sp < 40; sp++) {
-        reset(a, 6000 + sp, sp % 3, sp, (sp + 11) % 40, sp % 3);
+        reset(a, 6000 + sp, sp % 3, sp, (sp + 11) % 40, sp % ArenaCount);
         uint32_t rng = sp + 1;
         auto next = [&]() {
             rng ^= rng << 13;
@@ -598,6 +598,6 @@ int main() {
     reset(a, 77, 2, 12, 27, 1);
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
-    CHECK(hash(a) == 0xdd03362d679bb37aull);
+    CHECK(hash(a) == 0x21baacb4a80fa3b3ull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

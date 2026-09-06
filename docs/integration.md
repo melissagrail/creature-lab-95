@@ -1,6 +1,6 @@
-# Alpha integration contract — rules / observations v6
+# Alpha integration contract — rules / observations v7
 
-The core is C++17 with no renderer, model runtime or network dependency. `include/creature/api.h` exports opaque handles, registry queries, match reset, batched stepping, structured actor observations, commands, snapshots and hashes. `cr_reset_match` selects both species, weather and arena. `cr_version`, `cr_observation_version` and `cr_content_hash` identify the contract. V1–V5 saves, replays and policies are deliberately incompatible.
+The core is C++17 with no renderer, model runtime or network dependency. `include/creature/api.h` exports opaque handles, registry queries, match reset, batched stepping, structured actor observations, commands, snapshots and hashes. `cr_reset_match` selects both species, weather and arena. Arena IDs are 0–5; `cr_arena_count()` and `cr_arena_name(id)` expose the registry (`nullptr` for an invalid ID). Python exposes `Batch.arena_names`. Invalid C API resets reject atomically. `cr_version`, `cr_observation_version` and `cr_content_hash` identify the contract. V1–V6 saves, replays and policies are deliberately incompatible.
 
 ## Canonical action and result
 
@@ -12,7 +12,7 @@ For fields/traps/turrets, aim magnitude controls ground-target distance as a fra
 
 Status is native terminated, native clock-expired, winner (-1 draw/none), executed physics ticks. No auto-reset. A KO or capture can end before all three ticks execute. The 90-second scored verdict is **terminal for the finite game** even though the native API preserves its separate `truncated`/clock flag for debugging. The Gymnasium adapter maps either native ending to learner termination; an external rollout cutoff would instead be a truncation requiring appropriate bootstrap. Do not bootstrap through an adjudicated final win/loss as though the match continues.
 
-## Actor tensor v6: 3,620 floats
+## Actor tensor v7: 3,620 floats
 
 | Slice | Shape | Meaning |
 |---|---|---|
@@ -40,7 +40,7 @@ Move columns 0–35: kind/10; startup/30; active/30; recovery/30; cooldown/180; 
 
 History: age/150, kind/17, actor relation, target relation, (move+1)/161, amount/180, visible=1, present=1. Guidance is not inserted into public event history; it lives in private self state and replay input records. Event IDs 16 and 17 are ground changed and wind changed. Ground hazard damage uses move=-1, credits enemy damage to the last transformer/creator, and never credits self-harm as damage dealt. Opponent cooldowns, guidance, RNG and latent model memory are not exposed. Energy and its regeneration lock are now public, matching the viewer. Spatial state and combat telegraphs are public; rocks are collision occluders, not vision occluders.
 
-Global 0–12: time/2700, rain/1000, resultant wind x/24, wetness/1000, native terminated, native clock-expired, arena/2, objective enabled, own/enemy control /600, own/enemy capture preparation /30, end reason/3. Global 13–15: resultant wind y/24, longest remaining gust /600, vane cooldown /240. Global 16–21: own then enemy contribution x/24, y/24, life/600. Global 22–28: prevailing x/y /24, vane world x/(24×1024), y/(18×1024), own/enemy capture progress /45, vane enabled. 29 is own regeneration lock /24; 30–31 are own/enemy currently eligible regeneration per tick /12. Time-like normalization factors are scales, not clipping guarantees; some features exceed 1.
+Global 0–12: time/2700, rain/1000, resultant wind x/24, wetness/1000, native terminated, native clock-expired, arena/5, objective enabled, own/enemy control /600, own/enemy capture preparation /30, end reason/3. Global 13–15: resultant wind y/24, longest remaining gust /600, vane cooldown /240. Global 16–21: own then enemy contribution x/24, y/24, life/600. Global 22–28: prevailing x/y /24, vane world x/(24×1024), y/(18×1024), own/enemy capture progress /45, vane enabled. 29 is own regeneration lock /24; 30–31 are own/enemy currently eligible regeneration per tick /12. Time-like normalization factors are scales, not clipping guarantees; some features exceed 1.
 
 ## Python and model lifecycle
 
@@ -65,3 +65,12 @@ Water and charged-water currents are external forces: overlapping vectors sum wi
 The 1,000 internal-unit pool is displayed as 100 energy. Accepted arts and dodge pay from that pool and set a 24-tick regeneration lock. Base regeneration is eligible only once that lock expires and the body is idle or recovering. Long startup/active phases continue suppressing it. An interrupted cast imposes at least 12 ticks of lock. Saltcrab adds 7 internal units per guard tick independently of that lock; Clockfin refunds 70 on alternation and Coppergecko refunds 120 every third cast. Rejected inputs spend nothing. Regeneration lock does not itself forbid casting, and movement is free.
 
 The lock is explicitly serialized and validated. Existing energy, move cost and legal-action tokens combine with the new public reserve/lock/rate tokens to support spending and reserve decisions without pixel inference. `client/tinikami.hpp` receives a const world; artwork, animation, skin selection and hitbox overlays are absent from snapshots and model input. Source PNGs and lossless RGBA assets live under `assets/tinikami`; the core has no art dependency.
+
+
+## Gardens in v7
+
+The actor tensor remains 3,620 floats. Global column 6 now encodes arena ID /5. This semantic change increments both rules and observation versions to 7; the 40-species content fingerprint remains `223a8716`. The Python loader rejects v6 libraries before requesting the new arena exports. Existing models must explicitly migrate their manifests and arena feature interpretation.
+
+Arena IDs: 0 Stone Garden, 1 Moss Grove, 2 Open Meadow, 3 Moon Court, 4 Frost Steps, 5 Cinder Basin. All cover, surface kinds, currents and transformations still use the existing public entity rows. The three new maps fit the existing four-obstacle / sixteen-surface capacities. The base energy and move contracts are unchanged. [Layouts and presentation](alpha/gardens.md).
+
+Tile choice, rotation and soft blending are deterministic presentation functions. They never advance the simulation RNG, enter observations or participate in collision. The native garden receives const state; both skins and repeated captures preserve identical world hashes on all six arenas.

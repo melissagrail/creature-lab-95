@@ -15,6 +15,8 @@ extern "C" {
 CR_API uint32_t cr_version(void);
 CR_API uint32_t cr_content_hash(void);
 CR_API uint32_t cr_observation_version(void);
+CR_API int32_t cr_arena_count(void);
+CR_API const char *cr_arena_name(int32_t id);
 CR_API int32_t cr_species_count(void);
 CR_API const char *cr_species_name(int32_t id);
 CR_API int32_t cr_reset_match(void *, uint32_t seed, int32_t weather, int32_t a, int32_t b,

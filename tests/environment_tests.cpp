@@ -1,5 +1,6 @@
 #include "creature/sim.hpp"
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 using namespace creature;
@@ -276,6 +277,59 @@ int main() {
         auto data = snapshot(malformed);
         CHECK(!restore(destination, data.data(), data.size()));
         CHECK(hash(destination) == original_hash);
+    }
+    // Every species can spawn, expose the map, and replay on all six layouts.
+    CHECK(arena_name(-1) == nullptr && arena_name(ArenaCount) == nullptr);
+    for (int arena = 0; arena < ArenaCount; ++arena) {
+        CHECK(arena_name(arena) != nullptr);
+        for (int species = 0; species < SpeciesCount; ++species) {
+            World map, fork;
+            reset(map, 8700 + species, species % 3, species, (species + 17) % SpeciesCount, arena);
+            CHECK(map.arena == arena);
+            CHECK(std::abs(observe(map, 0).global[6] - float(arena) / (ArenaCount - 1)) < .00001f);
+            for (const auto &body : map.bodies)
+                for (const auto &rock : map.obstacles)
+                    CHECK(!rock.radius || length(body.pos - rock.pos) > body.radius + rock.radius);
+            int patches = 0;
+            for (const auto &g : map.surfaces)
+                if (g.life) {
+                    ++patches;
+                    CHECK(g.owner == -1);
+                }
+            CHECK(patches <= 5);
+            if (arena >= 3) {
+                for (const auto &rock : map.obstacles)
+                    if (rock.radius) {
+                        bool paired = false;
+                        for (const auto &other : map.obstacles)
+                            paired |= other.radius == rock.radius &&
+                                      other.pos.x + rock.pos.x == 24 * Q &&
+                                      other.pos.y + rock.pos.y == 18 * Q;
+                        CHECK(paired);
+                    }
+                for (const auto &g : map.surfaces)
+                    if (g.life) {
+                        bool paired = false;
+                        for (const auto &other : map.surfaces)
+                            paired |= other.life && other.kind == g.kind &&
+                                      other.radius == g.radius && other.pos.x + g.pos.x == 24 * Q &&
+                                      other.pos.y + g.pos.y == 18 * Q &&
+                                      other.flow.x == -g.flow.x && other.flow.y == -g.flow.y;
+                        CHECK(paired);
+                    }
+            }
+            auto bytes = snapshot(map);
+            CHECK(restore(fork, bytes.data(), bytes.size()));
+            for (int decision = 0; decision < 300 && !map.terminal && !map.truncated; ++decision) {
+                auto actions = std::array<Action, 2>{scripted(map, 0), scripted(map, 1)};
+                step(map, actions);
+                step(fork, actions);
+                CHECK(hash(map) == hash(fork));
+            }
+            CHECK(map.overflow == 0);
+            bytes = snapshot(map);
+            CHECK(restore(fork, bytes.data(), bytes.size()) && hash(map) == hash(fork));
+        }
     }
     std::cout << checks << " environment checks passed\n";
 }

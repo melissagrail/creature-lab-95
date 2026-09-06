@@ -1,6 +1,6 @@
-# Engine alpha v6
+# Engine alpha v7
 
-See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. Earlier v1–v5 builds remain in Git history; their content, snapshots and observation shape are incompatible.
+See [the design rules](alpha/design.md), [40 passive contracts](alpha/passives.md), [the roster](alpha/species.md), and [the integration schema](integration.md) for the authoritative alpha documentation. Earlier v1–v6 builds remain in Git history; their content, snapshots and observation shape are incompatible.
 
 The core uses signed integer coordinates at 1,024 units per game unit. Products/dot products use 64-bit intermediates; integer square root and explicit normalization avoid floating-point physics. A world has no renderer, wall clock, model or shared RNG dependency. The xorshift state is per world. Rendering and observation conversion can use floats without changing physics.
 
@@ -23,3 +23,5 @@ Terrain surfaces including stored current vectors, elemental transformation time
 Created ground first refreshes a nearby same-kind owned patch. At five live owned patches, a new placement replaces the owned patch with the shortest remaining lifetime; otherwise it allocates the first free slot. Conversions can transfer additional neutral patches without allocating. Fire spread samples neighbors before applying one generation of ignition each second. Ground damage is capped per kind per creature per pulse. Currents, phase transitions and fuel reactions run in deterministic pool order.
 
 The shared energy pool, cast-triggered regeneration lock and eligible regeneration rate follow the [v6 energy contract](alpha/tinikami.md). The 24-tick lock is explicitly persisted. Rendering is a selectable presentation layer: Tinikami consumes only const state and the same input commands as the debugging workbench. PNG decoding is an authoring step; shipped RGBA textures require only SDL2.
+
+Six fixed arena layouts are registered in the core, independent of their [garden presentation](alpha/gardens.md). Neutral ground and cover in the three added layouts are invariant under a 180-degree rotation; the existing north wind vane and prevailing weather remain asymmetric. First-three-map geometry and all energy/ability tuning are unchanged in v7.
