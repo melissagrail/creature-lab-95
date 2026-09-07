@@ -94,12 +94,20 @@ int main(int argc, char **argv) {
                         learned_opponent
                             ? opponent_brain.action(observe(w, 1 - seat), opponent_memory)
                             : scripted(w, 1 - seat, style);
+                    int tick_before = w.tick;
                     auto result = step(w, actions);
                     const auto &f = result.features[seat];
                     spent += f.spent;
-                    casts += f.spent > 0;
-                    if (f.spent > 0 && actions[seat].ability > 0)
-                        ++slots[actions[seat].ability - 1];
+                    // Footwork also spends energy. Count accepted cast events, not costs.
+                    for (const auto &event : w.events) {
+                        if (event.tick < tick_before || event.tick >= w.tick ||
+                            event.kind != Started || event.actor != seat)
+                            continue;
+                        ++casts;
+                        for (int slot = 0; slot < 5; ++slot)
+                            if (move_id(w.bodies[seat], slot) == event.move)
+                                ++slots[slot];
+                    }
                     damage += f.dealt;
                     taken += f.taken;
                     healed += f.healed;

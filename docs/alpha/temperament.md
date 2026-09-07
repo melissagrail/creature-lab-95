@@ -1,5 +1,7 @@
 # Stronger pilots and individual temperament — alpha 0.9
 
+This is the historical rules-7 report. For the current game and models, see [the journey](journey.md) and [rules-8 results](../../reports/rl-v10-summary.md). `Combat Lab.command` now opens the workbench described here; `Launch.command` opens the campaign.
+
 Tinikami now has a focused baseline, a temperament-conditioned spirit controller, learned species embeddings, and ability-specific movement and aiming. Both controllers run in native C++; Python is needed only for training. The deterministic combat engine is unchanged.
 
 ![Spirit temperaments in the native client](temperament.png)

@@ -1,0 +1,541 @@
+{
+  "version": 1,
+  "orientations": [
+    "south",
+    "east",
+    "north",
+    "west"
+  ],
+  "poses": [
+    "idle",
+    "walk_a",
+    "walk_b",
+    "windup",
+    "attack",
+    "hit",
+    "fall",
+    "fainted"
+  ],
+  "species": [
+    {
+      "source": "00-cinderfox.png",
+      "atlas": "0.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 252105,
+      "id": 0,
+      "name": "Cinderfox"
+    },
+    {
+      "source": "01-brambleback.png",
+      "atlas": "1.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 191496,
+      "id": 1,
+      "name": "Brambleback"
+    },
+    {
+      "source": "02-glasswing.png",
+      "atlas": "2.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 230758,
+      "id": 2,
+      "name": "Glasswing"
+    },
+    {
+      "source": "03-voltjack.png",
+      "atlas": "3.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 226546,
+      "id": 3,
+      "name": "Voltjack"
+    },
+    {
+      "source": "04-miretoad.png",
+      "atlas": "4.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 193361,
+      "id": 4,
+      "name": "Miretoad"
+    },
+    {
+      "source": "05-basaltusk.png",
+      "atlas": "5.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 173522,
+      "id": 5,
+      "name": "Basaltusk"
+    },
+    {
+      "source": "06-rimehare.png",
+      "atlas": "6.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 218688,
+      "id": 6,
+      "name": "Rimehare"
+    },
+    {
+      "source": "07-gloamcat.png",
+      "atlas": "7.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 217622,
+      "id": 7,
+      "name": "Gloamcat"
+    },
+    {
+      "source": "08-ironmoth.png",
+      "atlas": "8.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 192653,
+      "id": 8,
+      "name": "Ironmoth"
+    },
+    {
+      "source": "09-tidecoil.png",
+      "atlas": "9.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 201203,
+      "id": 9,
+      "name": "Tidecoil"
+    },
+    {
+      "source": "10-quillrat.png",
+      "atlas": "10.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 208572,
+      "id": 10,
+      "name": "Quillrat"
+    },
+    {
+      "source": "11-sunstag.png",
+      "atlas": "11.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 242267,
+      "id": 11,
+      "name": "Sunstag"
+    },
+    {
+      "source": "12-gravemole.png",
+      "atlas": "12.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 203216,
+      "id": 12,
+      "name": "Gravemole"
+    },
+    {
+      "source": "13-prismray.png",
+      "atlas": "13.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 229257,
+      "id": 13,
+      "name": "Prismray"
+    },
+    {
+      "source": "14-thornmantis.png",
+      "atlas": "14.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 208647,
+      "id": 14,
+      "name": "Thornmantis"
+    },
+    {
+      "source": "15-mosswarden.png",
+      "atlas": "15.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 194688,
+      "id": 15,
+      "name": "Mosswarden"
+    },
+    {
+      "source": "16-galecrest.png",
+      "atlas": "16.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 210241,
+      "id": 16,
+      "name": "Galecrest"
+    },
+    {
+      "source": "17-ashram.png",
+      "atlas": "17.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 219487,
+      "id": 17,
+      "name": "Ashram"
+    },
+    {
+      "source": "18-clockfin.png",
+      "atlas": "18.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 236309,
+      "id": 18,
+      "name": "Clockfin"
+    },
+    {
+      "source": "19-nullurchin.png",
+      "atlas": "19.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 225139,
+      "id": 19,
+      "name": "Nullurchin"
+    },
+    {
+      "source": "20-waxwyrm.png",
+      "atlas": "20.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 224922,
+      "id": 20,
+      "name": "Waxwyrm"
+    },
+    {
+      "source": "21-ribbonape.png",
+      "atlas": "21.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 206039,
+      "id": 21,
+      "name": "Ribbonape"
+    },
+    {
+      "source": "22-saltcrab.png",
+      "atlas": "22.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 236111,
+      "id": 22,
+      "name": "Saltcrab"
+    },
+    {
+      "source": "23-nectarbat.png",
+      "atlas": "23.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 230929,
+      "id": 23,
+      "name": "Nectarbat"
+    },
+    {
+      "source": "24-bellox.png",
+      "atlas": "24.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 219198,
+      "id": 24,
+      "name": "Bellox"
+    },
+    {
+      "source": "25-anvilnewt.png",
+      "atlas": "25.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 234550,
+      "id": 25,
+      "name": "Anvilnewt"
+    },
+    {
+      "source": "26-duneskink.png",
+      "atlas": "26.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 210157,
+      "id": 26,
+      "name": "Duneskink"
+    },
+    {
+      "source": "27-kelpwidow.png",
+      "atlas": "27.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 204972,
+      "id": 27,
+      "name": "Kelpwidow"
+    },
+    {
+      "source": "28-pyrelisk.png",
+      "atlas": "28.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 216968,
+      "id": 28,
+      "name": "Pyrelisk"
+    },
+    {
+      "source": "29-mooncalf.png",
+      "atlas": "29.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 210984,
+      "id": 29,
+      "name": "Mooncalf"
+    },
+    {
+      "source": "30-coppergecko.png",
+      "atlas": "30.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 240648,
+      "id": 30,
+      "name": "Coppergecko"
+    },
+    {
+      "source": "31-orchardboar.png",
+      "atlas": "31.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 194135,
+      "id": 31,
+      "name": "Orchardboar"
+    },
+    {
+      "source": "32-inkheron.png",
+      "atlas": "32.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 236668,
+      "id": 32,
+      "name": "Inkheron"
+    },
+    {
+      "source": "33-hooklynx.png",
+      "atlas": "33.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 214043,
+      "id": 33,
+      "name": "Hooklynx"
+    },
+    {
+      "source": "34-slagjaw.png",
+      "atlas": "34.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 205480,
+      "id": 34,
+      "name": "Slagjaw"
+    },
+    {
+      "source": "35-dewotter.png",
+      "atlas": "35.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 233619,
+      "id": 35,
+      "name": "Dewotter"
+    },
+    {
+      "source": "36-echofin.png",
+      "atlas": "36.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 208132,
+      "id": 36,
+      "name": "Echofin"
+    },
+    {
+      "source": "37-latchspider.png",
+      "atlas": "37.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 232225,
+      "id": 37,
+      "name": "Latchspider"
+    },
+    {
+      "source": "38-flintroc.png",
+      "atlas": "38.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 222895,
+      "id": 38,
+      "name": "Flintroc"
+    },
+    {
+      "source": "39-oathhound.png",
+      "atlas": "39.png",
+      "frames": 32,
+      "cell": 96,
+      "pivot": [
+        48,
+        88
+      ],
+      "alpha_pixels": 218237,
+      "id": 39,
+      "name": "Oathhound"
+    }
+  ]
+}

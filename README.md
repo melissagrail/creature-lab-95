@@ -1,43 +1,33 @@
-# Tinikami — temperament alpha 0.9
+# Tinikami: The Unwritten Road — journey alpha 0.10
 
-A deterministic C++ creature-combat engine with **40 playable species, 160 signature moves, 40 passives**, and two interchangeable native SDL skins: an illustrated pixel-art spirit garden and the original Windows 95-style workbench. Each species has a distinct setup, payoff, weakness and learning problem. A trained baseline pilots A by default. A separate temperament controller supports aggressive, skittish, patient, territorial and custom individuals. The 89,959-parameter architecture uses learned species embeddings, ability-conditioned controls, native C++ inference and separate recurrent memory per actor.
+A creature-collector campaign built around deterministic, real-time C++ combat and lightweight learned spirit pilots. Walk an eight-region road, meet forty original spirits, restore the sanctuary bells, and decide what happens to the broken Crown.
 
-![Individual temperaments in Tinikami](docs/alpha/temperament.png)
+Every species has four signature arts, a distinct passive, directional movement and its own animated sprite sheet. You can let a learned controller pilot your companion or take direct control at any time. The original Windows 95 combat workbench remains available.
 
-## Start here
+![The Unwritten Road](docs/alpha/journey.png)
 
-- **[Stronger pilots and temperament](docs/alpha/temperament.md)** — baseline and spirit pilots, individual seeds, species fine-tuning and measured behavior.
+## Play
 
-- **[Readable gardens and six arenas](docs/alpha/gardens.md)** — value hierarchy, varied tiling, three new layouts and current validation.
+On the development Mac, double-click **`Launch.command`** to play the campaign, or **`Combat Lab.command`** for the combat workbench. `build/Tinikami.app` is a standalone local app; its release ZIP includes SDL2, artwork and both native models. No Python or Torch is required to play.
 
-- **[Tinikami art and energy pacing](docs/alpha/tinikami.md)** — the spirit skin, spirit book, energy contracts and measured pacing.
-
-- **[Water, ice, mud and oil](docs/alpha/elements.md)** — currents, brittle ice, fuel propagation and terrain-creating moves.
-- **[Original terrain and wind systems](docs/alpha/terrain.md)** — reactive surfaces, timed vector fields, move interactions and the neutral wind vane.
-- **[Movement and casting commitments](docs/alpha/movement.md)** — facing, turning, directional speed, lateral dodge, planted/mobile casts and current validation.
-- **[Core design and combat rules](docs/alpha/design.md)** — eight gameplay axes, counterplay, resource economy, the bloom objective, alpha boundaries.
-- **[40-species field guide](docs/alpha/species.md)** — every kit, exact numbers, winning pattern, counterplay and learning test.
-- **[Passive contracts](docs/alpha/passives.md)** — all 40 executable mechanics.
-- **[Current six-arena diagnostic](reports/gardens-v7-balance.md)** — full matrix, aggregate rates and worst pairings.
-- **[RL / C API schema](docs/integration.md)** and **[verification](docs/alpha/temperament.md#native-integration-and-compatibility)**.
-
-## Build and play
-
-C++17 compiler required; only the viewer needs SDL2 2.0.18+. The headless core has no third-party library dependencies.
+From source:
 
 ```sh
-# macOS: install command-line developer tools, then:
+# macOS (C++ command-line tools required)
 brew install sdl2
 make all test
-./build/creature_lab
+./build/creature_lab --campaign
 
-# Ubuntu / Linux:
+# Ubuntu / Linux
 sudo apt-get install build-essential libsdl2-dev python3
 make all test
-./build/creature_lab
+./build/creature_lab --campaign
+
+# Combat research workbench
+./build/creature_lab --workbench
 ```
 
-On this Mac, double-click `Launch.command`. `scripts/package-macos.sh` produces a local `.app` bundle using the installed SDL2. CMake supports native builds including Windows:
+The downloadable macOS app is for Apple Silicon on macOS 14 or newer and is ad hoc signed, not notarized. Building from source is also supported. Windows uses CMake and an SDL2 installation such as vcpkg. Headless builds need no third-party C++ libraries:
 
 ```sh
 cmake -S . -B build-cmake -DCREATURE_VIEWER=OFF -DCMAKE_BUILD_TYPE=Release
@@ -45,59 +35,54 @@ cmake --build build-cmake --config Release
 ctest --test-dir build-cmake -C Release --output-on-failure
 ```
 
-Enable the CMake viewer with an SDL2 package installed (for example via vcpkg on Windows). The Python bridge can use `CREATURE_LIB=/absolute/path/to/library` for non-Make layouts.
+## The journey
 
-## Skin and workbench controls
+- **Eight distinct overworlds and 160 marked locations:** visible spirit habitats, conversations, road trials, memory markers, riddles, sanctuaries and keepers.
+- **Forty obtainable companions:** a completed first friendly challenge earns recognition even in defeat. Further victories or thread offerings deepen trust. There are no capture dice, random encounters or permanent losses.
+- **Three-companion parties:** condition carries across combat relays. Bond experience opens charms; village requests unlock more preparation choices. The sanctuary recovers everyone freely.
+- **Eight optional Lantern Walks:** branching eight-room expeditions, campfires, persistent condition and a final relay. Save between rooms or return home with earned rewards.
+- **A complete story route and two endings**, followed by free exploration and collection.
+- **1,280 authored animation frames:** four directions × eight poses × forty species. The title screen's Sprite Studio exposes every frame and the wider small/large size range.
 
-- **B / V:** cycle scripted / spirit / baseline pilots for A/B. **J / K:** choose a temperament and activate the spirit pilot. **F6:** reload models and restart. `Train.command` improves the baseline; `Train Spirits.command` continues temperament training.
-- **F2:** switch Tinikami / Windows 95 without resetting the fight. **H:** toggle collision geometry in the Tinikami skin.
-- The Tinikami skin is the default. `./build/creature_lab --skin debug` opens the original workbench. Both show the same simulation.
-- Every spirit has **100 energy**, shared by four arts and dodge. Cards show energy costs, cooldowns, and recharge state. Movement is free.
+**The 20-hour playthrough is a design target, not a verified duration of this alpha.** The complete route and collector systems are implemented; more authored content, encounter tuning and human playtesting are needed to support that length. [Scope, controls, saves and pacing](docs/alpha/journey.md).
 
-- **Tab / Roster:** browse 40 species, select for A or B. The `-` / `+` controls cycle either side.
-- **P:** pause/resume. **N:** one decision (three simulation ticks). **R:** restart seed.
-- **M:** human A versus bot B, or two bots. Human uses **WASD**, **mouse aim**, **1–4**, **Space + WASD dodge** (no movement input defaults to a right sidestep). Clicking a move selects human control and requests that move.
-- Ground-targeted fields/traps/turrets land at the cursor up to their maximum cast range. The mouse requests facing; turn speed limits how quickly the body follows. Directional attacks lock physical facing at cast start. Most casts plant; the move palette labels mobile exceptions.
-- **Z / X:** decrease/increase wind-cast strength in 25% steps. Mouse sets requested heading; the field uses facing when the cast begins.
-- **Wind vane:** hold its circle uncontested for 1.5 seconds, facing the desired flow direction, to create a five-second gust.
-- **L:** cycle Stone Garden, Moss Grove, Open Meadow, Moon Court, Frost Steps and Cinder Basin. Weather and new seed are toolbar controls. Match setting changes restart.
-- **F5 / F9:** snapshot / restore a replay branch. Save/load replay records actions, guidance, feedback and per-decision hashes.
-- Guidance is policy input; praise/correction are recorded learning annotations. They do not change physics or weights.
+## Controls
 
-The bloom wins at 600 uncontested control points, with a one-second capture preparation. KO takes priority. After 60 seconds the boundary contracts; at 90 seconds control then health fraction adjudicates. Shield/guard, status meters, visible traps, destructible turrets, attack geometry and the event monitor make the fundamentals inspectable.
+| Where | Controls |
+| --- | --- |
+| World | WASD/arrows or click to walk; Shift to hurry; E/Enter to interact |
+| Navigation | B companions; Tab travel atlas; J journal; Escape help |
+| Combat | M manual/pilot; WASD movement; mouse aim; 1–4 arts; Space dodge |
+| Combat tools | P pause; R remedy; Z/X wind strength; H exact geometry; Escape retreat |
+| Everywhere | F8 music; F5 save outside combat |
 
-```sh
-./build/creature_lab --species-a 21 --species-b 8 --arena 1
-# Species CLI IDs are zero-based; catalog displays 1–40.
-```
+Saves live in SDL's per-user application-data directory, separate from the checkout and app bundle. New journeys archive the existing slot. Writes are checksummed and keep a validated backup. Combat resumes from its pre-encounter checkpoint. [Save details](docs/alpha/journey.md#saves).
 
-## Test, simulate, tune
+## Combat and learned pilots
 
-```sh
-python3 tests/viewer_smoke.py      # six arenas + both skins + all 40 sprites preserve state
-make test                         # content validation + native + Python FFI
-make build/tournament
-./build/tournament 72 reports/matches.csv 3000
-python3 scripts/analyze_balance.py reports/matches.csv reports/balance
-python3 python/rollout.py --arenas 256 --decisions 1000
-```
+The engine runs at 30 fixed integer ticks per second, with three-tick decisions. Forty species share a 100-energy pool across four arts and dodge. Forward travel remains free; sustained hard strafing suppresses regeneration, drains energy and loses lateral drive at low reserves. Finite cornering acceleration prevents instantaneous high-speed changes of travel direction. Planted casts, facing, turn rate, terrain reactions, wind and the central control objective provide counterplay.
 
-The 72-seed protocol runs 112,320 matches across all 780 unordered pairs, both seats, eighteen map/weather conditions and four style pairings. This is **scripted baseline evidence**, not proof of learned-policy balance. Raw calibration/holdout CSVs and every numeric tuning intervention are included. **Gardens v7 is a systems playtest, not balance certification.** The linked diagnostic contains current measurements. Earlier v2/v3 reports remain historical evidence; terrain and wind require species-specific pilot and human playtests.
+The native recurrent controller has **89,959 parameters** and separate memory per actor. Species embeddings, ability-conditioned movement/aim and three temperament inputs support steady, aggressive, skittish, patient and territorial pilots. Campaign companions have reproducible individual trait variations. Gameplay does not silently train or change weights.
 
-Edit `content/roster.json`, then run `make content`. The generator compiles immutable C++ tables and regenerates the field guide. JSON is not loaded in the simulation loop. Rules and observation schema are v7; old prototype saves/models fail compatibility checks.
+Rules are **v8**, observations **v7** (3,620 values), model format **v3**. Incompatible rules-v7 models and replays are rejected. Explicit warm-start migration and training provenance are included. [Movement and training results](docs/alpha/footwork.md), [integration contract](docs/integration.md), [model manifest](models/README.md).
 
-## RL integration
-
-The dependency-free Python batch API exposes both creatures, legal actions, semantic own/announced move tokens, public entity/status/passive state, objective pressure and reward features. Optional examples:
+## Develop and verify
 
 ```sh
-python3 -m venv .venv
-.venv/bin/pip install -r python/requirements-ml.txt
+make test
+python3 tests/viewer_smoke.py
+python3 tests/journey_smoke.py
 .venv/bin/python tests/learning_tests.py models/apprentice.pt
-.venv/bin/python python/train.py --resume models/apprentice.pt --out runs/continued
-.venv/bin/python python/gym_env.py
+python3 scripts/compile_campaign.py --check
+# Native campaign/controller playthrough, including actual engine outcomes:
+make build/campaign_playthrough
+./build/campaign_playthrough models/apprentice.tbrain reports/local-playthrough.csv
+# Standalone macOS app and ZIP:
+sh scripts/package-macos.sh
 ```
 
-The 89,959-parameter recurrent model uses learned species embeddings, three temperament inputs and ability-conditioned movement/aim. The selected controller scores **37.60%** on 1,440 fresh native games versus **22.85%** for v8; 27 of 40 species improved on this cohort. Patient retains more energy, while some other temperament differences remain subtle in complete fights. [Full results and species breakdown](reports/rl-v9-summary.md). `python/train.py` supports generalist and individual/species fine-tuning. Unity presentation, automatic in-game adaptation, a self-play league, campaign/economy and online services remain future work.
+Edit `content/roster.json` and run `make content` for combat data. Edit `content/campaign.json` and run `python3 scripts/compile_campaign.py` for story and authored geography. The renderer and campaign layer are separate from duel physics and the RL ABI. Offline art import requires Pillow, NumPy and SciPy; runtime loads the committed raw atlases directly.
 
-MIT licensed; original placeholder creatures and pixel font, no franchise assets.
+Further design references: [40 species and kits](docs/alpha/species.md), [passives](docs/alpha/passives.md), [wind](docs/alpha/terrain.md), [water/ice/fuel](docs/alpha/elements.md), [garden readability](docs/alpha/gardens.md), [historical temperament work](docs/alpha/temperament.md). Older reports remain historical evidence, not current balance certification.
+
+MIT licensed. Original AI-assisted spirit and environment art, original pixel font and procedural music; no franchise assets. Asset sources and prompts are retained in `assets/tinikami`.

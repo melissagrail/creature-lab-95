@@ -1,0 +1,78 @@
+{
+  "warmstart": {
+    "games": 1440,
+    "score": 0.4625,
+    "wins": 665,
+    "draws": 2,
+    "seconds": 37.61643518518518,
+    "energy": 22.483032590277777,
+    "distance": 3.617879763888889,
+    "objective_distance": 3.8435832291666667,
+    "stationary": 0.22212970478472222,
+    "casts": 17.86111111111111
+  },
+  "profiles": {
+    "STEADY": {
+      "games": 1440,
+      "score": 0.7305555555555555,
+      "wins": 1051,
+      "draws": 2,
+      "seconds": 34.117592592592594,
+      "energy": 61.421616388888886,
+      "distance": 2.4818167569444443,
+      "objective_distance": 5.259636472222223,
+      "stationary": 0.12249760544444445,
+      "casts": 16.209027777777777
+    },
+    "AGGRESSIVE": {
+      "games": 1440,
+      "score": 0.7482638888888888,
+      "wins": 1076,
+      "draws": 3,
+      "seconds": 33.35027777777778,
+      "energy": 65.98219055555555,
+      "distance": 2.3595853055555556,
+      "objective_distance": 5.348101604166667,
+      "stationary": 0.11616518950694445,
+      "casts": 15.261111111111111
+    },
+    "SKITTISH": {
+      "games": 1440,
+      "score": 0.6944444444444444,
+      "wins": 1000,
+      "draws": 0,
+      "seconds": 36.82756944444444,
+      "energy": 59.96236284722222,
+      "distance": 2.5734141458333335,
+      "objective_distance": 5.172122673611111,
+      "stationary": 0.12791771695833334,
+      "casts": 17.365277777777777
+    },
+    "PATIENT": {
+      "games": 1440,
+      "score": 0.6305555555555555,
+      "wins": 907,
+      "draws": 2,
+      "seconds": 37.811597222222225,
+      "energy": 75.46267104166667,
+      "distance": 2.2902262777777778,
+      "objective_distance": 5.656907402777778,
+      "stationary": 0.10815762135416666,
+      "casts": 14.934722222222222
+    },
+    "TERRITORIAL": {
+      "games": 1440,
+      "score": 0.7479166666666667,
+      "wins": 1076,
+      "draws": 2,
+      "seconds": 34.01990740740741,
+      "energy": 65.63219479166666,
+      "distance": 2.3451043291666664,
+      "objective_distance": 5.610907402777777,
+      "stationary": 0.11930455001388889,
+      "casts": 15.74236111111111
+    }
+  },
+  "species_improved": 38,
+  "capacity_overflows": 0
+}

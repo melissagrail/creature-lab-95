@@ -146,6 +146,7 @@ bool parse_personality(const std::string &text, Personality &value, int &preset)
 }
 
 } // namespace
+#include "journey.hpp"
 #include "tinikami.hpp"
 int main(int argc, char **argv) {
     SDL_SetMainReady();
@@ -172,6 +173,8 @@ int main(int argc, char **argv) {
     SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
     bool run = true, paused = false, manual = false, playback = false, catalog = false;
     bool spirit_skin = true, hitboxes = false;
+    bool campaign_mode = argc == 1;
+    journey::Options journey_options;
     std::filesystem::path art_directory, brain_path;
     Brain brain, champion;
     std::array<BrainMemory, 2> brain_memory{}, saved_brain_memory{};
@@ -205,6 +208,23 @@ int main(int argc, char **argv) {
     int frames_limit = 0, preview_ticks = 0;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
+        if (a == "--campaign")
+            campaign_mode = true;
+        else if (a == "--journey-test") {
+            campaign_mode = true;
+            journey_options.test = true;
+        } else if (a == "--workbench")
+            campaign_mode = false;
+        else if (a == "--save-path" && i + 1 < argc)
+            journey_options.save_path = argv[++i];
+        else if (a == "--journey-scene" && i + 1 < argc)
+            journey_options.scene = std::clamp(std::stoi(argv[++i]), 0, 18);
+        else if (a == "--journey-site" && i + 1 < argc)
+            journey_options.focus_site = std::clamp(std::stoi(argv[++i]), 0, 19);
+        else if (a == "--journey-species" && i + 1 < argc)
+            journey_options.species = std::clamp(std::stoi(argv[++i]), 0, 39);
+        else if (a == "--journey-region" && i + 1 < argc)
+            journey_options.region = std::clamp(std::stoi(argv[++i]), 0, 7);
         if ((a == "--personality-seed-a" || a == "--personality-seed-b") && i + 1 < argc) {
             int side = a.back() == 'a' ? 0 : 1;
             try {
@@ -241,9 +261,10 @@ int main(int argc, char **argv) {
                 return 2;
             }
             requested_pilot[side] = pilot == "baseline" ? 2 : pilot == "learned";
-        } else if (a == "--seed" && i + 1 < argc)
+        } else if (a == "--seed" && i + 1 < argc) {
             seed = uint32_t(std::stoul(argv[++i]));
-        else if (a == "--skin" && i + 1 < argc)
+            journey_options.seeded = true;
+        } else if (a == "--skin" && i + 1 < argc)
             spirit_skin = std::string(argv[++i]) != "debug";
         else if (a == "--hitboxes")
             hitboxes = true;
@@ -327,6 +348,21 @@ int main(int argc, char **argv) {
     if (!champion_ready && (requested_pilot[0] == 2 || requested_pilot[1] == 2)) {
         std::cerr << "Cannot enable baseline pilot: " << champion_error << "\n";
         return 2;
+    }
+    if (campaign_mode) {
+        if (!art_ready) {
+            std::cerr << "The journey needs its art assets.\n";
+            return 2;
+        }
+        journey_options.frames = frames_limit;
+        journey_options.seed = seed;
+        journey_options.captures = captures;
+        int result = journey::run(window, brain, art_directory, journey_options);
+        tinikami::free();
+        SDL_DestroyRenderer(r);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return result;
     }
     for (int i = 0; i < 2; ++i) {
         baseline[i] = champion_ready && (requested_pilot[i] == 2 ||
@@ -769,9 +805,11 @@ int main(int argc, char **argv) {
                     }
             }
         }
+        static double finish_age = 0;
         uint64_t now = SDL_GetPerformanceCounter();
         double delta = double(now - last) / SDL_GetPerformanceFrequency();
         last = now;
+        finish_age = w.terminal || w.truncated ? finish_age + delta * 30 : 0;
         if (!paused)
             accumulator += std::min(delta, 0.25) * speed;
         else
@@ -784,15 +822,16 @@ int main(int argc, char **argv) {
             advance();
         buttons.clear();
         if (spirit_skin) {
-            tinikami::draw(w, {paused, manual, playback, catalog, hitboxes, catalog_target,
-                               catalog_page, weather, speed, wind_power, seed, note, learned[0],
-                               learned[1], brain.ready(), personality_ids, baseline});
+            tinikami::draw(w,
+                           {paused, manual, playback, catalog, hitboxes, catalog_target,
+                            catalog_page, weather, speed, wind_power, seed, note, learned[0],
+                            learned[1], brain.ready(), personality_ids, baseline, int(finish_age)});
         } else {
             rect(0, 0, 1100, 780, {0, 112, 112, 255});
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / TEMPERAMENT ALPHA 0.9", white, 1);
+            label(720, 23, "F2 TINIKAMI / JOURNEY ALPHA 0.10", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);

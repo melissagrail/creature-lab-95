@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int ArenaCount = 6, SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32,
               ZoneCount = 16, HistoryCount = 64;
-constexpr uint32_t RulesVersion = 7, ObservationVersion = 7;
+constexpr uint32_t RulesVersion = 8, ObservationVersion = 7;
 const char *arena_name(int);
 struct Vec {
     int32_t x = 0, y = 0;
@@ -125,6 +125,8 @@ struct Body {
     int32_t guidance = Free, guidance_age = 0, surface_mask = 0, energy_delay = 0;
 };
 int energy_regen(const Body &);
+// 0..100 exertion from actual sideways/reverse velocity; fully observable, no hidden state.
+int footwork_load(const Body &);
 struct Projectile {
     Vec pos{}, vel{}, origin{};
     int32_t life = 0, owner = 0, move = 0, age = 0, hit_mask = 0, bounces = 0, returning = 0,

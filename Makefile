@@ -25,10 +25,12 @@ $(BUILD)/sim_tests: $(CORE) tests/sim_tests.cpp include/creature/sim.hpp | $(BUI
 $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/benchmark.cpp -o $@
 viewer: $(BUILD)/creature_lab
-$(BUILD)/creature_lab: $(CORE) client/main.cpp agents/brain.cpp include/creature/brain.hpp include/creature/brain_api.h client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp include/creature/sim.hpp | $(BUILD)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp client/main.cpp $$(sdl2-config --cflags --libs) -o $@
-test: core $(BUILD)/environment_tests $(BUILD)/brain_tests
+$(BUILD)/creature_lab: $(CORE) client/main.cpp agents/brain.cpp include/creature/brain.hpp include/creature/brain_api.h client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp client/journey.hpp client/journey_audio.hpp include/creature/campaign.hpp src/campaign.cpp src/campaign_content.cpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp client/main.cpp $$(sdl2-config --cflags --libs) -o $@
+test: core $(BUILD)/environment_tests $(BUILD)/brain_tests $(BUILD)/campaign_tests
 	python3 scripts/compile_content.py --check
+	python3 scripts/compile_campaign.py --check
+	$(BUILD)/campaign_tests
 	$(BUILD)/sim_tests
 	$(BUILD)/environment_tests
 	$(BUILD)/brain_tests models/apprentice.tbrain
@@ -63,3 +65,12 @@ $(BUILD)/brain_eval: $(CORE) agents/brain.cpp tests/brain_eval.cpp include/creat
 
 $(BUILD)/brain_probe: $(CORE) agents/brain.cpp tests/brain_probe.cpp include/creature/brain.hpp include/creature/brain_api.h | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) agents/brain.cpp tests/brain_probe.cpp -o $@
+
+$(BUILD)/campaign_tests: $(CORE) src/campaign.cpp src/campaign_content.cpp tests/campaign_tests.cpp include/creature/campaign.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp tests/campaign_tests.cpp -o $@
+
+$(BUILD)/campaign_playthrough: $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/campaign_playthrough.cpp include/creature/campaign.hpp include/creature/brain.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/campaign_playthrough.cpp -o $@
+
+$(BUILD)/footwork_benchmark: $(CORE) tests/footwork_benchmark.cpp include/creature/sim.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/footwork_benchmark.cpp -o $@

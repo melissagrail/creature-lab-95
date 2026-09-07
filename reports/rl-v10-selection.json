@@ -1,0 +1,63 @@
+{
+  "release": "v0.10.0-alpha.1",
+  "rules": 8,
+  "observations": 7,
+  "content": "223a8716",
+  "format": 3,
+  "parameters": 89959,
+  "bytes": 359876,
+  "selected_checksum": "d9ff10f9",
+  "selection": "Final journey run checkpoint chosen by steady validation score before the fresh native evaluation. No native test reselection.",
+  "total_ppo_decisions": 15728640,
+  "selected_ancestry_new_ppo_decisions": 15073280,
+  "runs": [
+    {
+      "run": "footwork-v10",
+      "seed": 202609071,
+      "ppo_decisions": 3932160,
+      "selected_decisions": 3932160,
+      "selected_checksum": "5c4e046b",
+      "validation_score": 0.575,
+      "python_heldout_score": 0.5916666666666667,
+      "config": "reports/training-v10/footwork-v10-config.json"
+    },
+    {
+      "run": "cornering-v10",
+      "seed": 202609072,
+      "ppo_decisions": 3932160,
+      "selected_decisions": 3276800,
+      "selected_checksum": "bac8138c",
+      "validation_score": 0.5875,
+      "python_heldout_score": 0.5645833333333333,
+      "config": "reports/training-v10/cornering-v10-config.json"
+    },
+    {
+      "run": "journey-v10",
+      "seed": 202609073,
+      "ppo_decisions": 7864320,
+      "selected_decisions": 7864320,
+      "selected_checksum": "d9ff10f9",
+      "validation_score": 0.725,
+      "python_heldout_score": 0.725,
+      "config": "reports/training-v10/journey-v10-config.json"
+    }
+  ],
+  "immutable_inputs": {
+    "original_v9": "models/baselines/rules7/apprentice-v9.pt",
+    "rules8_warmstart": "models/baselines/rules8/warmstart-v9.pt",
+    "footwork_selected": "models/baselines/rules8/footwork-v10.pt",
+    "cornering_selected": "models/baselines/rules8/cornering-v10.pt"
+  },
+  "path_resolution_note": "All models/champion.pt opponent references in these three captured configurations resolved to the frozen rules8 warmstart-v9 weights at run startup. The first run models/apprentice.pt warm start also resolved to those weights. Opponent policies were loaded once; replacing the release files later did not alter a running training process.",
+  "physics_note": "The first run preceded the additional cornering constraint. Both later runs used the final rules8 movement physics. Intermediate rules8 baselines are retained for research, not presented as released versions.",
+  "fresh_native_evaluation": {
+    "seed_base": 2160000000,
+    "scenarios": 720,
+    "seats": 2,
+    "profiles": 5,
+    "grid": "crossed",
+    "opponent": "four scripted styles",
+    "selected_csv": "reports/brain-v10-heldout.csv",
+    "warmstart_csv": "reports/brain-v10-warmstart.csv"
+  }
+}

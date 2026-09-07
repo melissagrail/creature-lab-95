@@ -1,0 +1,178 @@
+{
+  "identity": {
+    "format": 2,
+    "rules": 8,
+    "observations": 7,
+    "content": 574261014,
+    "observation_size": 3620,
+    "hidden": 96,
+    "action_codec": "opponent-local-tanh-v1"
+  },
+  "parameters": 86755,
+  "bytes": 347060,
+  "checksum": "69746d40",
+  "parameter_order": [
+    {
+      "name": "log_std",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "entity.0.weight",
+      "shape": [
+        32,
+        43
+      ]
+    },
+    {
+      "name": "entity.0.bias",
+      "shape": [
+        32
+      ]
+    },
+    {
+      "name": "move.0.weight",
+      "shape": [
+        24,
+        48
+      ]
+    },
+    {
+      "name": "move.0.bias",
+      "shape": [
+        24
+      ]
+    },
+    {
+      "name": "event.0.weight",
+      "shape": [
+        24,
+        7
+      ]
+    },
+    {
+      "name": "event.0.bias",
+      "shape": [
+        24
+      ]
+    },
+    {
+      "name": "encoder.0.weight",
+      "shape": [
+        96,
+        245
+      ]
+    },
+    {
+      "name": "encoder.0.bias",
+      "shape": [
+        96
+      ]
+    },
+    {
+      "name": "memory.weight_ih",
+      "shape": [
+        288,
+        96
+      ]
+    },
+    {
+      "name": "memory.weight_hh",
+      "shape": [
+        288,
+        96
+      ]
+    },
+    {
+      "name": "memory.bias_ih",
+      "shape": [
+        288
+      ]
+    },
+    {
+      "name": "memory.bias_hh",
+      "shape": [
+        288
+      ]
+    },
+    {
+      "name": "motion.weight",
+      "shape": [
+        4,
+        96
+      ]
+    },
+    {
+      "name": "motion.bias",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "noop.weight",
+      "shape": [
+        1,
+        96
+      ]
+    },
+    {
+      "name": "noop.bias",
+      "shape": [
+        1
+      ]
+    },
+    {
+      "name": "slot_score.0.weight",
+      "shape": [
+        32,
+        120
+      ]
+    },
+    {
+      "name": "slot_score.0.bias",
+      "shape": [
+        32
+      ]
+    },
+    {
+      "name": "slot_score.2.weight",
+      "shape": [
+        1,
+        32
+      ]
+    },
+    {
+      "name": "slot_score.2.bias",
+      "shape": [
+        1
+      ]
+    },
+    {
+      "name": "value.weight",
+      "shape": [
+        1,
+        96
+      ]
+    },
+    {
+      "name": "value.bias",
+      "shape": [
+        1
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "models/baselines/apprentice-v8.pt",
+    "source_identity": {
+      "format": 2,
+      "rules": 7,
+      "observations": 7,
+      "content": 574261014,
+      "observation_size": 3620,
+      "hidden": 96,
+      "action_codec": "opponent-local-tanh-v1"
+    },
+    "migration": "Explicit footwork warm start; unchanged observations and weights. Not retrained yet."
+  }
+}

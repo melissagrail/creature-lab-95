@@ -1,7 +1,7 @@
 {
   "identity": {
     "format": 3,
-    "rules": 7,
+    "rules": 8,
     "observations": 7,
     "content": 574261014,
     "observation_size": 3620,
@@ -15,7 +15,7 @@
   },
   "parameters": 89959,
   "bytes": 359876,
-  "checksum": "4a424577",
+  "checksum": "d9ff10f9",
   "parameter_order": [
     {
       "name": "log_std",
@@ -189,37 +189,41 @@
   ],
   "metadata": {
     "stage": "ppo",
-    "steps": 4259840,
+    "steps": 7864320,
     "config": {
-      "out": "runs/personality-v3",
+      "out": "runs/journey-v10",
       "resume": null,
-      "warmstart": "models/baselines/apprentice-v8.pt",
-      "seed": 20260907,
+      "warmstart": "runs/cornering-v10/best.pt",
+      "seed": 202609073,
       "threads": 1,
       "demo_envs": 32,
-      "demo_steps": 2048,
-      "bc_epochs": 32,
+      "demo_steps": 512,
+      "bc_epochs": 12,
       "envs": 64,
       "horizon": 128,
-      "updates": 640,
+      "updates": 960,
       "sequence": 16,
       "minibatch": 32,
       "epochs": 3,
-      "lr": 7e-05,
+      "lr": 4e-05,
       "gamma": 0.9995,
       "clip": 0.2,
       "entropy": 0.003,
-      "target_kl": 0.03,
-      "eval_every": 40,
+      "target_kl": 0.06,
+      "eval_every": 160,
       "eval_games": 240,
       "test_games": 240,
       "personality_rate": 0.55,
       "style_scale": 0.003,
-      "refine_imitation": true,
+      "refine_imitation": false,
       "opponent": [
-        "models/baselines/apprentice-v8.pt"
+        "models/champion.pt",
+        "runs/cornering-v10/best.pt"
       ],
-      "learned_opponent_rate": 0.25
+      "learned_opponent_rate": 0.25,
+      "species": null,
+      "personality": null,
+      "individual_seed": null
     }
   }
 }

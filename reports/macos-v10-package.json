@@ -1,0 +1,11 @@
+{
+  "file": "Tinikami-macOS-arm64.zip",
+  "bytes": 37330509,
+  "sha256": "039ff5e51d664555b5ab5e5d688dff9e5b9cdb68e8913e26f6f598d3ecd17487",
+  "platform": "macOS arm64",
+  "model_checksum": "d9ff10f9",
+  "bundles_sdl2": true,
+  "signature": "ad hoc; not notarized",
+  "relocated_controller_test": "25 checks passed",
+  "minimum_macos": "14.0"
+}

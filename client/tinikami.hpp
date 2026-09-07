@@ -11,7 +11,7 @@ struct Atlas {
     bool spirit_crops = false;
     int width = 0, height = 0, cols = 4, rows = 4;
     bool load(const std::filesystem::path &file, int c, int row, bool crops = false,
-              bool subdued = false) {
+              bool subdued = false, bool landscape = false) {
         spirit_crops = crops;
         std::ifstream f(file, std::ios::binary);
         char magic[4];
@@ -44,6 +44,18 @@ struct Atlas {
                         p[channel] = uint8_t(
                             std::clamp(value + (int(p[channel]) - lum) * (prop ? 65 : 55) / 100,
                                        prop ? 25 : 45, prop ? 180 : 150));
+                }
+        }
+        if (landscape) {
+            // Gentle environment grading; preserve actor/VFX saturation and asset originals.
+            for (int y = 0; y < height; ++y)
+                for (int x = 0; x < width; ++x) {
+                    auto *p = data.data() + (size_t(y) * width + x) * 4;
+                    int lum = (54 * p[0] + 183 * p[1] + 19 * p[2]) / 256;
+                    int saturation = (x * cols / width) == 2 ? 55 : 80;
+                    for (int c = 0; c < 3; ++c)
+                        p[c] = uint8_t(std::clamp(
+                            lum * 92 / 100 + (int(p[c]) - lum) * saturation / 100, 0, 255));
                 }
         }
         texture =
@@ -102,12 +114,37 @@ struct Atlas {
     }
 };
 Atlas spirits, terrain, effects;
+std::array<Atlas, SpeciesCount> animations;
+std::array<bool, SpeciesCount> animated{};
+int sprite_size(int species) {
+    return std::clamp(44 + (Roster[species].radius - 340) * 72 / 320, 40, 120);
+}
+int orientation(Vec facing) {
+    if (std::abs(facing.x) > std::abs(facing.y))
+        return facing.x > 0 ? 1 : 3;
+    return facing.y >= 0 ? 0 : 2;
+}
+void spirit(int species, int x, int ground_y, int size, Vec facing, int pose = 0, int alpha = 255,
+            bool mask = false, SDL_Color tint = pale) {
+    if (animated[species]) {
+        // Imported sheets share a normalized foot pivot at 88/96 cell height.
+        animations[species].draw(orientation(facing) * 8 + std::clamp(pose, 0, 7), x - size / 2,
+                                 ground_y - size * 88 / 96, size, size, 0, false, alpha, mask,
+                                 tint);
+    } else
+        spirits.draw(species, x - size / 2, ground_y - size * 3 / 4, size, size, 0, facing.x < 0,
+                     alpha, mask, tint);
+}
 bool load(const std::filesystem::path &dir) {
+    for (int i = 0; i < SpeciesCount; ++i)
+        animated[i] = animations[i].load(dir / "animations" / (std::to_string(i) + ".rgba"), 8, 4);
     return spirits.load(dir / "spirits.rgba", 8, 5, true) &&
            terrain.load(dir / "environment-v2.rgba", 8, 4, false, true) &&
            effects.load(dir / "effects.rgba", 4, 4);
 }
 void free() {
+    for (auto &a : animations)
+        a.free();
     spirits.free();
     terrain.free();
     effects.free();
@@ -255,6 +292,7 @@ struct View {
     bool learned_a, learned_b, brain_ready;
     std::array<int, 2> personality_ids;
     std::array<bool, 2> baseline;
+    int finish_age = 0;
 };
 void draw(const World &w, const View &v) {
     rect(0, 0, 1100, 780, night);
@@ -276,7 +314,7 @@ void draw(const World &w, const View &v) {
         : v.learned_b ? "B: SPIRIT [V]"
                       : "B: SCRIPT [V]",
         v.learned_b);
-    label(934, 68, "ALPHA 0.9", moss, 1);
+    label(934, 68, "ALPHA 0.10", moss, 1);
     tag(1, 24, 93, 88, v.paused ? "RESUME [P]" : "PAUSE [P]", v.paused);
     tag(3, 118, 93, 82, "RESET [R]");
     tag(4, 206, 93, 118, v.manual ? "YOU + SPIRIT" : "WATCH SPIRITS", v.manual);
@@ -351,16 +389,31 @@ void draw(const World &w, const View &v) {
         int i = w.bodies[0].pos.y <= w.bodies[1].pos.y ? n : 1 - n;
         const auto &b = w.bodies[i];
         auto team = i ? vermilion : jade;
-        int size = std::clamp(54 + b.radius * 36 / Q, 60, 84);
-        int bob = b.move >= 0 ? 0 : (w.tick / (length(b.vel) > 15 ? 3 : 9) + b.species) % 4 / 2 * 2;
+        int size = sprite_size(b.species);
+        int pose = length(b.vel) > 15 ? 1 + (w.tick / 5) % 2 : 0;
+        if (b.move >= 0)
+            pose = phase(b) == Startup ? 3 : phase(b) == Active ? 4 : 0;
+        int hurt_age = 1000, faint_age = 1000;
+        for (int j = 0; j < w.event_count; ++j) {
+            const auto &ev = w.events[(w.event_head - 1 - j + HistoryCount) % HistoryCount];
+            if (ev.target != i)
+                continue;
+            if (ev.kind == Hit)
+                hurt_age = std::min(hurt_age, w.tick - ev.tick);
+            if (ev.kind == Knockout)
+                faint_age = std::min(faint_age, w.tick - ev.tick);
+        }
+        if (hurt_age < 6)
+            pose = 5;
+        if (!b.hp)
+            pose = faint_age + v.finish_age < 12 ? 6 : 7;
         int x = sx(b.pos.x), y = sy(b.pos.y);
         worldcircle(b.pos, b.radius, {23, 40, 43, 90}, true);
         worldcircle(b.pos, b.radius + 75, team);
         for (auto offset : {Vec{-1, 0}, Vec{1, 0}, Vec{0, -1}, Vec{0, 1}})
-            spirits.draw(b.species, x - size / 2 + offset.x, y - size * 3 / 4 - bob + offset.y,
-                         size, size, 0, b.aim.x < 0, b.hp ? 200 : 60, true, {28, 36, 43, 255});
-        spirits.draw(b.species, x - size / 2, y - size * 3 / 4 - bob, size, size, 0, b.aim.x < 0,
-                     b.hp ? 255 : 80);
+            spirit(b.species, x + offset.x, y + offset.y, size, b.aim, pose, b.hp ? 200 : 140, true,
+                   {28, 36, 43, 255});
+        spirit(b.species, x, y, size, b.aim, pose, b.hp ? 255 : 170);
         Vec nose = b.pos + scale(b.aim, b.radius + 480);
         Vec side = scale(Vec{-b.aim.y, b.aim.x}, 180);
         worldline(nose - scale(b.aim, 230) + side, nose, team);
@@ -379,7 +432,11 @@ void draw(const World &w, const View &v) {
             fx(6, b.pos + Vec{-350, -250}, 21, -90, 190);
         if (b.root)
             worldcircle(b.pos, b.radius + 180, jade);
-        bar(x - 25, y - size * 3 / 4 - 10, 50, b.hp, Roster[b.species].hp, moss);
+        bar(x - 25, y - size * 88 / 96 - 10, 50, b.hp, Roster[b.species].hp, moss);
+        if (footwork_load(b) >= 70 && b.hp) {
+            line(x - 14, y + 15, x + 14, y + 15, gold);
+            label(x - 21, y + 19, "STRAIN", gold, 1);
+        }
         if (b.move >= 0) {
             auto ph = phase(b);
             const auto &m = Moves[b.move];
@@ -462,8 +519,9 @@ void draw(const World &w, const View &v) {
         label(833, y + 70, "ENERGY " + num(b.energy / 10) + "/100", jade, 1);
         bar(833, y + 84, 218, b.energy, 1000, jade, true);
         std::string state = energy_regen(b) ? "+" + num(energy_regen(b) * 3) + "/S RECHARGING"
-                            : b.move >= 0   ? "CASTING / REGEN PAUSED"
-                                            : "BREATH " + seconds(b.energy_delay) + "S";
+                            : footwork_load(b) >= 70 ? "FOOTWORK / REGEN LIMITED"
+                            : b.move >= 0            ? "CASTING / REGEN PAUSED"
+                                                     : "BREATH " + seconds(b.energy_delay) + "S";
         label(753, y + 108, state, moss, 1);
         bool active = (i ? v.learned_b : v.learned_a && !v.manual) && !v.baseline[i];
         tag(34 + i, 915, y + 96, 143,

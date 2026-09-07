@@ -135,6 +135,43 @@ int main() {
                 CHECK(length(wet.bodies[0].pos - origin) == 0);
             }
     }
+    // Rules 8: strafing is a burst/positioning choice, not free sustained defense.
+    for (int sp = 0; sp < SpeciesCount; ++sp) {
+        const auto &spec = Roster[sp];
+        Body b;
+        b.species = sp;
+        b.energy = 500;
+        CHECK(footwork_load(b) == 0 && energy_regen(b) == spec.regen);
+        b.vel = {spec.speed, 0};
+        CHECK(footwork_load(b) == 0 && energy_regen(b) == spec.regen);
+        b.vel = {0, spec.speed * spec.strafe / 100};
+        CHECK(footwork_load(b) == 100 && energy_regen(b) == 0);
+        b.vel = {0, spec.speed * spec.strafe / 500};
+        CHECK(footwork_load(b) == 0);
+        World rich = locomotion_world(sp), spent = rich;
+        spent.bodies[0].energy = 0;
+        for (int t = 0; t < 18; ++t) {
+            step(rich, {{{0, Q, Q, 0, 0}, {}}}, 1);
+            step(spent, {{{0, Q, Q, 0, 0}, {}}}, 1);
+        }
+        CHECK(length(spent.bodies[0].vel) < length(rich.bodies[0].vel));
+        CHECK(rich.bodies[0].energy < 1000);
+        CHECK(observe(rich, 0).global[30] == float(energy_regen(rich.bodies[0])) / 12);
+        World curve = locomotion_world(sp);
+        curve.bodies[0].vel = {spec.speed, 0};
+        step(curve, {{{0, Q, Q, 0, 0}, {}}}, 1);
+        CHECK(std::abs(curve.bodies[0].vel.y) <=
+              std::max(2, spec.speed * (5 + spec.turn_degrees) / 240) + 1);
+        World burst = locomotion_world(sp);
+        burst.bodies[0].vel = {spec.speed, 0};
+        step(burst, {{{0, Q, Q, 0, 5}, {}}}, 1);
+        step(burst, {{{0, Q, Q, 0, 0}, {}}}, 1);
+        CHECK(burst.bodies[0].energy < 1000 && burst.bodies[0].vel.y > curve.bodies[0].vel.y);
+        auto bytes = snapshot(rich);
+        World copy;
+        CHECK(restore(copy, bytes.data(), bytes.size()));
+        CHECK(hash(copy) == hash(rich));
+    }
     // Shared-energy opportunity costs: exact payment, finite reserve, and breathing windows.
     for (int sp = 0; sp < SpeciesCount; ++sp) {
         World energy = locomotion_world(sp);
@@ -145,7 +182,7 @@ int main() {
             step(moving, {{{Q, 0, Q, 0, 0}, {}}}, 1);
         }
         CHECK(energy.bodies[0].energy == std::min(1000, 500 + 10 * Roster[sp].regen));
-        CHECK(energy.bodies[0].energy == moving.bodies[0].energy); // Locomotion is free.
+        CHECK(energy.bodies[0].energy == moving.bodies[0].energy); // Forward travel is free.
         energy = locomotion_world(sp);
         auto &body = energy.bodies[0];
         const auto &m = move_for(body, 0);
@@ -598,6 +635,7 @@ int main() {
     reset(a, 77, 2, 12, 27, 1);
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
-    CHECK(hash(a) == 0x21baacb4a80fa3b3ull);
+    std::cout << "Measured golden " << std::hex << hash(a) << std::dec << "\n";
+    CHECK(hash(a) == 0x03b73ddd44073999ull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }
