@@ -1,7 +1,7 @@
 {
   "version": "0.12.1",
   "bytes": 37493383,
-  "sha256": "3cc2ae126a503a7c23a838d76fca60bdeeb064b718763b0b3a878f7c6a215836",
+  "sha256": "86433f940d87439949c0c8988a4b4ed5a19265a75d53430749b0996ff3052a58",
   "minimum_macos": "14.0",
   "architecture": "arm64",
   "rules": 9,

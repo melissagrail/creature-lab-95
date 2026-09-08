@@ -1,4 +1,6 @@
 #pragma once
+#include <SDL.h>
+#include <algorithm>
 #include <atomic>
 #include <cmath>
 #include <cstdint>
