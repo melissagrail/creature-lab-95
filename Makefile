@@ -77,3 +77,6 @@ $(BUILD)/footwork_benchmark: $(CORE) tests/footwork_benchmark.cpp include/creatu
 
 $(BUILD)/apprenticeship_playthrough: $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp include/creature/campaign.hpp include/creature/brain.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp -o $@
+
+$(BUILD)/journey_audio_tests: tests/journey_audio_tests.cpp client/journey_audio.hpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) tests/journey_audio_tests.cpp $$(sdl2-config --cflags --libs) -o $@

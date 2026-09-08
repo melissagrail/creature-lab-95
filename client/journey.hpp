@@ -204,7 +204,7 @@ class Game {
             std::ostringstream out;
             auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             out << "Recorded (UTC): " << std::put_time(std::gmtime(&now), "%Y-%m-%d %H:%M:%S")
-                << "\nBuild: 0.12 / rules " << RulesVersion << " / observations "
+                << "\nBuild: 0.12.1 / rules " << RulesVersion << " / observations "
                 << ObservationVersion << " / brain checksum " << brain.checksum() << " / content "
                 << ContentHash << "\nJourney seed: " << state.seed
                 << "\nRegion: " << camp::Regions[state.region].name << " / tile " << state.x / 256

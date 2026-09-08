@@ -1,0 +1,13 @@
+{
+  "version": "0.12.1",
+  "bytes": 37493383,
+  "sha256": "3cc2ae126a503a7c23a838d76fca60bdeeb064b718763b0b3a878f7c6a215836",
+  "minimum_macos": "14.0",
+  "architecture": "arm64",
+  "rules": 9,
+  "observations": 8,
+  "model_checksum": "187a9a2f",
+  "codesign": "ad hoc / deep strict verified",
+  "dependencies": "SDL2 bundled; no Homebrew runtime paths",
+  "relocated_controller_test": "80 campaign controller checks passed"
+}

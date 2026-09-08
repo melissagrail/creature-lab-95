@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
       - run: make all test
+      - run: make build/journey_audio_tests && ./build/journey_audio_tests
       - run: make build/tournament && ./build/tournament 1 reports/ci-smoke.csv
       - run: python3 tests/viewer_smoke.py
       - run: python3 tests/journey_smoke.py

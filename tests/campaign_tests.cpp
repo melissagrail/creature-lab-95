@@ -422,6 +422,24 @@ int main() {
     CHECK(!copy.cleared[1]); // Corruption did not replace backup.
     std::filesystem::remove(path, ec);
     std::filesystem::remove(path.string() + ".bak", ec);
+    // The beginner must close before planting a melee swing at a circling fox.
+    // Previously Brambleback spent an entire duel whiffing at ~2,010 units.
+    for (unsigned seed : {448456818u, 41u, 207u, 910u}) {
+        auto beginner = c::new_journey(seed, 1);
+        auto fight = c::encounter(beginner, 2);
+        World duel;
+        c::initialize_round(duel, beginner, fight, 0, 0, 1000, 1000);
+        int casts = 0, hits = 0;
+        while (!duel.terminal && !duel.truncated) {
+            auto action = c::companion_action(duel, {});
+            casts += action.ability != 0;
+            auto result = step(duel, {action, c::opponent_action(duel, fight, 0)});
+            hits += result.features[1].taken > 0;
+        }
+        CHECK(hits >= 5);
+        CHECK(casts <= hits + 3);
+        CHECK(duel.winner == 0);
+    }
     std::cout << checks
               << " campaign checks passed: eight connected regions, all species, both endings, "
                  "save corruption and backup.\n";

@@ -1,4 +1,4 @@
-# Tinikami: The Unwritten Road — journey alpha 0.12
+# Tinikami: The Unwritten Road — journey alpha 0.12.1
 
 A creature-collector campaign built around deterministic, real-time C++ combat and lightweight learned spirit pilots. Walk an eight-region road, meet forty original spirits, restore the sanctuary bells, and decide what happens to the broken Crown.
 
@@ -41,6 +41,7 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 - **Forty obtainable companions:** after the opening six completed challenges, a completed first friendly challenge earns recognition even in defeat. Further victories or thread offerings deepen trust. There are no capture dice, random encounters or permanent losses.
 - **Three-companion parties:** condition carries across combat relays. Bond experience gradually opens arts, dodge, speed, energy and charms; village requests unlock more preparation choices. The sanctuary recovers everyone freely.
 - **An open starter apprenticeship:** explore every Hearthmere habitat immediately; friendship starts after six completed challenges. Fourteen lessons teach keeper calls, cover, a slow charged burst and the lotus. Young spirits begin with one art.
+- **An original battle soundtrack:** a 144 BPM chip arrangement with melodic phrases, bass, drums and smooth exploration transitions. F8 toggles music.
 - **An in-game design notebook:** F7 pauses play, records feedback and attaches location/encounter context. Notes survive new journeys.
 - **Eight optional Lantern Walks:** branching eight-room expeditions, campfires, persistent condition and a final relay. Save between rooms or return home with earned rewards.
 - **A complete story route and two endings**, followed by free exploration and collection.

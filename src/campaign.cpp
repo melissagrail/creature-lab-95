@@ -18,8 +18,12 @@ uint32_t mix(uint32_t x) {
     x *= 0x846ca68bu;
     return x ^ (x >> 16);
 }
-int index(int r, int s) { return r * SiteCount + s; }
-bool valid_species(int s) { return s >= 0 && s < SpeciesCount; }
+int index(int r, int s) {
+    return r * SiteCount + s;
+}
+bool valid_species(int s) {
+    return s >= 0 && s < SpeciesCount;
+}
 bool clear_path(const World &w, Vec start, Vec end, int padding) {
     Vec delta = end - start;
     int64_t squared = int64_t(delta.x) * delta.x + int64_t(delta.y) * delta.y;
@@ -353,7 +357,9 @@ Action opponent_action(const World &w, const Encounter &e, int round) {
     }
     return action;
 }
-bool beginner_assistance(const Body &b) { return b.pace <= 75; }
+bool beginner_assistance(const Body &b) {
+    return b.pace <= 75;
+}
 Action companion_action(const World &w, Action pilot) {
     const auto &b = w.bodies[0];
     // Beginners approach, face and plant for an affordable attack. They do not
@@ -409,10 +415,16 @@ Action companion_action(const World &w, Action pilot) {
             range += m.radius;
         if (m.kind == Lunge)
             range += m.speed * m.active;
-        reach = std::max(reach, range + w.bodies[1].radius - 200);
+        // A planted melee windup needs room for the target to move. Chase into
+        // reliable striking distance instead of repeatedly spending at the fringe.
+        const int margin =
+            m.kind == Melee ? std::clamp(length(w.bodies[1].vel) * m.startup + 150, 350, 800) : 100;
+        const int striking_distance =
+            std::max(b.radius + w.bodies[1].radius, range + w.bodies[1].radius - margin);
+        reach = std::max(reach, striking_distance - 100);
         if (!choice && !obstructed && mask[slot + 1] &&
             length(delta) >= m.min_range + (m.min_range ? w.bodies[1].radius : 0) &&
-            length(delta) <= range + w.bodies[1].radius - 100) {
+            length(delta) <= striking_distance) {
             choice = slot + 1;
             int lead = m.startup + (m.kind == Bolt && m.speed ? length(delta) / m.speed : 0);
             aim = unit(delta + scale(w.bodies[1].vel, std::min(45, lead), 1));
@@ -703,7 +715,9 @@ Development development(int r) {
 int lesson_index(int site) {
     return site == 3 ? 0 : site == 6 ? 1 : site == 9 ? 2 : site == 12 ? 3 : -1;
 }
-int lesson_count(int site) { return site == 3 || site == 6 ? 4 : 3; }
+int lesson_count(int site) {
+    return site == 3 || site == 6 ? 4 : 3;
+}
 std::string lesson_brief(const State &s, int site) {
     int i = lesson_index(site);
     if (s.region != 0 || i < 0)
