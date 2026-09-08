@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 namespace creature {
-constexpr int BrainFormat = 3, BrainHidden = 96, BrainParameters = 89959;
+constexpr int BrainFormat = 3, BrainHidden = 96, BrainParameters = 90727;
 using Personality = std::array<float, 3>;
 constexpr int PersonalityCount = 5;
 const char *personality_name(int);
@@ -27,15 +27,9 @@ class Brain {
 
   public:
     bool load(const std::string &path, std::string &error);
-    bool ready() const {
-        return weights.size() == BrainParameters || weights.size() == 86755;
-    }
-    uint32_t checksum() const {
-        return checksum_;
-    }
-    int format() const {
-        return format_;
-    }
+    bool ready() const { return weights.size() == BrainParameters || weights.size() == 87523; }
+    uint32_t checksum() const { return checksum_; }
+    int format() const { return format_; }
     bool forward(const Observation &, const BrainMemory &, BrainOutput &,
                  const Personality & = {}) const;
     Action action(const Observation &, BrainMemory &, const Personality & = {}) const;

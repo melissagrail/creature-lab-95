@@ -1,4 +1,4 @@
-# The Unwritten Road — campaign alpha 0.10
+# The Unwritten Road — campaign alpha 0.11
 
 The combat laboratory now has a complete campaign route around it: an opening, eight regions, forty obtainable companions, persistent progression, a final decision and postgame exploration. This is a playable campaign alpha. **Twenty hours remains the intended release-length experience; it is not a measured duration of the current content.**
 
@@ -17,7 +17,7 @@ The sanctuary bells once carried names between villages. Keeper Nara tried to re
 | Inkshore | Diagonal coastline, piers and islands | Concealment, returns and delayed effects |
 | Hush Crown | Broken islands joined by narrow paths | Mixed terrain, wind and party adaptation |
 
-Each region contains twenty authored sites: a sanctuary, five species habitats, four two-spirit road trials, three main conversations, a village request, a memory, a cache, a bell riddle, a three-spirit keeper, an onward gate and an optional Lantern Walk. Roads and sites have different arrangements in every region. All 160 locations are checked for reachability. The world has visible encounters; walking through grass never launches a random battle.
+Each region contains twenty authored sites: a sanctuary, five species habitats, four road trials (two-spirit relays after Hearthmere; fourteen separate introductory lessons in Hearthmere), three main conversations, a village request, a memory, a cache, a bell riddle, a three-spirit keeper, an onward gate and an optional Lantern Walk. Roads and sites have different arrangements in every region. All 160 locations are checked for reachability. The world has visible encounters; walking through grass never launches a random battle.
 
 The two final choices lead to different epilogues: shared keepership through an open circle, or an unbound road without a permanent keeper. Both leave the world available for collection and optional play.
 
@@ -27,16 +27,16 @@ Choose Cinderfox, Rimehare or Dewotter. Every species is available later regardl
 
 A completed first friendly encounter earns one trust mark even in defeat. Retreating does not. Further victories earn additional marks, or three memory threads buy one mark after recognition. Species need one, two or three marks according to their habitat tier. There are no capture probabilities. The spirit book holds every acquired species; three travel in the active party.
 
-Bond experience is shared by the party after encounters. It records familiarity without increasing base HP or damage: the forty combat kits keep their common power budget. Bond rank 2 opens starting charms. Village requests add three further options. Temperaments can be changed in the spirit book, and each companion retains a small reproducible individual variation. This changes controller input; it does not retrain or edit the species' physics.
+Bond experience is shared by the party after encounters. It records familiarity without increasing base HP or damage: the forty combat kits keep their common power budget. Bond ranks 2–4 unlock additional arts; rank 2 adds dodge and starting charms. Pace, capacity and recovery gradually increase through rank 5. [Full thresholds and opening sequence](development.md). Village requests add three further options. Temperaments can be changed in the spirit book, and each companion retains a small reproducible individual variation. This changes controller input; it does not retrain or edit the species' physics.
 
 | Charm | Starting tradeoff | Unlock |
 | --- | --- | --- |
-| Open Hand | Full 100 energy | Always |
-| Stone | 12 shield for 15 seconds; 85 energy | Bond 2 |
-| Wind | Three seconds of haste; 85 energy | Bond 2 |
-| Reed | 30% recovery between victorious relay rounds instead of 15%; 85 energy | Fen request + bond 2 |
-| Bell | Five seconds of control resistance; 80 energy | Archive request + bond 2 |
-| Lantern | 24 shield for 15 seconds; 65 energy | Hearthmere request + bond 2 |
+| Open Hand | Full current capacity | Always |
+| Stone | 12 shield for 15 seconds; 85% capacity | Bond 2 |
+| Wind | Three seconds of haste; 85% capacity | Bond 2 |
+| Reed | 30% recovery between victorious relay rounds instead of 15%; 85% capacity | Fen request + bond 2 |
+| Bell | Five seconds of control resistance; 80% capacity | Archive request + bond 2 |
+| Lantern | 24 shield for 15 seconds; 65% capacity | Hearthmere request + bond 2 |
 
 A sanctuary fully recovers every companion and ensures at least three remedies. Two threads craft an extra remedy. Each remedy heals one-third of maximum vitality and can be used once per duel round. They are manual decisions even while a spirit pilots itself.
 
@@ -60,7 +60,7 @@ In combat, M toggles learned pilot/manual control; WASD moves, mouse aims, 1–4
 
 ## Saves
 
-Campaign saves use the independent `TINISAV2` envelope, fixed little-endian fields, length validation and an FNV checksum. They are separate from combat snapshots and model files. Load validates into a candidate before replacing live state. Save writes a temporary file, preserves a validated `.bak`, then replaces the current file. A corrupt current file cannot overwrite a valid backup.
+Campaign saves use the independent `TINISAV3` envelope (with validated `TINISAV2` migration), fixed little-endian fields, length validation and an FNV checksum. They are separate from combat snapshots and model files. Load validates into a candidate before replacing live state. Save writes a temporary file, preserves a validated `.bak`, then replaces the current file. A corrupt current file cannot overwrite a valid backup.
 
 On macOS the default location is:
 
@@ -71,6 +71,10 @@ On macOS the default location is:
 Linux and Windows use SDL's corresponding per-user application-data directory. `--save-path PATH` selects a deliberate alternate slot. Starting a new journey archives any existing primary file, including an unreadable one, before writing. Save failures are visible. F5 saves outside combat; the world also autosaves and progression writes immediately.
 
 Battles resume from the saved pre-encounter checkpoint. Lantern Walks resume at their current room choice. The game does not serialize a half-finished duel or recurrent controller memory into the campaign save. Unfocused time and paused battle time do not advance the playtime counter.
+
+## Design notes
+
+F7 opens a notebook that pauses play and attaches the current location, party and combat context. Save with Ctrl/Command+Enter. Notes are UTF-8 Markdown beside the journey save and survive new journeys. [Notebook controls and snapshot limits](development.md#in-game-design-notes).
 
 ## Architecture and validation
 

@@ -20,7 +20,7 @@ def run():
                       np.array([[0.],[1.],[0.]],np.float32),np.array([99.],np.float32),gamma=.9,lam=1.)
     np.testing.assert_allclose(ret[:,0],[2.8,2,92.1],rtol=1e-5)
     # Exact discounted telescoping, including the native time-limit verdict as a terminal.
-    obs=np.zeros((3,3620),np.float32);obs[:,0]=[1,.8,.7];obs[:,66+11]=[1,.9,.2]
+    obs=np.zeros((3,3628),np.float32);obs[:,0]=[1,.8,.7];obs[:,66+11]=[1,.9,.2]
     gamma=.9
     r0=rewards(obs[:1],obs[1:2],np.array([False]),np.array([-1]),np.array([0]),gamma)
     r1=rewards(obs[1:2],obs[2:3],np.array([True]),np.array([0]),np.array([0]),gamma)
@@ -29,6 +29,10 @@ def run():
     traits=np.array([[1,-.25,0],[-1,.4,0],[0,1,.25]],np.float32)
     assert np.all(np.abs(personality_reward(obs,traits)) <= .003*np.abs(traits).sum(-1)+1e-8)
     assert np.all(personality_reward(obs,np.zeros_like(traits)) == 0)
+    # Reserve preference compares with the current developmental cap, not an unreachable 100.
+    reserve_obs=obs[:2].copy();reserve_obs[:,1]=[.3,.5]
+    reserve_obs[:,SLICES['global_'].start+34]=[.6,1.]
+    np.testing.assert_allclose(personality_reward(reserve_obs,np.array([[0,1,0],[0,1,0]],np.float32)),[0,0],atol=1e-8)
     from legacy_policy import LegacyPolicy
     legacy=LegacyPolicy();modern=upgrade(legacy)
     with Batch(1) as upgrade_env, torch.no_grad():
@@ -43,6 +47,20 @@ def run():
         with_species.reset(0)
         np.testing.assert_allclose(with_species.learner_obs()[0,22],2/39)
     finally:with_species.close()
+    curriculum=ArenaBatch(32,51,development_rate=1.)
+    try:
+        development=curriculum.obs[:,:,SLICES['global_'].start+32:SLICES['global_'].start+40]
+        assert np.any(development[:,:,1]<1.) and np.all(development[:,:,2]>=.6)
+        with torch.no_grad():
+            p=CreaturePolicy();o=torch.from_numpy(curriculum.learner_obs())
+            _, logits, _, _=p(o,torch.zeros(32,HIDDEN))
+            assert torch.all(logits[o[:,SLICES['mask']]<.5]<-1e8)
+        try:curriculum.batch.development(0,0,capacity=499);raise AssertionError('Bad capacity accepted')
+        except ValueError:pass
+        curriculum.step(curriculum.teacher())
+        try:curriculum.batch.development(0,0);raise AssertionError('Midmatch change accepted')
+        except ValueError:pass
+    finally:curriculum.close()
     policy=load_checkpoint(sys.argv[1])[0] if len(sys.argv)>1 else CreaturePolicy();env=ArenaBatch(4,77,personality_rate=1. if policy.brain_format==3 else 0.)
     try:
         env.styles[:]=0
@@ -77,6 +95,9 @@ def run():
                 player=species%2
                 pair=(species,(species+17)%40) if player==0 else ((species+17)%40,species)
                 batch.reset(0,100+species,species%3,pair,species%6)
+                if species%3==0:
+                    batch.development(0,player,1,65,600,60)
+                    batch.development(0,1-player,19,75,700,70)
                 h=torch.zeros(1,HIDDEN)
                 for t in range(12):
                     o=np.asarray(batch.observe(player=player),np.float32)

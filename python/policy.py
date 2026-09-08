@@ -34,7 +34,7 @@ class CreaturePolicy(LegacyPolicy):
 
     def __init__(self):
         super().__init__()
-        self.encoder = nn.Sequential(nn.Linear(272, 96), nn.Tanh())
+        self.encoder = nn.Sequential(nn.Linear(280, 96), nn.Tanh())
         self.species = nn.Embedding(40, 12)
         self.slot_motion = nn.Linear(32, 4)
         nn.init.normal_(self.species.weight, std=.2)
@@ -80,7 +80,7 @@ def upgrade(legacy):
     for name, tensor in legacy.state_dict().items():
         if name == 'encoder.0.weight':
             state[name].zero_()
-            state[name][:,:245] = tensor
+            state[name][:,:253] = tensor
         else:
             state[name] = tensor
     policy.load_state_dict(state)

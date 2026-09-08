@@ -5,21 +5,11 @@
 using namespace creature;
 static constexpr int ObsSize = ObservationSize;
 extern "C" {
-uint32_t cr_content_hash() {
-    return ContentHash;
-}
-uint32_t cr_observation_version() {
-    return ObservationVersion;
-}
-int32_t cr_arena_count() {
-    return ArenaCount;
-}
-const char *cr_arena_name(int32_t id) {
-    return arena_name(id);
-}
-int32_t cr_species_count() {
-    return SpeciesCount;
-}
+uint32_t cr_content_hash() { return ContentHash; }
+uint32_t cr_observation_version() { return ObservationVersion; }
+int32_t cr_arena_count() { return ArenaCount; }
+const char *cr_arena_name(int32_t id) { return arena_name(id); }
+int32_t cr_species_count() { return SpeciesCount; }
 const char *cr_species_name(int32_t id) {
     return id >= 0 && id < SpeciesCount ? Roster[id].name : nullptr;
 }
@@ -31,21 +21,21 @@ int32_t cr_reset_match(void *ptr, uint32_t seed, int32_t weather, int32_t a, int
     reset(*static_cast<World *>(ptr), seed, weather, a, b, arena);
     return 0;
 }
-uint32_t cr_version() {
-    return RulesVersion;
+int32_t cr_development(void *world, int32_t actor, int32_t arts, int32_t pace, int32_t capacity, int32_t recovery) {
+    return world && configure_development(*static_cast<World *>(world), actor, arts, pace, capacity,
+                                          recovery)
+               ? 0
+               : -1;
 }
-int32_t cr_observation_size() {
-    return ObsSize;
-}
+uint32_t cr_version() { return RulesVersion; }
+int32_t cr_observation_size() { return ObsSize; }
 void *cr_create(uint32_t seed, int32_t weather) {
     auto *w = new (std::nothrow) World;
     if (w)
         reset(*w, seed, weather);
     return w;
 }
-void cr_destroy(void *w) {
-    delete static_cast<World *>(w);
-}
+void cr_destroy(void *w) { delete static_cast<World *>(w); }
 int32_t cr_reset(void *w, uint32_t seed, int32_t weather) {
     if (!w)
         return -1;

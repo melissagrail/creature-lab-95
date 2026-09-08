@@ -1,10 +1,23 @@
-# Tinikami controllers — alpha 0.10
+# Tinikami controllers — alpha 0.11
+
+`apprentice.tbrain` and `champion.tbrain` contain the same explicitly expanded v0.10 learned weights: **90,727 parameters, 362,948 bytes, checksum `a6a76794`**. Rules **9**, observations **8** (3,628 floats), content `223a8716`, model format **3**, recurrent memory **96 floats** per actor. The new simulation golden is `8f436a06e647a94c`.
+
+Eight new encoder inputs expose developmental limits. Their weights initialize to zero; every previous weight is retained. This is a schema migration, not new training. The `.pt` files are weights-only warm starts; optimizer moments from the old-shaped encoder are not silently reused. The original full checkpoint and manifest are retained in `baselines/rules8/release-v10/`. Run `scripts/migrate-development.py SOURCE.pt TARGET` against a known rules-8/observations-7 checkpoint to reproduce the expansion. Older models remain deliberately incompatible.
+
+The native and Python models pass inference parity across all forty species. Campaign profiles change available actions, physical speed, energy capacity and regeneration, and always apply the engine's legal-action mask. `python/train.py --development-rate .35` opts into a mixture of developmental scenarios for future PPO training. The launcher training scripts enable this mixture. The shipped weights have not undergone that curriculum training.
+
+`baselines/legacy-development.*` is the similarly expanded format-2 compatibility fixture (87,523 parameters). Historical rules-7/8 checkpoints and their evidence remain intact. To reproduce the historical training command below, check out release `v0.10.0-alpha.1`; to train on the current engine use a migrated checkpoint and current opponents.
+
+Campaign companions supply persistent temperament and seeded variation to a shared controller. They do not change its weights during play. Native play requires neither Python nor Torch. All project-trained weights are MIT licensed.
+
+## Historical v0.10 training and evaluation
+
 
 `champion.tbrain` and `apprentice.tbrain` contain the same validation-selected rules-8 controller: **89,959 parameters, 359,876 bytes, checksum `d9ff10f9`**. Each has a matching `.pt` checkpoint with optimizer state and a `.json` manifest. The names remain separate so focused baseline and mixed-temperament training can diverge later. Native play needs neither Python nor Torch.
 
 Three local PPO runs collected **15,728,640 new decisions** under the movement changes. The final run's selected checkpoint scored 72.5% on validation before the fresh native evaluation. On the paired native cohort it scores **73.06%** versus **46.25%** for the old weights explicitly migrated to the same new physics. Thirty-eight species improve and two tie in that small per-species cohort. The five temperament scores range from 63.06% to 74.83%; equal personality power is not established.
 
-[Full results and campaign tests](../reports/rl-v10-summary.md), [selection manifest](../reports/rl-v10-selection.json), and [training logs/configs](../reports/training-v10/) include raw evidence and limitations. Rules are **8**, observations **7** (3,620 floats), content `223a8716`, and model format **3**. The core sim golden is `03b73ddd44073999`.
+[Full results and campaign tests](../reports/rl-v10-summary.md), [selection manifest](../reports/rl-v10-selection.json), and [training logs/configs](../reports/training-v10/) include raw evidence and limitations. Rules are **8**, observations **7** (3,620 floats), content `223a8716`, and model format **3**. The historical core sim golden is `03b73ddd44073999`.
 
 Retained baselines:
 

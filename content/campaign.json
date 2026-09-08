@@ -38,7 +38,7 @@
           "species": 1,
           "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "I once kept the road between eight sanctuaries. Their bells carried names through the valley. When one bell fell silent, I tied its note to another. Then another. I thought I was helping.|Now every sound leads toward the Crown. Find the spirits by the old footbridge. Meet their challenge, and listen after the dust settles. That is how trust begins.",
+          "text": "I once kept the road between eight sanctuaries. Their bells carried names through the valley. When one bell fell silent, I tied its note to another. Then another. I thought I was helping.|Now every sound leads toward the Crown. First, learn to listen to the friend already beside you. The keeper at the First Breathing Space offers four quiet lessons. One art. One partner. Time to breathe.|Then practise at A Place to Stand. After eight successful lessons, the Ember Footbridge opens. Other habitats follow as you learn. Your companion awakens more arts through bond, not through collecting a crowd.",
           "after": "The conversation has changed what you know. The next marked place on the road is now open."
         },
         {
@@ -47,7 +47,7 @@
           "y": 27,
           "kind": "Wild",
           "species": 0,
-          "prerequisite": -1,
+          "prerequisite": 6,
           "speaker": "Cinderfox / FIELD ENCOUNTER",
           "text": "It has arranged fallen twigs into a tiny hearth. Whenever the flame gutters, it offers another bright tail-spark. Nara says it follows travellers who know when to stop running.|FIELD NOTE / Move through its first flame, then give yourself room to recover. Its short reach makes chasing and retreating very different decisions.",
           "after": "The fox leaves one coal beside your boot. It stays warm even after the rain.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -60,8 +60,8 @@
           "species": 35,
           "prerequisite": 1,
           "speaker": "Keeper Nara",
-          "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "text": "Four short lessons introduce facing, the first art, telegraphs, and recovery. Each is a separate duel. The teacher restores your companion after every success. Return here until all four lessons are complete.",
+          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "The Baker's Bowl",
@@ -80,7 +80,7 @@
           "y": 13,
           "kind": "Wild",
           "species": 1,
-          "prerequisite": -1,
+          "prerequisite": 9,
           "speaker": "Brambleback / FIELD ENCOUNTER",
           "text": "A walking shrine blocks the path. Paper wishes flutter among its thorns. It will not move until somebody reads the smallest wish, written by a child who simply wanted a friend.|FIELD NOTE / Its rooted defense is strongest when you hurry into it. Draw out a commitment, then approach from another angle.",
           "after": "A fresh paper wish appears beneath the shrine roof. There is no name on it yet.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -93,8 +93,8 @@
           "species": 1,
           "prerequisite": 4,
           "speaker": "Keeper Nara",
-          "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "text": "Four more one-on-one lessons practise approach, retreat, and the rhythm of spending breath. Your starter reaches bond 2 after eight lesson wins: a second art and a paid dodge awaken. The first wild habitat then opens.",
+          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Paper Lantern Path",
@@ -102,7 +102,7 @@
           "y": 23,
           "kind": "Wild",
           "species": 10,
-          "prerequisite": -1,
+          "prerequisite": 16,
           "speaker": "Quillrat / FIELD ENCOUNTER",
           "text": "Quillrat has collected every discarded shopping list in the village. It sorts them by the things people forgot. At the top of the pile is a note that says only: come home early.|FIELD NOTE / A prickly defender invites wasteful attacks. Wait for its resources to fall, then use an opening rather than a constant barrage.",
           "after": "A folded scrap appears in your field book. It is a list of places the two of you have not visited.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -126,8 +126,8 @@
           "species": 31,
           "prerequisite": 6,
           "speaker": "Keeper Nara",
-          "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "text": "Three lessons introduce your second art, dodging, and holding the lotus. More choices draw on the same small energy pool. A deliberate pause can be the best move.",
+          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Dewpool",
@@ -135,7 +135,7 @@
           "y": 35,
           "kind": "Wild",
           "species": 35,
-          "prerequisite": -1,
+          "prerequisite": 16,
           "speaker": "Dewotter / FIELD ENCOUNTER",
           "text": "Dewotter has tied a ribbon around every raindrop it could catch. By noon the ribbons are empty. It keeps them anyway, because the rain was here.|FIELD NOTE / Cleansing and return paths can reverse an exchange. Commit after the protective answer, and watch where the water will travel back.",
           "after": "An empty blue ribbon joins your book. It smells faintly of the river.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -159,8 +159,8 @@
           "species": 10,
           "prerequisite": 11,
           "speaker": "Keeper Nara",
-          "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "text": "Three final lessons put your new choices together. Start and stop on purpose; keep enough energy for an answer. The Hearth Bell ahead is the first three-opponent relay.",
+          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Orchard Hollow",
@@ -168,7 +168,7 @@
           "y": 13,
           "kind": "Wild",
           "species": 31,
-          "prerequisite": -1,
+          "prerequisite": 16,
           "speaker": "Orchardboar / FIELD ENCOUNTER",
           "text": "Orchardboar plants crooked saplings where the gardener wanted a straight fence. Every sapling has survived the storms. The fence has been replaced three times.|FIELD NOTE / A broad body can control a narrow lane. Use committed forward pressure thoughtfully; reversing out of every exchange gives away too much ground.",
           "after": "The gardener leaves a gap in the new fence.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."

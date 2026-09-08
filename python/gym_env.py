@@ -11,7 +11,7 @@ from gymnasium import spaces
 from creature import Batch, SLICES, quantize, ARENA_COUNT
 
 SHAPES = dict(self=(66,), entities=(69,44), moves=(5,48), announced=(48,),
-              history=(24,8), global_=(32,), mask=(6,))
+              history=(24,8), global_=(40,), mask=(6,))
 
 class CreatureEnv(gym.Env):
     metadata = {'render_modes': []}

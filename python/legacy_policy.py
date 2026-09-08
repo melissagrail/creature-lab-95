@@ -17,7 +17,7 @@ class LegacyPolicy(nn.Module):
 
     Format 2: explicit enemy token plus pooled public entities. Motion/aim heads
     use the opponent-relative frame; learning.py rotates them to world actions.
-    obs: [batch,3620], memory: [batch,96]. For episodes/branches, manage memory
+    obs: [batch,3628], memory: [batch,96]. For episodes/branches, manage memory
     explicitly; it does not belong to the deterministic physics snapshot.
     """
     def __init__(self):
@@ -25,7 +25,7 @@ class LegacyPolicy(nn.Module):
         self.entity = nn.Sequential(nn.Linear(ENTITY_SIZE-1, 32), nn.Tanh())
         self.move = nn.Sequential(nn.Linear(MOVE_SIZE, 24), nn.Tanh())
         self.event = nn.Sequential(nn.Linear(7, 24), nn.Tanh())
-        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + ENTITY_SIZE-1 + 32 + 24 + 24 + 32 + 24, 96), nn.Tanh())
+        self.encoder = nn.Sequential(nn.Linear(SELF_SIZE + ENTITY_SIZE-1 + 32 + 24 + 24 + 40 + 24, 96), nn.Tanh())
         self.memory = nn.GRUCell(96, 96)
         self.motion = nn.Linear(96, 4)
         self.noop = nn.Linear(96, 1)

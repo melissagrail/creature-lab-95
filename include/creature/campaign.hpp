@@ -49,6 +49,7 @@ struct State {
     // A Lantern Walk saves between rooms, never halfway through a duel.
     int walk_region = -1, walk_depth = 0, walk_choice = 0;
     std::array<int, RegionCount> walks{};
+    std::array<int, 4> lessons{};
 };
 struct Encounter {
     int region = 0, site = 0, rounds = 1, arena = 0, weather = 0;
@@ -79,6 +80,14 @@ Encounter encounter(const State &, int site);
 bool resolve(State &, const Encounter &, bool won, const std::array<int, 3> &vitality,
              bool withdrew = false);
 int rank(const Companion &);
+int rank_threshold(int rank);
+struct Development {
+    int arts, pace, capacity, recovery;
+};
+Development development(int rank);
+int lesson_index(int site);
+int lesson_count(int site);
+std::string lesson_brief(const State &, int site);
 bool charm_unlocked(const State &, int species, int charm);
 bool begin_walk(State &);
 bool rest_walk(State &);
@@ -86,6 +95,7 @@ bool leave_walk(State &);
 Encounter walk_encounter(const State &, int choice);
 int encounter_reward(const State &, const Encounter &);
 bool trained_opponent(const State &, const Encounter &);
+Action opponent_action(const World &, const Encounter &, int round);
 void prepare_garden(World &, const Encounter &, int round);
 void initialize_round(World &, const State &, const Encounter &, int round, int slot, int vitality,
                       int enemy_vitality);

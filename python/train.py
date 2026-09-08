@@ -178,6 +178,7 @@ def main():
     p.add_argument('--eval-every',type=int,default=20);p.add_argument('--eval-games',type=int,default=240)
     p.add_argument('--test-games',type=int,default=240)
     p.add_argument('--personality-rate',type=float,default=.6)
+    p.add_argument('--development-rate',type=float,default=0.,help='Fraction of training episodes using limited developmental kits (0..1)')
     p.add_argument('--style-scale',type=float,default=.003)
     p.add_argument('--refine-imitation',action='store_true')
     p.add_argument('--opponent',type=Path,action='append',default=[])
@@ -195,7 +196,7 @@ def main():
     if args.resume and args.warmstart:p.error('Choose either --resume or --warmstart')
     if not (0<args.gamma<=1 and 0<args.clip<1 and args.lr>0 and args.target_kl>0 and args.entropy>=0):
         p.error('Invalid learning hyperparameters')
-    if not (0<=args.personality_rate<=1 and 0<=args.learned_opponent_rate<=1 and args.style_scale>=0):p.error('Invalid personality/opponent options')
+    if not (0<=args.development_rate<=1 and 0<=args.personality_rate<=1 and 0<=args.learned_opponent_rate<=1 and args.style_scale>=0):p.error('Invalid personality/opponent options')
     if args.species is not None and not 0<=args.species<40:p.error('Species must be 0-39')
     if args.individual_seed is not None and (args.personality or not 0<=args.individual_seed<=0xffffffff):
         p.error('Use a uint32 individual seed or a named personality, not both')
@@ -237,7 +238,7 @@ def main():
         if 'optimizer' in prior:optimizer.load_state_dict(prior['optimizer'])
         for group in optimizer.param_groups:group['lr']=args.lr
     # Resume retains weights/optimizer, but deliberately starts fresh episodes and memory.
-    env=ArenaBatch(args.envs,args.seed+offset+1,personality_rate=args.personality_rate,fixed_personality=fixed_personality,target_species=args.species);memory=torch.zeros(args.envs,HIDDEN)
+    env=ArenaBatch(args.envs,args.seed+offset+1,personality_rate=args.personality_rate,fixed_personality=fixed_personality,target_species=args.species,development_rate=args.development_rate);memory=torch.zeros(args.envs,HIDDEN)
     opponents=FrozenOpponents(args.opponent,args.envs,args.learned_opponent_rate) if args.opponent else None
     best=-1.;recent=[];last=offset
     if (args.resume or args.warmstart) and prior.get('stage')=='ppo':

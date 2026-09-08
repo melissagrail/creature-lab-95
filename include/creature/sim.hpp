@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int ArenaCount = 6, SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32,
               ZoneCount = 16, HistoryCount = 64;
-constexpr uint32_t RulesVersion = 8, ObservationVersion = 7;
+constexpr uint32_t RulesVersion = 9, ObservationVersion = 8;
 const char *arena_name(int);
 struct Vec {
     int32_t x = 0, y = 0;
@@ -122,9 +122,12 @@ struct Body {
     int32_t meter = 0, counter = 0, passive_timer = 0, last_slot = -1, idle_ticks = 0,
             stationary = 0, control = 0, capture = 0;
     std::array<int32_t, 5> cooldown{};
+    // Scenario-authored development limits. Defaults preserve full-kit laboratory combat.
+    int32_t arts = 31, pace = 100, capacity = 1000, recovery_rate = 100;
     int32_t guidance = Free, guidance_age = 0, surface_mask = 0, energy_delay = 0;
 };
 int energy_regen(const Body &);
+int travel_speed(const Body &);
 // 0..100 exertion from actual sideways/reverse velocity; fully observable, no hidden state.
 int footwork_load(const Body &);
 struct Projectile {
@@ -178,6 +181,7 @@ struct StepResult {
     std::array<Features, 2> features{};
     int32_t ticks = 0;
 };
+bool configure_development(World &, int actor, int arts, int pace, int capacity, int recovery);
 void reset(World &, uint32_t, int weather = 0, int species_a = 0, int species_b = 1, int arena = 0);
 const Move &move_for(const Body &, int slot);
 int move_id(const Body &, int slot);
@@ -191,7 +195,7 @@ std::array<int32_t, 6> action_mask(const World &, int);
 StepResult step(World &, const std::array<Action, 2> &, int ticks = DecisionTicks);
 Action scripted(const World &, int, int style = 0);
 constexpr int SelfSize = 66, EntityCount = 69, EntitySize = 44, MoveSize = 48, EventSize = 8,
-              EventCount = 24, GlobalSize = 32;
+              EventCount = 24, GlobalSize = 40;
 constexpr int ObservationSize =
     SelfSize + EntityCount * EntitySize + 6 * MoveSize + EventCount * EventSize + GlobalSize + 6;
 struct Observation {

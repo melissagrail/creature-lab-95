@@ -1,8 +1,11 @@
 #pragma once
 #include "creature/campaign.hpp"
+#include "design_notebook.hpp"
 #include "journey_audio.hpp"
 #include "tinikami.hpp"
+#include <cctype>
 #include <chrono>
+#include <ctime>
 #include <functional>
 #include <iomanip>
 #include <queue>
@@ -43,7 +46,8 @@ enum Screen {
     Studio,
     Inn,
     Notes,
-    Help
+    Help,
+    DesignNotes
 };
 struct Palette {
     SDL_Color floor, path, water, edge, accent;
@@ -181,6 +185,138 @@ class Game {
     std::array<int, 3> vitality{}, bells{};
     std::array<BrainMemory, 2> memories{};
     World duel;
+    Screen notebook_return = Explore;
+    std::string draft, note_context, note_error;
+    std::vector<uint8_t> note_snapshot;
+    std::vector<std::filesystem::path> saved_notes;
+    int note_selected = -1, note_scroll = 0;
+    size_t note_cursor = 0, note_anchor = 0;
+    std::string growth_message;
+    std::filesystem::path notes_directory() const {
+        return options.save_path.parent_path() / "design-notes";
+    }
+    void open_notebook() {
+        if (screen == DesignNotes)
+            return;
+        notebook_return = screen;
+        if (draft.empty()) {
+            std::ostringstream out;
+            auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+            out << "Recorded (UTC): " << std::put_time(std::gmtime(&now), "%Y-%m-%d %H:%M:%S")
+                << "\nBuild: 0.11 / rules " << RulesVersion << " / observations "
+                << ObservationVersion << " / brain checksum " << brain.checksum() << " / content "
+                << ContentHash << "\nJourney seed: " << state.seed
+                << "\nRegion: " << camp::Regions[state.region].name << " / tile " << state.x / 256
+                << "," << state.y / 256 << "\nScreen: " << int(screen)
+                << " / played seconds: " << state.play_seconds << "\nVictories: " << state.victories
+                << " / defeats: " << state.defeats << "\nParty:";
+            for (int id : state.party)
+                if (id >= 0)
+                    out << " " << Roster[id].name << " (bond " << camp::rank(state.companions[id])
+                        << ", XP " << state.companions[id].experience << ", temperament "
+                        << personality_name(state.companions[id].temperament) << ")";
+            note_snapshot.clear();
+            if (screen == Battle || screen == Result) {
+                out << "\nEncounter: " << camp::Regions[match.region].sites[match.site].name
+                    << " / seed " << match.seed << " / round " << std::min(battle_round + 1, match.rounds) << " / tick "
+                    << duel.tick << " / manual " << manual << " / paused " << paused;
+                for (int i = 0; i < 2; ++i) {
+                    const auto &b = duel.bodies[i];
+                    out << "\nActor " << i << ": " << Roster[b.species].name << " HP " << b.hp
+                        << " energy " << b.energy << "/" << b.capacity << " move " << b.move
+                        << " arts " << b.arts << " pace " << b.pace;
+                }
+                note_snapshot = snapshot(duel);
+            }
+            note_context = out.str();
+        }
+        saved_notes = design_notebook::entries(notes_directory());
+        note_selected = -1;
+        note_scroll = 0;
+        note_error.clear();
+        note_cursor = note_anchor = draft.size();
+        pending_ability = 0;
+        screen = DesignNotes;
+        SDL_StartTextInput();
+    }
+    void close_notebook() {
+        SDL_StopTextInput();
+        screen = notebook_return;
+        accumulator = 0;
+    }
+    void add_note_text(const std::string &text) {
+        if (note_selected >= 0)
+            return;
+        size_t begin = std::min(note_cursor, note_anchor), end = std::max(note_cursor, note_anchor);
+        if (draft.size() - (end - begin) + text.size() > 4000) {
+            note_error = "4000 BYTE LIMIT / SAVE THIS NOTE AND START ANOTHER";
+            return;
+        }
+        std::string clean;
+        for (unsigned char c : text)
+            if (c >= 32 || c == '\n' || c == '\t')
+                clean += char(c);
+        draft.replace(begin, end - begin, clean);
+        note_cursor = note_anchor = begin + clean.size();
+        note_error.clear();
+    }
+    void notebook() {
+        rect(0, 0, 1100, 780, night);
+        frame(28, 24, 1044, 732, paper);
+        label(52, 47, "DESIGN NOTEBOOK", ink, 3);
+        label(53, 86, "PLAY IS PAUSED / CONTEXT IS CAPTURED WHEN YOU START A DRAFT", moss, 1);
+        label(53, 109, "UTF-8 TEXT IS SAVED IN FULL; THIS PIXEL FONT PREVIEWS ASCII", moss, 1);
+        tag(1104, 735, 42, 310, "OPEN NOTES FOLDER");
+        tag(1106, 735, 86, 310, "CLEAR DRAFT", note_selected < 0 && !draft.empty());
+        frame(50, 141, 996, 450, pale);
+        std::string value =
+            note_selected < 0 ? draft : design_notebook::read(saved_notes[note_selected]);
+        auto ls = design_notebook::layout(value, 80);
+        int cursor_line = 0;
+        for (int j = 0; j < int(ls.size()); ++j)
+            if (note_cursor >= ls[j].begin)
+                cursor_line = j;
+        int start = note_selected < 0
+                        ? std::max(0, cursor_line - 16)
+                        : std::clamp(note_scroll, 0, std::max(0, int(ls.size()) - 17));
+        for (int j = start; j < std::min(int(ls.size()), start + 17); ++j) {
+            int y = 161 + (j - start) * 24;
+            if (note_selected < 0) {
+                for (size_t c = 0; c + 1 < ls[j].offsets.size(); ++c)
+                    if (ls[j].offsets[c] >= std::min(note_cursor, note_anchor) &&
+                        ls[j].offsets[c] < std::max(note_cursor, note_anchor))
+                        rect(68 + int(c) * 12, y - 2, 12, 20, {192, 212, 191, 255});
+            }
+            label(69, y, ls[j].text, ink, 2);
+            if (note_selected < 0 && j == cursor_line && (present / 25) % 2 == 0) {
+                int column =
+                    int(std::lower_bound(ls[j].offsets.begin(), ls[j].offsets.end(), note_cursor) -
+                        ls[j].offsets.begin());
+                rect(69 + column * 12, y - 2, 2, 19, jade);
+            }
+        }
+        if (value.empty())
+            label(69, 162, "TYPE YOUR OBSERVATION HERE...", muted, 2);
+        label(55, 611,
+              note_selected < 0
+                  ? "DRAFT / " + num(int(draft.size())) + " OF 4000 BYTES / ESC KEEPS YOUR DRAFT"
+                  : "SAVED NOTE " + num(note_selected + 1) + " / " + num(int(saved_notes.size())) +
+                        " / UP-DOWN SCROLL",
+              moss, 1);
+        label(55, 635,
+              note_error.empty()
+                  ? "CTRL-ENTER SAVES / CTRL-V PASTES / CTRL-C COPIES / F7 OR ESC RETURNS"
+                  : note_error,
+              note_error.empty() ? moss : tinikami::vermilion, 1);
+        tag(1101, 54, 667, 265, "SAVE NOTE AND RETURN", note_selected < 0);
+        tag(1102, 330, 667, 190, "PREVIOUS NOTE");
+        tag(1103, 531, 667, 190, "NEXT / DRAFT");
+        tag(1105, 732, 667, 310, "RETURN TO PLAY [F7]");
+        label(55, 720,
+              "NOTES ARE SEPARATE FROM YOUR SAVE. NEW JOURNEYS KEEP THEM. BATTLE NOTES INCLUDE A "
+              "SNAPSHOT.",
+              moss, 1);
+    }
     std::string message, dialog_speaker;
     std::vector<std::string> dialog;
     std::vector<Vec> route;
@@ -316,6 +452,10 @@ class Game {
         }
         if (node.kind == camp::Wild || node.kind == camp::Trial || node.kind == camp::Keeper ||
             node.kind == camp::Expedition) {
+            if (state.region == 0 && node.kind == camp::Trial) {
+                tell(node.speaker, camp::lesson_brief(state, id), 1);
+                return;
+            }
             tell(node.speaker,
                  std::string(node.text) +
                      (node.kind == camp::Wild
@@ -378,7 +518,19 @@ class Game {
     }
     void finish_match(bool victory, bool withdrew = false) {
         won = victory;
+        std::array<int, 3> old_ranks{};
+        for (int j = 0; j < 3; ++j)
+            if (state.party[j] >= 0)
+                old_ranks[j] = camp::rank(state.companions[state.party[j]]);
         camp::resolve(state, match, won, vitality, withdrew);
+        growth_message.clear();
+        for (int j = 0; j < 3; ++j)
+            if (state.party[j] >= 0) {
+                int rank = camp::rank(state.companions[state.party[j]]);
+                if (rank > old_ranks[j])
+                    growth_message += std::string(Roster[state.party[j]].name) + " AWAKENS BOND " +
+                                      num(rank) + "! ";
+            }
         persist();
         set_region();
         screen = Result;
@@ -440,7 +592,7 @@ class Game {
         actions[1] = brain.ready() && camp::trained_opponent(state, match)
                          ? brain.action(observe(duel, 1), memories[1],
                                         personality_preset((match.region + battle_round) % 5))
-                         : scripted(duel, 1, match.styles[battle_round]);
+                         : camp::opponent_action(duel, match, battle_round);
         if (manual) {
             const auto *keys = SDL_GetKeyboardState(nullptr);
             int mx, my;
@@ -802,9 +954,7 @@ class Game {
         }
         circle(xx + state.x * scale / 256, yy + state.y * scale / 256, 3, pale, true);
     }
-    void shade() {
-        rect(0, 0, 1100, 780, {17, 30, 37, 190});
-    }
+    void shade() { rect(0, 0, 1100, 780, {17, 30, 37, 190}); }
     void title() {
         rect(0, 0, 1100, 780, night);
         cover.draw(0, 0, 0, 1100, 780);
@@ -922,13 +1072,22 @@ class Game {
         label(x, 324, Roster[selected].role, moss, 1);
         label(x, 351, "TRUST " + num(c.trust) + " / " + num(camp::trust_needed(selected)), jade, 2);
         label(x, 380, "BOND RANK " + num(camp::rank(c)) + " / 5", moss, 2);
-        bar(x, 408, 270, c.experience % 120, 120, gold);
+        int bond = camp::rank(c);
+        bar(x, 408, 270, bond == 5 ? 1 : c.experience - camp::rank_threshold(bond),
+            bond == 5 ? 1 : camp::rank_threshold(bond + 1) - camp::rank_threshold(bond), gold);
+        label(x, 420,
+              bond == 5 ? "FULLY AWAKENED"
+                        : num(camp::rank_threshold(bond + 1) - c.experience) +
+                              " XP TO NEXT BOND / ARTS PAGE FOR UNLOCKS",
+              moss, 1);
         label(x, 431, "TEMPERAMENT / " + std::string(personality_name(c.temperament)), moss, 1);
         tag(220, x, 452, 270, "CHANGE TEMPERAMENT", owned);
-        static const char *charms[] = {
-            "OPEN HAND / FULL ENERGY",           "STONE / 12 SHIELD, 85 ENERGY",
-            "WIND / HASTE, 85 ENERGY",           "REED / MORE RELAY HEAL, 85 ENERGY",
-            "BELL / BRIEF CC RESIST, 80 ENERGY", "LANTERN / 24 SHIELD, 65 ENERGY"};
+        static const char *charms[] = {"OPEN HAND / FULL ENERGY",
+                                       "STONE / 12 SHIELD, 85% ENERGY",
+                                       "WIND / HASTE, 85% ENERGY",
+                                       "REED / MORE RELAY HEAL, 85% ENERGY",
+                                       "BELL / BRIEF CC RESIST, 80% ENERGY",
+                                       "LANTERN / 24 SHIELD, 65% ENERGY"};
         label(x, 496, charms[c.charm], moss, 1);
         tag(221, x, 516, 270,
             camp::rank(c) >= 2 ? "CHANGE CHARM / REQUESTS UNLOCK MORE" : "CHARMS UNLOCK AT BOND 2",
@@ -1068,32 +1227,58 @@ class Game {
             label(833, yy + 12, species.name, i ? tinikami::vermilion : jade, 2);
             label(833, yy + 39, "VITALITY " + num(body.hp) + " / " + num(species.hp), ink, 1);
             bar(833, yy + 53, 218, body.hp, species.hp, moss);
-            label(833, yy + 72, "ENERGY " + num(body.energy / 10) + " / 100", jade, 1);
-            bar(833, yy + 86, 218, body.energy, 1000, jade, true);
+            label(833, yy + 72, "ENERGY " + num(body.energy / 10) + " / " + num(body.capacity / 10),
+                  jade, 1);
+            bar(833, yy + 86, 218, body.energy, body.capacity, jade, true);
             std::string status = energy_regen(body)
                                      ? "+" + num(energy_regen(body) * 3) + " ENERGY / SEC"
                                  : footwork_load(body) >= 70 ? "FOOTWORK / REGEN LIMITED"
                                                              : "COMMITTED / REGEN PAUSED";
-            label(751, yy + 109, status, moss, 1);
+            int arts = 0;
+            for (int j = 0; j < 4; ++j)
+                arts += (body.arts >> j) & 1;
+            label(751, yy + 109, num(arts) + " ART" + (arts == 1 ? "" : "S") + " / " + status, moss,
+                  1);
         }
-        rect(724, 83, 14, 608, night);
+        rect(724, 10, 14, 681, night);
         rect(738, 683, 330, 47, night);
         frame(738, 598, 330, 85, paper);
-        label(752, 612, "1-4 ARTS / SPACE DODGE / MOUSE AIM", ink, 1);
-        label(752, 635, "WASD MOVE / Z-X WIND CAST STRENGTH", moss, 1);
-        label(752, 657, "H GEOMETRY / PLANT TO RECOVER", moss, 1);
+        label(752, 612,
+              duel.bodies[0].arts == 1 ? "1 FIRST ART / MOUSE AIM"
+                                       : "1-4 ARTS / SPACE DODGE / MOUSE AIM",
+              ink, 1);
+        label(752, 635,
+              state.region < 2 ? "WASD MOVE / RELEASE TO PLANT"
+                               : "WASD MOVE / Z-X WIND CAST STRENGTH",
+              moss, 1);
+        label(752, 657, "F7 DESIGN NOTE / H GEOMETRY", moss, 1);
         frame(20, 691, 1048, 67, paper);
-        label(34, 702, "LOTUS CONTROL", ink, 1);
-        bar(139, 699, 225, duel.bodies[0].control, 600, jade);
-        bar(381, 699, 225, duel.bodies[1].control, 600, tinikami::vermilion);
-        label(655, 702,
-              "WIND " + num(wind_vector(duel).x) + "," + num(wind_vector(duel).y) + " / CAST " +
-                  num(wind_power) + "%",
-              moss, 1);
-        label(35, 735,
-              "SIDEWAYS SPRINTING SPENDS BREATH. STILLNESS RESTORES IT. THE CENTRAL GARDEN CAN WIN "
-              "A ROUND.",
-              moss, 1);
+        if (duel.objective) {
+            label(34, 702, "LOTUS CONTROL", ink, 1);
+            bar(139, 699, 225, duel.bodies[0].control, 600, jade);
+            bar(381, 699, 225, duel.bodies[1].control, 600, tinikami::vermilion);
+            label(655, 702,
+                  "WIND " + num(wind_vector(duel).x) + "," + num(wind_vector(duel).y) + " / CAST " +
+                      num(wind_power) + "%",
+                  moss, 1);
+            label(35, 735,
+                  "SIDEWAYS SPRINTING SPENDS BREATH. STILLNESS RESTORES IT. THE CENTRAL GARDEN CAN "
+                  "WIN "
+                  "A ROUND.",
+                  moss, 1);
+        } else {
+            label(35, 706,
+                  "FACE YOUR PARTNER. USE YOUR FIRST ART. STEP CLEAR OF THE BRIGHT WINDUP. BREATHE "
+                  "BETWEEN EXCHANGES.",
+                  ink, 1);
+            label(35, 735, "ONE ART / NO TERRITORY CONTEST YET / MORE CHOICES AWAKEN AT BOND 2",
+                  moss, 1);
+        }
+        for (int j = 0; j < 5; ++j)
+            if (!(duel.bodies[0].arts & (1 << j))) {
+                frame(747, 399 + j * 36, 312, 33, night);
+                label(757, 410 + j * 36, "LOCKED / BOND " + num(j == 4 ? 2 : j + 1), muted, 1);
+            }
         for (int j = 0; j < 5; j++)
             buttons.push_back({{747, 399 + j * 36, 312, 33}, "CAST", 710 + j});
         if (paused) {
@@ -1167,6 +1352,13 @@ class Game {
                 y += 26;
             }
         }
+        if (!growth_message.empty())
+            label(143, 517, growth_message.substr(0, 100), jade, 1);
+        if (state.region == 0 && camp::lesson_index(site) >= 0)
+            label(143, 539,
+                  "LESSONS " + num(state.lessons[camp::lesson_index(site)]) + " / " +
+                      num(camp::lesson_count(site)) + " COMPLETE / RETURN HERE FOR THE NEXT",
+                  moss, 1);
         tag(720, 664, 559, 286,
             won ? (match.walk && state.walk_region >= 0 ? "CONTINUE LANTERN WALK"
                                                         : "READ THE NEXT PAGE")
@@ -1368,7 +1560,13 @@ class Game {
         label(57, 96, sp.role, moss, 1);
         tinikami::spirit(selected, 179, 324, 190, {0, Q}, present / 20 % 3);
         label(58, 352, "VITALITY " + num(sp.hp), jade, 2);
-        label(58, 389, "ENERGY +" + num(sp.regen * 3) + " / SEC", moss, 1);
+        auto growth = camp::development(camp::rank(state.companions[selected]));
+        label(58, 380,
+              "BOND " + num(camp::rank(state.companions[selected])) + " / " +
+                  num(growth.capacity / 10) + " ENERGY",
+              moss, 1);
+        label(58, 398, "PACE " + num(growth.pace) + "% / RECOVERY " + num(growth.recovery) + "%",
+              moss, 1);
         label(58, 417, "FORWARD / SIDE / REVERSE", moss, 1);
         label(58, 439, "100% / " + num(sp.strafe) + "% / " + num(sp.backward) + "%", ink, 2);
         int yy = 484;
@@ -1384,6 +1582,7 @@ class Game {
             frame(344, y, 698, 119, pale);
             tinikami::effects.draw(tinikami::effect_id(move), 358, y + 15, 65, 65);
             label(443, y + 14, num(i + 1) + " / " + move.name, ink, 2);
+            label(909, y + 17, (growth.arts & (1 << i)) ? "AWAKE" : "BOND " + num(i + 1), moss, 1);
             label(444, y + 45,
                   "ENERGY " + num(move.cost / 10) + "   COOLDOWN " +
                       tinikami::seconds(move.cooldown) + "S   BASE HIT " + num(move.damage),
@@ -1420,7 +1619,8 @@ class Game {
                   jade, 1);
         }
         tag(225, 58, 684, 260, "BACK TO COMPANIONS");
-        label(348, 694, "DODGE USES THE SAME ENERGY POOL. NUMBERS DESCRIBE BASE EFFECTS.", moss, 1);
+        label(348, 694, "BOND 1: ART 1 / 2: ART 2 + DODGE / 3: ART 3 / 4: ART 4 / 5: FULL PACE",
+              moss, 1);
     }
     void help() {
         if (return_screen == Title)
@@ -1443,9 +1643,9 @@ class Game {
                                "SPACE DODGES. P PAUSES. R USES ONE REMEDY PER ROUND.",
                                "Z / X SET WIND CAST STRENGTH. H SHOWS EXACT GEOMETRY.",
                                "HARD STRAFING LIMITS ENERGY RECOVERY. PLANT AND BREATHE.",
-                               "BOND 2 UNLOCKS CHARMS. VILLAGE REQUESTS ADD THREE MORE.",
+                               "BONDS 2-4 UNLOCK ARTS; 2 ADDS DODGE. 5 REACHES FULL PACE.",
                                "DEFEAT RETURNS YOU HOME. NOTHING IS PERMANENTLY LOST.",
-                               "F5 SAVES. F8 TOGGLES THE ORIGINAL GENERATIVE SOUNDTRACK."};
+                               "F7 DESIGN NOTEBOOK. F5 SAVES. F8 TOGGLES MUSIC."};
         int y = 179;
         for (auto &l : lines) {
             label(105, y, l, ink, 1);
@@ -1455,7 +1655,65 @@ class Game {
     }
     void choose(int id) {
         sound.chime();
+        if (id == 1100) {
+            open_notebook();
+            return;
+        }
+        if (screen == DesignNotes) {
+            if (id == 1101 && note_selected < 0) {
+                if (design_notebook::save(notes_directory(), note_context, draft, note_snapshot,
+                                          note_error)) {
+                    draft.clear();
+                    note_snapshot.clear();
+                    close_notebook();
+                    message = "DESIGN NOTE SAVED";
+                    toast_age = 180;
+                }
+            } else if (id == 1106 && note_selected < 0) {
+                draft.clear();
+                note_cursor = note_anchor = 0;
+                note_error.clear();
+                close_notebook();
+                open_notebook();
+            } else if (id == 1102 && !saved_notes.empty()) {
+                note_selected = std::min(int(saved_notes.size()) - 1, note_selected + 1);
+                note_scroll = 0;
+            } else if (id == 1103) {
+                note_selected = std::max(-1, note_selected - 1);
+                note_scroll = 0;
+            } else if (id == 1104) {
+                std::error_code ec;
+                std::filesystem::create_directories(notes_directory(), ec);
+                std::string path = std::filesystem::absolute(notes_directory()).generic_string(),
+                            encoded;
+                const char *hex = "0123456789ABCDEF";
+                for (unsigned char c : path)
+                    if (std::isalnum(c) || c == '/' || c == ':' || c == '-' || c == '_' || c == '.')
+                        encoded += char(c);
+                    else {
+                        encoded += '%';
+                        encoded += hex[c >> 4];
+                        encoded += hex[c & 15];
+                    }
+                std::string prefix = !encoded.empty() && encoded[0] == '/' ? "file://" : "file:///";
+                if (ec || SDL_OpenURL((prefix + encoded).c_str()) != 0)
+                    note_error = "COULD NOT OPEN FOLDER / NOTES REMAIN BESIDE YOUR JOURNEY SAVE";
+            } else if (id == 1105)
+                close_notebook();
+            return;
+        }
         if (id == 3) {
+            if (!draft.empty() && !preview) {
+                if (!design_notebook::save(notes_directory(),
+                                           note_context + "\nUnfinished draft saved on exit.",
+                                           draft, note_snapshot, note_error)) {
+                    auto error = note_error;
+                    open_notebook();
+                    note_error = error;
+                    return;
+                }
+                draft.clear();
+            }
             running = false;
             return;
         }
@@ -1709,6 +1967,11 @@ class Game {
             return;
         }
         if (id >= 710 && id < 715) {
+            if (!(duel.bodies[0].arts & (1 << (id - 710)))) {
+                message = "THIS ART AWAKENS AT BOND " + num(id == 714 ? 2 : id - 709);
+                toast_age = 120;
+                return;
+            }
             manual = true;
             pending_ability = id - 709;
             return;
@@ -1719,6 +1982,11 @@ class Game {
                 return;
             }
             if (won) {
+                if (state.region == 0 && camp::lesson_index(site) >= 0 && !state.cleared[site]) {
+                    tell("THE NEXT LESSON", "Your companion is rested. Return to this teacher when "
+                                            "you are ready for the next short lesson.");
+                    return;
+                }
                 const auto &n = camp::Regions[state.region].sites[site];
                 tell(n.speaker, n.after, n.kind == camp::Keeper ? 2 : 0);
             } else
@@ -1815,6 +2083,7 @@ class Game {
             else if (options.scene == 3)
                 screen = Party;
             else if (options.scene == 4) {
+                if(options.region==0) { state=camp::new_journey(options.seed,0);state.cleared[1]=1; }
                 site = 3;
                 start_match();
                 for (int t = 0; t < 12; ++t)
@@ -1855,6 +2124,13 @@ class Game {
             else if (options.scene == 16) {
                 selected = options.species;
                 screen = Notes;
+            } else if (options.scene == 19) {
+                site = 3;
+                start_match();
+                open_notebook();
+                add_note_text("The first lesson is easy to read.\n\nThe attack flashes clearly, "
+                              "but I would like a longer pause before the next exchange.\n\nTry "
+                              "making the recovery animation hold its final frame for a beat.");
             } else if (options.scene == 17 || options.scene == 18) {
                 for (int j : {1, 3, 4, 6, 9, 11, 12, 16})
                     state.cleared[state.region * 20 + j] = 1;
@@ -1920,10 +2196,55 @@ class Game {
             check(screen == Dialogue && state.cleared[1], "walk reaches and interacts with Nara");
             while (screen == Dialogue)
                 choose(110);
-            interact(2);
+            interact(3);
             while (screen == Dialogue)
                 choose(110);
-            check(screen == Battle, "wild encounter starts");
+            check(screen == Battle, "lesson encounter starts");
+            int note_tick = duel.tick;
+            bool note_paused = paused;
+            choose(1100);
+            check(screen == DesignNotes, "notebook opens during battle");
+            add_note_text("The opening attack needs a clearer cue.\nA second line.");
+            auto original_draft = draft;
+            note_cursor = note_anchor = 4;
+            add_note_text("very ");
+            check(draft.find("The very opening") == 0, "text inserts at cursor");
+            note_anchor = 4;
+            note_cursor = 9;
+            add_note_text("");
+            check(draft == original_draft, "selected text deletes");
+            choose(1105);
+            check(screen == Battle && !draft.empty() && duel.tick == note_tick &&
+                      paused == note_paused,
+                  "draft closes without changing battle");
+            choose(1100);
+            auto good_path = options.save_path;
+            options.save_path = good_path / "unwritable" / "journey.tini";
+            choose(1101);
+            check(screen == DesignNotes && !draft.empty() && !note_error.empty(),
+                  "failed note write retains editable draft");
+            options.save_path = good_path;
+            choose(1101);
+            check(screen == Battle && draft.empty(), "note saves and returns");
+            auto entries = design_notebook::entries(notes_directory());
+            check(entries.size() == 1, "one durable design note");
+            auto saved = design_notebook::read(entries[0]);
+            check(saved.find("opening attack") != std::string::npos &&
+                      saved.find("Journey seed") != std::string::npos,
+                  "feedback and context persist");
+            auto replay = entries[0];
+            replay.replace_extension(".crlb");
+            auto raw = design_notebook::read(replay);
+            World captured;
+            check(restore(captured, reinterpret_cast<const uint8_t *>(raw.data()), raw.size()) &&
+                      captured.tick == note_tick,
+                  "note snapshot restores");
+            choose(1100);
+            choose(1101);
+            check(screen == DesignNotes && !note_error.empty(), "empty note refused");
+            choose(1102);
+            check(note_selected == 0, "saved notes browse");
+            choose(1105);
             for (int i = 0; i < 2000 && screen == Battle; ++i) {
                 if (duel.bodies[0].hp < Roster[duel.bodies[0].species].hp / 2)
                     choose(702);
@@ -2002,14 +2323,113 @@ class Game {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
                 if (e.type == SDL_QUIT) {
+                    if (!draft.empty() && !preview) {
+                        if (!design_notebook::save(notes_directory(),
+                                                   note_context +
+                                                       "\nUnfinished draft saved on exit.",
+                                                   draft, note_snapshot, note_error)) {
+                            if (screen != DesignNotes) {
+                                notebook_return = screen;
+                                screen = DesignNotes;
+                                SDL_StartTextInput();
+                            }
+                            continue;
+                        }
+                        draft.clear();
+                    }
                     running = false;
                     break;
                 }
                 if (!preview && e.type == SDL_WINDOWEVENT &&
                     e.window.event == SDL_WINDOWEVENT_FOCUS_LOST && screen == Battle)
                     paused = true;
+                if (e.type == SDL_TEXTINPUT && screen == DesignNotes) {
+                    add_note_text(e.text.text);
+                    continue;
+                }
+                if (e.type == SDL_KEYDOWN && screen == DesignNotes) {
+                    auto k = e.key.keysym.sym;
+                    bool ctrl = (e.key.keysym.mod & (KMOD_CTRL | KMOD_GUI)) != 0;
+                    if (k == SDLK_ESCAPE || k == SDLK_F7)
+                        choose(1105);
+                    else if (ctrl && k == SDLK_RETURN)
+                        choose(1101);
+                    else if (ctrl && k == SDLK_v) {
+                        char *v = SDL_GetClipboardText();
+                        if (v) {
+                            add_note_text(v);
+                            SDL_free(v);
+                        }
+                    } else if (ctrl && (k == SDLK_c || k == SDLK_x)) {
+                        auto copy =
+                            note_selected < 0
+                                ? (note_cursor == note_anchor
+                                       ? draft
+                                       : draft.substr(std::min(note_cursor, note_anchor),
+                                                      std::max(note_cursor, note_anchor) -
+                                                          std::min(note_cursor, note_anchor)))
+                                : design_notebook::read(saved_notes[note_selected]);
+                        SDL_SetClipboardText(copy.c_str());
+                        if (k == SDLK_x && note_selected < 0) {
+                            if (note_cursor == note_anchor) {
+                                note_anchor = 0;
+                                note_cursor = draft.size();
+                            }
+                            add_note_text("");
+                        }
+                    } else if (ctrl && k == SDLK_a && note_selected < 0) {
+                        note_anchor = 0;
+                        note_cursor = draft.size();
+                    } else if (note_selected < 0 && (k == SDLK_LEFT || k == SDLK_RIGHT ||
+                                                     k == SDLK_HOME || k == SDLK_END)) {
+                        if (k == SDLK_LEFT)
+                            note_cursor = design_notebook::previous(draft, note_cursor);
+                        else if (k == SDLK_RIGHT)
+                            note_cursor = design_notebook::next(draft, note_cursor);
+                        else if (k == SDLK_HOME) {
+                            auto n = note_cursor ? draft.rfind('\n', note_cursor - 1)
+                                                 : std::string::npos;
+                            note_cursor = n == std::string::npos ? 0 : n + 1;
+                        } else {
+                            auto n = draft.find('\n', note_cursor);
+                            note_cursor = n == std::string::npos ? draft.size() : n;
+                        }
+                        if (!(e.key.keysym.mod & KMOD_SHIFT))
+                            note_anchor = note_cursor;
+                    } else if ((k == SDLK_BACKSPACE || k == SDLK_DELETE) && note_selected < 0) {
+                        if (note_cursor == note_anchor)
+                            note_anchor = k == SDLK_BACKSPACE
+                                              ? design_notebook::previous(draft, note_cursor)
+                                              : design_notebook::next(draft, note_cursor);
+                        add_note_text("");
+                    } else if (k == SDLK_RETURN)
+                        add_note_text("\n");
+                    else if (note_selected < 0 && (k == SDLK_UP || k == SDLK_DOWN)) {
+                        auto lines = design_notebook::layout(draft, 80);
+                        int row = 0;
+                        for (int j = 0; j < int(lines.size()); ++j)
+                            if (note_cursor >= lines[j].begin)
+                                row = j;
+                        size_t col = std::lower_bound(lines[row].offsets.begin(),
+                                                      lines[row].offsets.end(), note_cursor) -
+                                     lines[row].offsets.begin();
+                        row = std::clamp(row + (k == SDLK_UP ? -1 : 1), 0, int(lines.size()) - 1);
+                        note_cursor =
+                            lines[row].offsets[std::min(col, lines[row].offsets.size() - 1)];
+                        if (!(e.key.keysym.mod & KMOD_SHIFT))
+                            note_anchor = note_cursor;
+                    } else if (k == SDLK_UP)
+                        note_scroll = std::max(0, note_scroll - 1);
+                    else if (k == SDLK_DOWN)
+                        ++note_scroll;
+                    continue;
+                }
                 if (e.type == SDL_KEYDOWN && !e.key.repeat) {
                     auto k = e.key.keysym.sym;
+                    if (k == SDLK_F7) {
+                        choose(1100);
+                        continue;
+                    }
                     if (k == SDLK_F8) {
                         sound.enabled.store(!sound.enabled.load());
                         continue;
@@ -2083,7 +2503,7 @@ class Game {
             }
             if ((SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
                 !(screen == Battle && paused) && screen != Title && screen != Starters &&
-                screen != Credits && screen != Studio) {
+                screen != Credits && screen != Studio && screen != DesignNotes) {
                 played_clock += dt;
                 while (played_clock >= 1) {
                     state.play_seconds = std::min(100000000, state.play_seconds + 1);
@@ -2099,7 +2519,7 @@ class Game {
                 }
             }
             if (screen == Battle && !paused && !preview) {
-                accumulator += dt;
+                accumulator += dt * (duel.bodies[0].pace < 80 ? .8 : 1.0);
                 while (accumulator >= .1 && screen == Battle) {
                     advance_battle();
                     accumulator -= .1;
@@ -2158,7 +2578,12 @@ class Game {
             case Help:
                 help();
                 break;
+            case DesignNotes:
+                notebook();
+                break;
             }
+            if (screen != DesignNotes)
+                tag(1100, 906, 747, 164, "DESIGN NOTE [F7]");
             if (!message.empty() && screen != Title && toast_age > 0) {
                 frame(330, 6, 440, 30, pale);
                 label(342, 17, message.substr(0, 70), ink, 1);
@@ -2184,7 +2609,8 @@ class Game {
             if (options.frames)
                 SDL_Delay(1);
         }
-        if (has_save && screen != Battle && screen != Title && screen != Starters)
+        if (has_save && screen != Battle && screen != Title && screen != Starters &&
+            !(screen == DesignNotes && notebook_return == Battle))
             persist();
         return 0;
     }

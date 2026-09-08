@@ -1,10 +1,10 @@
 {
   "identity": {
     "format": 3,
-    "rules": 8,
-    "observations": 7,
+    "rules": 9,
+    "observations": 8,
     "content": 574261014,
-    "observation_size": 3620,
+    "observation_size": 3628,
     "hidden": 96,
     "action_codec": "opponent-local-conditional-tanh-v2",
     "personality": [
@@ -13,9 +13,9 @@
       "territory"
     ]
   },
-  "parameters": 89959,
-  "bytes": 359876,
-  "checksum": "d9ff10f9",
+  "parameters": 90727,
+  "bytes": 362948,
+  "checksum": "a6a76794",
   "parameter_order": [
     {
       "name": "log_std",
@@ -66,7 +66,7 @@
       "name": "encoder.0.weight",
       "shape": [
         96,
-        272
+        280
       ]
     },
     {
@@ -188,42 +188,21 @@
     }
   ],
   "metadata": {
-    "stage": "ppo",
-    "steps": 7864320,
-    "config": {
-      "out": "runs/journey-v10",
-      "resume": null,
-      "warmstart": "runs/cornering-v10/best.pt",
-      "seed": 202609073,
-      "threads": 1,
-      "demo_envs": 32,
-      "demo_steps": 512,
-      "bc_epochs": 12,
-      "envs": 64,
-      "horizon": 128,
-      "updates": 960,
-      "sequence": 16,
-      "minibatch": 32,
-      "epochs": 3,
-      "lr": 4e-05,
-      "gamma": 0.9995,
-      "clip": 0.2,
-      "entropy": 0.003,
-      "target_kl": 0.06,
-      "eval_every": 160,
-      "eval_games": 240,
-      "test_games": 240,
-      "personality_rate": 0.55,
-      "style_scale": 0.003,
-      "refine_imitation": false,
-      "opponent": [
-        "models/champion.pt",
-        "runs/cornering-v10/best.pt"
-      ],
-      "learned_opponent_rate": 0.25,
-      "species": null,
-      "personality": null,
-      "individual_seed": null
-    }
+    "source": "models/baselines/rules8/release-v10/apprentice.pt",
+    "source_identity": {
+      "format": 3,
+      "rules": 8,
+      "observations": 7,
+      "content": 574261014,
+      "observation_size": 3620,
+      "hidden": 96,
+      "action_codec": "opponent-local-conditional-tanh-v2",
+      "personality": [
+        "aggression",
+        "reserve",
+        "territory"
+      ]
+    },
+    "migration": "Eight zero-initialized development inputs; old weights retained. Campaign curriculum not retrained."
   }
 }

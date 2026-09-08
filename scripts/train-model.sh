@@ -14,7 +14,7 @@ if ! .venv/bin/python -c 'import torch, numpy' >/dev/null 2>&1; then
 fi
 training_run="runs/$training_mode-$(date +%Y%m%d-%H%M%S)"
 .venv/bin/python python/train.py --resume "models/$model_name.pt" --out "$training_run" --threads 1 \
- --personality-rate "$personality_rate" --opponent models/baselines/legacy-footwork.pt --opponent models/champion.pt
+ --personality-rate "$personality_rate" --development-rate .35 --opponent models/baselines/legacy-development.pt --opponent models/champion.pt
 .venv/bin/python python/export_brain.py "$training_run/best.pt" "models/$model_name.tbrain" --copy-checkpoint
 if [ "$(uname -s)" = Darwin ]; then sh scripts/package-macos.sh; fi
 printf '\nTraining complete. Restart the journey to load its updated brain. In the workbench, F6 reloads both brains; B/V select a pilot and J/K activate a temperament.\n'

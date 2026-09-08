@@ -48,7 +48,7 @@ bool fight(c::State &s, const c::Encounter &e, Brain &brain, Stats &stats) {
             auto opponent = c::trained_opponent(s, e)
                                 ? brain.action(observe(w, 1), enemy_memory,
                                                personality_preset((e.region + round) % 5))
-                                : scripted(w, 1, e.styles[round]);
+                                : c::opponent_action(w, e, round);
             auto result = step(w, {brain.action(observe(w, 0), memory, personality), opponent});
             stats.ticks += result.ticks;
             if (w.overflow) {
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
             // Visible habitats first; a thread offering follows first contact.
             for (int site : {2, 5, 10, 7, 13}) {
                 int species = c::Regions[region].sites[site].species;
-                if (c::befriended(s, species))
+                if (c::befriended(s, species) || !c::available(s, region, site))
                     continue;
                 bool met = false;
                 for (int attempt = 0; attempt < 12 && !met; ++attempt) {
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
                     continue;
                 }
                 bool won = false;
-                for (int attempt = 0; attempt < 12 && !won; ++attempt) {
+                for (int attempt = 0; attempt < 24 && !won; ++attempt) {
                     c::rest(s);
                     if (attempt > 0) {
                         std::vector<int> owned;
@@ -164,13 +164,40 @@ int main(int argc, char **argv) {
                                 if (c::charm_unlocked(s, id, 1))
                                     s.companions[id].charm = 1;
                             }
-                    won = fight(s, c::encounter(s, site), brain, stats);
+                    won = fight(s, c::encounter(s, site), brain, stats) &&
+                          s.cleared[region * 20 + site];
                 }
                 if (!won) {
                     std::cerr << "Road blocked region " << region << " site " << site << " starter "
                               << starter << '\n';
                     blocked = true;
                     break;
+                }
+            }
+            if (region == 0) {
+                // Visible habitats first; a thread offering follows first contact.
+                for (int site : {2, 5, 10, 7, 13}) {
+                    int species = c::Regions[region].sites[site].species;
+                    if (c::befriended(s, species) || !c::available(s, region, site))
+                        continue;
+                    bool met = false;
+                    for (int attempt = 0; attempt < 12 && !met; ++attempt) {
+                        c::rest(s);
+                        fight(s, c::encounter(s, site), brain, stats);
+                        met = s.companions[species].trust > 0;
+                    }
+                    if (!met) {
+                        std::cerr << "Could not meet " << Roster[species].name
+                                  << " in twelve attempts, starter " << starter << '\n';
+                        blocked = true;
+                        continue;
+                    }
+                    while (!c::befriended(s, species) && c::offer_thread(s, species)) {
+                    }
+                    // Rotate the third slot to sample regional species while keeping two familiar
+                    // leads.
+                    if (c::befriended(s, species) && s.party[2] >= 0)
+                        c::set_party(s, 2, species);
                 }
             }
             c::finish_story(s, 19);

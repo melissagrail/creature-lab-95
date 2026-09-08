@@ -314,7 +314,7 @@ void draw(const World &w, const View &v) {
         : v.learned_b ? "B: SPIRIT [V]"
                       : "B: SCRIPT [V]",
         v.learned_b);
-    label(934, 68, "ALPHA 0.10", moss, 1);
+    label(934, 68, "ALPHA 0.11", moss, 1);
     tag(1, 24, 93, 88, v.paused ? "RESUME [P]" : "PAUSE [P]", v.paused);
     tag(3, 118, 93, 82, "RESET [R]");
     tag(4, 206, 93, 118, v.manual ? "YOU + SPIRIT" : "WATCH SPIRITS", v.manual);
@@ -346,8 +346,10 @@ void draw(const World &w, const View &v) {
             int x = AX + (n * 83 + w.tick * 2) % 690, y = AY + (n * 71 + w.tick * 4) % 515;
             line(x, y, x + 3, y + 8, {152, 179, 184, 90});
         }
-    worldcircle({12 * Q, 9 * Q}, 2500, {239, 231, 202, 110});
-    terrain.draw(27, sx(12 * Q) - 26, sy(9 * Q) - 25, 52, 52, 0, false, 220);
+    if (w.objective) {
+        worldcircle({12 * Q, 9 * Q}, 2500, {239, 231, 202, 110});
+        terrain.draw(27, sx(12 * Q) - 26, sy(9 * Q) - 25, 52, 52, 0, false, 220);
+    }
     if (w.vane_enabled) {
         worldcircle(w.vane_pos, 950, {239, 231, 202, 130});
         terrain.draw(26, sx(w.vane_pos.x) - 30, sy(w.vane_pos.y) - 39, 60, 60);

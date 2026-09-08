@@ -3,18 +3,12 @@
 #include <limits>
 #include <type_traits>
 namespace creature {
-Vec operator+(Vec a, Vec b) {
-    return {a.x + b.x, a.y + b.y};
-}
-Vec operator-(Vec a, Vec b) {
-    return {a.x - b.x, a.y - b.y};
-}
+Vec operator+(Vec a, Vec b) { return {a.x + b.x, a.y + b.y}; }
+Vec operator-(Vec a, Vec b) { return {a.x - b.x, a.y - b.y}; }
 Vec scale(Vec v, int n, int d) {
     return {int32_t(int64_t(v.x) * n / d), int32_t(int64_t(v.y) * n / d)};
 }
-static int64_t dot(Vec a, Vec b) {
-    return int64_t(a.x) * b.x + int64_t(a.y) * b.y;
-}
+static int64_t dot(Vec a, Vec b) { return int64_t(a.x) * b.x + int64_t(a.y) * b.y; }
 static uint64_t isqrt(uint64_t n) {
     uint64_t r = 0, b = uint64_t(1) << 62;
     while (b > n)
@@ -29,9 +23,7 @@ static uint64_t isqrt(uint64_t n) {
     }
     return r;
 }
-int length(Vec v) {
-    return int(isqrt(uint64_t(dot(v, v))));
-}
+int length(Vec v) { return int(isqrt(uint64_t(dot(v, v)))); }
 Vec unit(Vec v) {
     int n = length(v);
     return n ? scale(v, Q, n) : Vec{Q, 0};
@@ -51,9 +43,7 @@ static void event(World &w, int k, int a, int t, int m, int amount, Vec p) {
 int move_id(const Body &b, int slot) {
     return slot == 4 ? 160 : slot >= 0 && slot < 4 ? Roster[b.species].moves[slot] : 160;
 }
-const Move &move_for(const Body &b, int slot) {
-    return Moves[move_id(b, slot)];
-}
+const Move &move_for(const Body &b, int slot) { return Moves[move_id(b, slot)]; }
 Phase phase(const Body &b) {
     if (b.move < 0)
         return Idle;
@@ -167,8 +157,8 @@ std::array<int32_t, 6> action_mask(const World &w, int i) {
     auto &b = w.bodies[i];
     for (int j = 0; j < 5; j++) {
         auto &m = move_for(b, j);
-        r[j + 1] = b.move < 0 && !b.stun && b.hp > m.health_cost && b.energy >= m.cost &&
-                   !b.cooldown[j] && (!b.silence || j == 4) &&
+        r[j + 1] = (b.arts & (1 << j)) && b.move < 0 && !b.stun && b.hp > m.health_cost &&
+                   b.energy >= m.cost && !b.cooldown[j] && (!b.silence || j == 4) &&
                    (!b.root || (m.kind != Lunge && m.kind != Blink && m.kind != Evade));
     }
     return r;
@@ -343,9 +333,7 @@ static bool in_owned_zone(const World &w, int i) {
             return true;
     return false;
 }
-static int projectile_radius(const Move &m) {
-    return m.kind == Turret ? 160 : m.radius;
-}
+static int projectile_radius(const Move &m) { return m.kind == Turret ? 160 : m.radius; }
 static void cleanse(Body &b) {
     b.burn = b.poison = b.poison_stacks = b.slow = b.root = b.silence = b.wound = 0;
 }
@@ -474,9 +462,9 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             result.features[i].spent += m.cost;
             b.cooldown[slot] = m.cooldown;
             if (s.passive == Cadence && b.last_slot >= 0 && slot != b.last_slot)
-                b.energy = std::min(1000, b.energy + 70);
+                b.energy = std::min(b.capacity, b.energy + 70);
             if (s.passive == Recycle && ++b.counter % 3 == 0)
-                b.energy = std::min(1000, b.energy + 120);
+                b.energy = std::min(b.capacity, b.energy + 120);
             if (s.passive == Rhythm) {
                 b.meter = b.idle_ticks >= 21 && b.idle_ticks <= 42 ? std::min(60, b.meter + 20) : 0;
             }
@@ -496,7 +484,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         Vec input{std::clamp(actions[i].mx, -Q, Q), std::clamp(actions[i].my, -Q, Q)};
         if (length(input) > Q)
             input = unit(input);
-        int speed = s.speed;
+        int speed = travel_speed(b);
         if (b.haste)
             speed = speed * 5 / 4;
         if (b.slow)
@@ -552,13 +540,13 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         if (ground & (1 << Mud))
             traction = 1;
         Vec acceleration = scale(scale(input, speed) - b.vel, 1, traction);
-        if (length(b.vel) > s.speed / 3) {
+        if (length(b.vel) > travel_speed(b) / 3) {
             // Turning a moving body has a finite lateral acceleration budget. A
             // reversal may brake directly, but tight circles cannot preserve full
             // speed just by pointing the next input a few degrees farther around.
             Vec tangent = unit(Vec{-b.vel.y, b.vel.x});
             int sideways = int(dot(acceleration, tangent) / Q);
-            int cornering = std::max(2, s.speed * (5 + s.turn_degrees) / 240);
+            int cornering = std::max(2, travel_speed(b) * (5 + s.turn_degrees) / 240);
             int excess = sideways - std::clamp(sideways, -cornering, cornering);
             acceleration = acceleration - scale(tangent, excess);
         }
@@ -1084,7 +1072,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         int footwork_cost = b.move < 0 && !b.stun && !b.root && footwork_load(b) >= 70 ? 1 : 0;
         footwork_cost = std::min(footwork_cost, b.energy);
         result.features[i].spent += footwork_cost;
-        b.energy = std::clamp(b.energy + energy_regen(b) - footwork_cost, 0, 1000);
+        b.energy = std::clamp(b.energy + energy_regen(b) - footwork_cost, 0, b.capacity);
         if (b.energy_delay)
             --b.energy_delay;
         auto dec = [](int32_t &t) {
@@ -1262,6 +1250,14 @@ Action scripted(const World &w, int i, int style) {
         }
     Vec d = target - b.pos;
     int distance = length(d), desired = s.preferred_range;
+    // A young melee spirit cannot rely on its still-locked ranged art to close an exchange.
+    if ((b.arts & 15) == 1) {
+        const auto &basic = move_for(b, 0);
+        int reach = basic.kind == Nova ? basic.radius : basic.range;
+        if (basic.kind == Lunge)
+            reach += basic.speed * basic.active;
+        desired = std::min(desired, std::max(700, reach * 70 / 100 + e.radius));
+    }
     if (style == 1)
         desired = desired * 75 / 100;
     if (style == 2)
@@ -1435,19 +1431,32 @@ int footwork_load(const Body &b) {
     const auto &s = Roster[b.species];
     int side = int(std::abs(int64_t(b.vel.y) * b.aim.x - int64_t(b.vel.x) * b.aim.y) / Q);
     int back = std::max(0, -int(dot(b.vel, b.aim) / Q));
-    int side_budget = std::max(1, s.speed * s.strafe / 100);
-    int back_budget = std::max(1, s.speed * s.backward / 100);
+    int side_budget = std::max(1, travel_speed(b) * s.strafe / 100);
+    int back_budget = std::max(1, travel_speed(b) * s.backward / 100);
     int effort = std::max(side * 100 / side_budget, back * 85 / back_budget);
     // Slow adjustments are free. Full strafing suppresses base recovery, including
     // very agile species; their advantage is distance covered for the same exertion.
     return std::clamp((effort - 25) * 100 / 65, 0, 100);
 }
 // Internal energy units are tenths of a displayed point.
+int travel_speed(const Body &b) { return Roster[b.species].speed * b.pace / 100; }
+bool configure_development(World &w, int actor, int arts, int pace, int capacity, int recovery) {
+    if (w.tick || actor < 0 || actor > 1 || arts < 1 || arts > 31 || pace < 50 || pace > 100 ||
+        capacity < 500 || capacity > 1000 || recovery < 40 || recovery > 100)
+        return false;
+    auto &b = w.bodies[actor];
+    b.arts = arts;
+    b.pace = pace;
+    b.capacity = capacity;
+    b.recovery_rate = recovery;
+    b.energy = std::min(b.energy, capacity);
+    return true;
+}
 int energy_regen(const Body &b) {
     const auto &s = Roster[b.species];
     int base = !b.energy_delay && (b.move < 0 || phase(b) == Recovery) ? s.regen : 0;
     base = base * (100 - footwork_load(b)) / 100;
-    return base + (s.passive == Reservoir && b.guard ? 7 : 0);
+    return (base + (s.passive == Reservoir && b.guard ? 7 : 0)) * b.recovery_rate / 100;
 }
 Observation observe(const World &w, int i) {
     Observation o;
@@ -1497,9 +1506,9 @@ Observation observe(const World &w, int i) {
     o.self[36] = float(b.idle_ticks) / 90;
     o.self[37] = float(b.stationary) / 90;
     o.self[38] = float(b.control) / 600;
-    o.self[39] = float(s.speed) / 210;
+    o.self[39] = float(travel_speed(b)) / 210;
     o.self[40] = float(s.hp) / 180;
-    o.self[41] = float(s.regen) / 12;
+    o.self[41] = float(s.regen * b.recovery_rate / 100) / 12;
     o.self[42] = float(s.mass) / 200;
     for (int k = 0; k < 8; k++)
         o.self[43 + k] = float(s.axes[k]) / 5;
@@ -1709,6 +1718,13 @@ Observation observe(const World &w, int i) {
     o.global[29] = float(b.energy_delay) / 24;
     o.global[30] = float(energy_regen(b)) / 12;
     o.global[31] = float(energy_regen(e)) / 12;
+    for (int j = 0; j < 2; ++j) {
+        const auto &v = w.bodies[j ? 1 - i : i];
+        o.global[32 + j * 4] = float(v.arts) / 31;
+        o.global[33 + j * 4] = float(v.pace) / 100;
+        o.global[34 + j * 4] = float(v.capacity) / 1000;
+        o.global[35 + j * 4] = float(v.recovery_rate) / 100;
+    }
     auto mask = action_mask(w, i);
     for (int j = 0; j < 6; j++)
         o.mask[j] = float(mask[j]);
@@ -1764,6 +1780,10 @@ template <class F> static void fields(World &w, F f) {
         f(b.hp);
         f(b.energy);
         f(b.energy_delay);
+        f(b.arts);
+        f(b.pace);
+        f(b.capacity);
+        f(b.recovery_rate);
         f(b.radius);
         f(b.move);
         f(b.slot);
@@ -1889,7 +1909,9 @@ static bool valid(const World &w) {
         if (b.surface_mask < 0 || b.surface_mask > 65535 || b.species < 0 || b.species >= 40 ||
             b.move < -1 || b.move >= MoveCount || b.slot < -1 || b.slot > 4 || b.last_slot < -1 ||
             b.last_slot > 4 || b.hp < 0 || b.hp > Roster[b.species].hp ||
-            b.radius != Roster[b.species].radius || b.energy < 0 || b.energy > 1000 ||
+            b.radius != Roster[b.species].radius || b.energy < 0 || b.energy > b.capacity ||
+            b.arts < 1 || b.arts > 31 || b.pace < 50 || b.pace > 100 || b.capacity < 500 ||
+            b.capacity > 1000 || b.recovery_rate < 40 || b.recovery_rate > 100 ||
             b.energy_delay < 0 || b.energy_delay > 24 || !pos(b.pos) || !vel(b.vel) ||
             !vel(b.aim) || !vel(b.locked) || b.age < 0 || b.age > 120 || b.aim_scale < 0 ||
             b.aim_scale > Q || b.meter < 0 || b.meter > 1000 || b.counter < 0 ||

@@ -13,6 +13,8 @@ extern "C" {
 // Caller owns buffers. Functions return 0 on success, -1 on invalid arguments.
 // Handles must originate from cr_create; use each handle on one thread at a time.
 CR_API uint32_t cr_version(void);
+// Initial tick only. Returns 0 on success, -1 for invalid limits or a running world.
+CR_API int32_t cr_development(void *world, int32_t actor, int32_t arts, int32_t pace, int32_t capacity, int32_t recovery);
 CR_API uint32_t cr_content_hash(void);
 CR_API uint32_t cr_observation_version(void);
 CR_API int32_t cr_arena_count(void);

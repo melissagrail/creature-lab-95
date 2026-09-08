@@ -18,15 +18,16 @@ uint32_t mix(uint32_t x) {
     x *= 0x846ca68bu;
     return x ^ (x >> 16);
 }
-int index(int r, int s) {
-    return r * SiteCount + s;
-}
-bool valid_species(int s) {
-    return s >= 0 && s < SpeciesCount;
-}
+int index(int r, int s) { return r * SiteCount + s; }
+bool valid_species(int s) { return s >= 0 && s < SpeciesCount; }
 void fill_party(State &s, int species) {
     if (!befriended(s, species))
         return;
+    for (int r = 0; r < RegionCount; ++r)
+        if (std::find(Regions[r].species.begin(), Regions[r].species.end(), species) !=
+            Regions[r].species.end())
+            s.companions[species].experience =
+                std::max(s.companions[species].experience, rank_threshold(1 + r / 2));
     for (int id : s.party)
         if (id == species)
             return;
@@ -42,7 +43,7 @@ uint32_t checksum(const uint8_t *p, size_t size) {
         h = (h ^ p[i]) * 16777619u;
     return h;
 }
-template <class F> void fields(State &s, F f) {
+template <class F> void fields(State &s, F f, bool legacy = false) {
     f(s.seed);
     f(s.region);
     f(s.x);
@@ -73,6 +74,9 @@ template <class F> void fields(State &s, F f) {
     f(s.walk_choice);
     for (auto &v : s.walks)
         f(v);
+    if (!legacy)
+        for (auto &v : s.lessons)
+            f(v);
 }
 } // namespace
 State new_journey(uint32_t seed, int starter) {
@@ -117,6 +121,9 @@ bool accessible(const State &s, int region) {
 bool available(const State &s, int region, int site) {
     if (!accessible(s, region) || site < 0 || site >= SiteCount)
         return false;
+    if (Regions[region].sites[site].kind == Wild &&
+        s.companions[Regions[region].sites[site].species].trust > 0)
+        return true;
     int prior = Regions[region].sites[site].prerequisite;
     return prior < 0 || s.cleared[index(region, prior)];
 }
@@ -248,6 +255,13 @@ Encounter encounter(const State &s, int site) {
         e.enemies[j] = j == 0 ? n.species : r.species[(site + j * 2) % 5];
         e.styles[j] = (s.region + site + j) % 4;
     }
+    if (s.region == 0 && n.kind == Trial) {
+        e.rounds = 1;
+        int step = s.lessons[lesson_index(site)];
+        static const int practice[] = {6, 35, 6, 35};
+        e.enemies[0] = site <= 6 ? (step % 2 ? 6 : 35) : practice[(step + lesson_index(site)) % 4];
+        e.styles[0] = step % 2;
+    }
     return e;
 }
 bool trained_opponent(const State &s, const Encounter &e) {
@@ -255,6 +269,32 @@ bool trained_opponent(const State &s, const Encounter &e) {
         return false;
     return (e.walk && s.walk_choice == 1) ||
            (e.region >= 3 && Regions[e.region].sites[e.site].kind == Keeper);
+}
+Action opponent_action(const World &w, const Encounter &e, int round) {
+    auto action = scripted(w, 1, e.styles[std::clamp(round, 0, 4)]);
+    if (e.region == 0 && !e.walk && e.site >= 0 && e.site < SiteCount &&
+        Regions[0].sites[e.site].kind == Trial) {
+        // These are teaching partners. An attack opportunity every three seconds leaves
+        // a clear observation-response-recovery rhythm; the actual art uses normal physics.
+        if (action.ability == 5) {
+            action.ability = 0;
+            action.mx = action.my = 0;
+        }
+        int cadence = e.site <= 6 ? 90 : 75;
+        if (w.tick % cadence >= DecisionTicks)
+            action.ability = 0;
+        if (w.tick % cadence >= cadence / 2)
+            action.mx = action.my = 0;
+        // Demonstrate the new objective by leaving the lotus to the learner. Keepers
+        // contest it normally; a stationary lesson partner must not win by camping it.
+        Vec from_centre = w.bodies[1].pos - Vec{12 * Q, 9 * Q};
+        if (w.objective && length(from_centre) < 3000 && w.bodies[1].move < 0) {
+            Vec away = length(from_centre) ? unit(from_centre) : Vec{Q, 0};
+            action.mx = away.x;
+            action.my = away.y;
+        }
+    }
+    return action;
 }
 int encounter_reward(const State &s, const Encounter &e) {
     return e.rounds * (e.walk && s.walk_choice == 1 ? 3 : 2);
@@ -272,7 +312,7 @@ bool resolve(State &s, const Encounter &e, bool won, const std::array<int, 3> &v
         if (s.party[j] >= 0) {
             auto &c = s.companions[s.party[j]];
             c.vitality = std::clamp(vitality[j], 0, 1000);
-            c.experience = std::min(99999, c.experience + (won ? e.rounds * 15 : 5));
+            c.experience = std::min(99999, c.experience + (withdrew ? 0 : won ? e.rounds * 15 : 5));
         }
     if (won) {
         ++s.victories;
@@ -287,6 +327,13 @@ bool resolve(State &s, const Encounter &e, bool won, const std::array<int, 3> &v
                 s.threads = std::min(9999, s.threads + 12);
                 rest(s);
             }
+        } else if (e.region == 0 && n.kind == Trial) {
+            int &progress = s.lessons[lesson_index(e.site)];
+            progress = std::min(lesson_count(e.site), progress + 1);
+            if (progress >= lesson_count(e.site))
+                s.cleared[e.site] = 1;
+            // Lessons are separate, readable duels; each ends with a free recovery.
+            rest(s);
         } else
             s.cleared[index(e.region, e.site)] = 1;
         if (n.kind == Wild) {
@@ -374,6 +421,37 @@ void initialize_round(World &w, const State &s, const Encounter &e, int round, i
     w.bodies[1].hp =
         std::max(1, Roster[e.enemies[round]].hp * std::clamp(enemy_vitality, 0, 1000) / 1000);
     prepare_garden(w, e, round);
+    auto own_growth = development(rank(s.companions[own]));
+    int foe_rank = std::clamp(1 + e.region, 1, 5);
+    if (e.region == 0 && e.site >= 9)
+        foe_rank = 2;
+    if (e.walk)
+        foe_rank = std::max(3, foe_rank);
+    auto foe_growth = development(foe_rank);
+    configure_development(w, 0, own_growth.arts, own_growth.pace, own_growth.capacity,
+                          own_growth.recovery);
+    configure_development(w, 1, foe_growth.arts, foe_growth.pace, foe_growth.capacity,
+                          foe_growth.recovery);
+    if (e.region == 0 && !e.walk) {
+        // Teach the basic attack/recovery loop before wind, surfaces and territory contests.
+        w.surfaces = {};
+        w.wind_base = {};
+        w.winds = {};
+        w.rain = w.wetness = 0;
+        w.vane_enabled = 0;
+        if (e.site <= 6) {
+            w.objective = 0;
+            w.obstacles = {};
+            w.bodies[0].pos = {9 * Q, 9 * Q};
+            w.bodies[1].pos = {15 * Q, 9 * Q};
+        }
+        if (Regions[0].sites[e.site].kind == Trial) {
+            w.obstacles = {};
+            w.bodies[0].pos = {9 * Q, 9 * Q};
+            w.bodies[1].pos = {15 * Q, 9 * Q};
+            w.bodies[1].hp = std::max(1, w.bodies[1].hp * (e.site == 3 ? 45 : 60) / 100);
+        }
+    }
     int charm = s.companions[own].charm;
     if (charm == 1) {
         w.bodies[0].shield = 12;
@@ -395,6 +473,8 @@ void initialize_round(World &w, const State &s, const Encounter &e, int round, i
         w.bodies[0].shield_timer = 450;
         w.bodies[0].energy = 650;
     }
+    if (charm)
+        w.bodies[0].energy = w.bodies[0].energy * own_growth.capacity / 1000;
 }
 void prepare_garden(World &w, const Encounter &e, int round) {
     // Scenario setup uses ordinary observable engine terrain, not special-case damage rules.
@@ -418,8 +498,47 @@ void prepare_garden(World &w, const Encounter &e, int round) {
         w.wind_base = round % 2 ? Vec{-power, 5} : Vec{power, -5};
     }
 }
+int rank_threshold(int r) {
+    static const int thresholds[] = {0, 0, 120, 300, 600, 1000};
+    return thresholds[std::clamp(r, 1, 5)];
+}
 int rank(const Companion &c) {
-    return std::min(5, 1 + c.experience / 120);
+    int r = 1;
+    while (r < 5 && c.experience >= rank_threshold(r + 1))
+        ++r;
+    return r;
+}
+Development development(int r) {
+    static const Development stages[] = {{1, 65, 600, 60},
+                                         {19, 75, 700, 70},
+                                         {23, 85, 800, 80},
+                                         {31, 95, 900, 90},
+                                         {31, 100, 1000, 100}};
+    return stages[std::clamp(r, 1, 5) - 1];
+}
+int lesson_index(int site) {
+    return site == 3 ? 0 : site == 6 ? 1 : site == 9 ? 2 : site == 12 ? 3 : -1;
+}
+int lesson_count(int site) { return site == 3 || site == 6 ? 4 : 3; }
+std::string lesson_brief(const State &s, int site) {
+    int i = lesson_index(site);
+    if (s.region != 0 || i < 0)
+        return "";
+    static const char *tips[] = {
+        "ONE ART, ONE OPPONENT. Your teacher attacks, then pauses to let you answer. Face your "
+        "partner, plant your feet to attack, then let your energy return. Watch the bright windup "
+        "before stepping clear.",
+        "FIND YOUR RHYTHM. Approach facing forward. Backing away is slower. Pause between attacks "
+        "to recover breath. Eight successful lessons open the first wild habitat.",
+        "A SECOND CHOICE. Your teacher leaves the lotus for you to claim. Keepers will contest it "
+        "later. At bond 2, your second art and a paid dodge awaken. They share energy. The lotus "
+        "in the centre now offers another way to win.",
+        "PUT IT TOGETHER. Choose when to attack, dodge, or hold the centre. Your first companion "
+        "can join you. The keeper ahead is your first three-opponent relay."};
+    return "LESSON " + std::to_string(std::min(s.lessons[i] + 1, lesson_count(site))) + " / " +
+           std::to_string(lesson_count(site)) + "|" + tips[i] +
+           "|Each lesson is one short duel, followed by free recovery. Return here for the next "
+           "lesson. Your starter learns before the collection grows.";
 }
 int ground(int region, int x, int y) {
     if (region < 0 || region >= RegionCount || x < 0 || y < 0 || x >= MapWidth || y >= MapHeight)
@@ -479,10 +598,13 @@ bool validate(const State &s) {
                 return false;
         }
     }
+    for (int j = 0; j < 4; ++j)
+        if (s.lessons[j] < 0 || s.lessons[j] > (j < 2 ? 4 : 3))
+            return false;
     return true;
 }
 std::vector<uint8_t> serialize(const State &state) {
-    std::vector<uint8_t> out{'T', 'I', 'N', 'I', 'S', 'A', 'V', '2'};
+    std::vector<uint8_t> out{'T', 'I', 'N', 'I', 'S', 'A', 'V', '3'};
     auto put = [&](auto v) {
         for (int j = 0; j < 4; ++j)
             out.push_back(uint8_t(uint32_t(v) >> (j * 8)));
@@ -493,7 +615,8 @@ std::vector<uint8_t> serialize(const State &state) {
     return out;
 }
 bool deserialize(State &s, const uint8_t *p, size_t n) {
-    if (!p || n != serialize(State{}).size() || !std::equal(p, p + 8, "TINISAV2"))
+    bool legacy = p && n == serialize(State{}).size() - 16 && std::equal(p, p + 8, "TINISAV2");
+    if (!legacy && (!p || n != serialize(State{}).size() || !std::equal(p, p + 8, "TINISAV3")))
         return false;
     auto word = [&](size_t a) {
         return uint32_t(p[a]) | uint32_t(p[a + 1]) << 8 | uint32_t(p[a + 2]) << 16 |
@@ -503,10 +626,23 @@ bool deserialize(State &s, const uint8_t *p, size_t n) {
         return false;
     State candidate;
     size_t at = 8;
-    fields(candidate, [&](auto &v) {
-        v = decltype(v + 0)(word(at));
-        at += 4;
-    });
+    fields(
+        candidate,
+        [&](auto &v) {
+            v = decltype(v + 0)(word(at));
+            at += 4;
+        },
+        legacy);
+    if (legacy) {
+        int sites[] = {3, 6, 9, 12};
+        int credited=0;
+        for (int j = 0; j < 4; ++j) {
+            if (candidate.cleared[sites[j]]) candidate.lessons[j] = lesson_count(sites[j]);
+            credited+=candidate.lessons[j];
+        }
+        for(int id:candidate.party) if(id>=0 && id<SpeciesCount)
+            candidate.companions[id].experience=std::max(candidate.companions[id].experience,credited*15);
+    }
     if (!validate(candidate))
         return false;
     s = candidate;
@@ -518,7 +654,8 @@ bool load(State &s, const std::filesystem::path &path, std::string &error) {
         error = "No journey save at " + path.string();
         return false;
     }
-    if (in.tellg() != std::streampos(serialize(State{}).size())) {
+    if (in.tellg() != std::streampos(serialize(State{}).size()) &&
+        in.tellg() != std::streampos(serialize(State{}).size() - 16)) {
         error = "Journey save has the wrong size";
         return false;
     }

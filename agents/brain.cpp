@@ -28,9 +28,7 @@ struct Linear {
         }
     }
 };
-float sigmoid(float x) {
-    return 1.f / (1.f + std::exp(-std::clamp(x, -60.f, 60.f)));
-}
+float sigmoid(float x) { return 1.f / (1.f + std::exp(-std::clamp(x, -60.f, 60.f))); }
 bool finite(const float *p, size_t n, float bound = 1000) {
     for (size_t i = 0; i < n; ++i)
         if (!std::isfinite(p[i]) || std::abs(p[i]) > bound)
@@ -39,7 +37,7 @@ bool finite(const float *p, size_t n, float bound = 1000) {
 }
 } // namespace
 bool Brain::load(const std::string &path, std::string &error) {
-    constexpr size_t modern_size = 36 + BrainParameters * 4 + 4, legacy_size = 36 + 86755 * 4 + 4;
+    constexpr size_t modern_size = 36 + BrainParameters * 4 + 4, legacy_size = 36 + 87523 * 4 + 4;
     std::ifstream f(path, std::ios::binary | std::ios::ate);
     if (!f ||
         (f.tellg() != std::streampos(modern_size) && f.tellg() != std::streampos(legacy_size))) {
@@ -52,7 +50,7 @@ bool Brain::load(const std::string &path, std::string &error) {
     f.read(reinterpret_cast<char *>(bytes.data()), size);
     const auto *b = bytes.data();
     int format = int(word(b + 8));
-    int parameters = format == 2 ? 86755 : BrainParameters;
+    int parameters = format == 2 ? 87523 : BrainParameters;
     if (!f || std::memcmp(b, "TINIBRN1", 8) || (format != 2 && format != BrainFormat) ||
         size != size_t(40 + parameters * 4) || word(b + 12) != RulesVersion ||
         word(b + 16) != ObservationVersion || word(b + 20) != ContentHash ||
@@ -103,7 +101,7 @@ bool Brain::forward(const Observation &o, const BrainMemory &memory, BrainOutput
         return Linear{w, b, in, output};
     };
     auto entity = layer(43, 32), move = layer(48, 24), event = layer(7, 24),
-         encoder = layer(format_ == 2 ? 245 : 272, 96);
+         encoder = layer(format_ == 2 ? 253 : 280, 96);
     const float *wi = p;
     p += 288 * 96;
     const float *wh = p;
@@ -123,7 +121,7 @@ bool Brain::forward(const Observation &o, const BrainMemory &memory, BrainOutput
     }
     if (p != weights.data() + weights.size())
         return false;
-    std::array<float, 272> input{};
+    std::array<float, 280> input{};
     int cursor = 0;
     auto append = [&](const float *a, int n) {
         std::copy(a, a + n, input.begin() + cursor);
@@ -167,7 +165,7 @@ bool Brain::forward(const Observation &o, const BrainMemory &memory, BrainOutput
     for (auto &v : history)
         v /= std::max(1.f, count);
     append(history, 24);
-    append(o.global.data(), 32);
+    append(o.global.data(), 40);
     float announced[24];
     move.run(o.announced.data(), announced, true);
     append(announced, 24);
@@ -292,9 +290,7 @@ void *tb_create(const char *path) {
         return nullptr;
     }
 }
-void tb_destroy(void *brain) {
-    delete static_cast<creature::Brain *>(brain);
-}
+void tb_destroy(void *brain) { delete static_cast<creature::Brain *>(brain); }
 int32_t tb_forward_personality(void *brain, const float *observation, const float *memory,
                                const float *traits, float *output) {
     if (!brain || !observation || !memory || !traits || !output)

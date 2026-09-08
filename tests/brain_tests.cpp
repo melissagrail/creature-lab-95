@@ -77,5 +77,5 @@ int main(int argc, char **argv) {
     }
     std::cout << checks << " brain checks passed; " << calls << " decisions across all 40 species; "
               << inference_seconds * 1e6 / calls << " us/inference; "
-              << (brain.format() == 2 ? 86755 : BrainParameters) << " parameters\n";
+              << (brain.format() == 2 ? 87523 : BrainParameters) << " parameters\n";
 }

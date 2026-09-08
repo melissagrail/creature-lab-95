@@ -14,8 +14,8 @@ from legacy_policy import LegacyPolicy
 FORMAT = 3
 HIDDEN = 96
 MAGIC = b'TINIBRN1'
-PARAMETERS = 89959
-PARAMETER_COUNTS = {2:86755, 3:89959}
+PARAMETERS = 90727
+PARAMETER_COUNTS = {2:87523, 3:90727}
 
 def identity(format=FORMAT):
     lib = library()
@@ -129,7 +129,9 @@ def gae(reward, value, done, bootstrap, gamma=.997, lam=.95):
     return advantage,advantage+value
 
 class ArenaBatch:
-    def __init__(self,count,seed=7,scenarios=None,personality_rate=0.,fixed_personality=None,target_species=None):
+    def __init__(self,count,seed=7,scenarios=None,personality_rate=0.,fixed_personality=None,target_species=None,development_rate=0.):
+        if not 0 <= development_rate <= 1: raise ValueError('Development rate must be 0..1')
+        self.development_rate=development_rate
         self.count=count; self.rng=np.random.default_rng(seed);self.scenarios=scenarios
         self.personality_rate=personality_rate;self.fixed_personality=fixed_personality;self.target_species=target_species
         self.personalities=np.zeros((count,2,3),np.float32)
@@ -153,6 +155,14 @@ class ArenaBatch:
         if self.target_species is not None:a=self.target_species
         species=(int(a),int(b)) if seat==0 else (int(b),int(a))
         self.batch.reset(i,seed,weather,species,arena)
+        # Opt-in curriculum: five developmental stages, matched or adjacent opponents.
+        # A zero rate makes no extra RNG draws and preserves existing scenario sequences.
+        if self.development_rate and self.rng.random()<self.development_rate:
+            stages=[(1,65,600,60),(19,75,700,70),(23,85,800,80),(31,95,900,90),(31,100,1000,100)]
+            stage=int(self.rng.integers(5))
+            for player in range(2):
+                other=stage if player==seat else int(np.clip(stage+self.rng.integers(-1,2),0,4))
+                self.batch.development(i,player,*stages[other])
         self.styles[i]=self.rng.integers(4,size=2) if self.scenarios is None else [style,style]
         self.styles[i,1-seat]=style;self.seats[i]=seat;self.episode[i]=0
         self.reset_before[i]=1
@@ -217,5 +227,5 @@ def personality_reward(obs, personality, scale=.003):
     distance=np.sqrt((enemy[:,1:3]**2).sum(-1))*24
     center=np.sqrt(((obs[:,13]-.5)*24)**2+((obs[:,14]-.5)*18)**2)
     features=np.column_stack((1-2*np.clip(distance/10,0,1),
-                              2*np.clip(obs[:,1],0,1)-1,1-2*np.clip(center/10,0,1)))
+                              2*np.clip(obs[:,1]/np.maximum(obs[:,SLICES['global_'].start+34],.001),0,1)-1,1-2*np.clip(center/10,0,1)))
     return (scale*(features*personality).sum(-1)).astype(np.float32)

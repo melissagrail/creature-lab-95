@@ -1,21 +1,16 @@
 {
   "identity": {
-    "format": 3,
+    "format": 2,
     "rules": 9,
     "observations": 8,
     "content": 574261014,
     "observation_size": 3628,
     "hidden": 96,
-    "action_codec": "opponent-local-conditional-tanh-v2",
-    "personality": [
-      "aggression",
-      "reserve",
-      "territory"
-    ]
+    "action_codec": "opponent-local-tanh-v1"
   },
-  "parameters": 90727,
-  "bytes": 362948,
-  "checksum": "a6a76794",
+  "parameters": 87523,
+  "bytes": 350132,
+  "checksum": "0db61ecb",
   "parameter_order": [
     {
       "name": "log_std",
@@ -66,7 +61,7 @@
       "name": "encoder.0.weight",
       "shape": [
         96,
-        280
+        253
       ]
     },
     {
@@ -165,43 +160,18 @@
       "shape": [
         1
       ]
-    },
-    {
-      "name": "species.weight",
-      "shape": [
-        40,
-        12
-      ]
-    },
-    {
-      "name": "slot_motion.weight",
-      "shape": [
-        4,
-        32
-      ]
-    },
-    {
-      "name": "slot_motion.bias",
-      "shape": [
-        4
-      ]
     }
   ],
   "metadata": {
-    "source": "models/baselines/rules8/release-v10/apprentice.pt",
+    "source": "models/baselines/legacy-footwork.pt",
     "source_identity": {
-      "format": 3,
+      "format": 2,
       "rules": 8,
       "observations": 7,
       "content": 574261014,
       "observation_size": 3620,
       "hidden": 96,
-      "action_codec": "opponent-local-conditional-tanh-v2",
-      "personality": [
-        "aggression",
-        "reserve",
-        "territory"
-      ]
+      "action_codec": "opponent-local-tanh-v1"
     },
     "migration": "Eight zero-initialized development inputs; old weights retained. Campaign curriculum not retrained."
   }

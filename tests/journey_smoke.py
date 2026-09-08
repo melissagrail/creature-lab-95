@@ -19,8 +19,8 @@ for species in range(40):
         assert len(set(frames))>=4,f'Insufficient distinct poses {species}/{row}'
 with tempfile.TemporaryDirectory(prefix='tinikami-journey-test-') as tmp:
     save=Path(tmp)/'never-written.tini'
-    screens=[0,2,5,4,7,11,1,12,13,14,3,8,9,10,6,16,15,8,8]
-    for scene in range(19):
+    screens=[0,2,5,4,7,11,1,12,13,14,3,8,9,10,6,16,15,8,8,17]
+    for scene in range(20):
         capture=Path(tmp)/str(scene)
         result=subprocess.run([str(exe),'--campaign','--journey-scene',str(scene),'--journey-region','4',
             '--frames','2','--save-path',str(save),'--captures',str(capture)],cwd=root,env=env,text=True,capture_output=True,check=True)
@@ -31,4 +31,4 @@ with tempfile.TemporaryDirectory(prefix='tinikami-journey-test-') as tmp:
     result=subprocess.run([str(exe),'--journey-test'],cwd=root,env=env,text=True,capture_output=True,check=True)
     assert 'campaign controller checks passed' in result.stdout,result.stderr
     print(result.stdout.strip())
-print('Campaign: 19 rendered fixtures, isolated save behavior, all 1,280 animation cells and native controller flow passed.')
+print('Campaign: 20 rendered fixtures, isolated save behavior, all 1,280 animation cells and native controller flow passed.')

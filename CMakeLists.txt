@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(CreatureLab VERSION 0.10.0 LANGUAGES CXX)
+project(CreatureLab VERSION 0.11.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(creature SHARED src/sim.cpp src/content.cpp src/api.cpp)
@@ -37,7 +37,7 @@ target_include_directories(tinibrain PUBLIC include)
 add_executable(brain_tests src/sim.cpp src/content.cpp agents/brain.cpp tests/brain_tests.cpp)
 target_include_directories(brain_tests PRIVATE include)
 add_test(NAME brain COMMAND brain_tests "${CMAKE_CURRENT_SOURCE_DIR}/models/apprentice.tbrain")
-add_test(NAME legacy_brain COMMAND brain_tests "${CMAKE_CURRENT_SOURCE_DIR}/models/baselines/legacy-footwork.tbrain")
+add_test(NAME legacy_brain COMMAND brain_tests "${CMAKE_CURRENT_SOURCE_DIR}/models/baselines/legacy-development.tbrain")
 
 add_executable(brain_eval src/sim.cpp src/content.cpp agents/brain.cpp tests/brain_eval.cpp)
 target_include_directories(brain_eval PRIVATE include)
@@ -53,3 +53,6 @@ add_executable(campaign_playthrough src/sim.cpp src/content.cpp src/campaign.cpp
 target_include_directories(campaign_playthrough PRIVATE include)
 add_executable(footwork_benchmark src/sim.cpp src/content.cpp tests/footwork_benchmark.cpp)
 target_include_directories(footwork_benchmark PRIVATE include)
+
+add_executable(apprenticeship_playthrough src/sim.cpp src/content.cpp src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp)
+target_include_directories(apprenticeship_playthrough PRIVATE include)

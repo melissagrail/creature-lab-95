@@ -636,6 +636,6 @@ int main() {
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
     std::cout << "Measured golden " << std::hex << hash(a) << std::dec << "\n";
-    CHECK(hash(a) == 0x03b73ddd44073999ull);
+    CHECK(hash(a) == 0x8f436a06e647a94cull);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

@@ -1,4 +1,4 @@
-# Tinikami: The Unwritten Road — journey alpha 0.10
+# Tinikami: The Unwritten Road — journey alpha 0.11
 
 A creature-collector campaign built around deterministic, real-time C++ combat and lightweight learned spirit pilots. Walk an eight-region road, meet forty original spirits, restore the sanctuary bells, and decide what happens to the broken Crown.
 
@@ -39,7 +39,9 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 
 - **Eight distinct overworlds and 160 marked locations:** visible spirit habitats, conversations, road trials, memory markers, riddles, sanctuaries and keepers.
 - **Forty obtainable companions:** a completed first friendly challenge earns recognition even in defeat. Further victories or thread offerings deepen trust. There are no capture dice, random encounters or permanent losses.
-- **Three-companion parties:** condition carries across combat relays. Bond experience opens charms; village requests unlock more preparation choices. The sanctuary recovers everyone freely.
+- **Three-companion parties:** condition carries across combat relays. Bond experience gradually opens arts, dodge, speed, energy and charms; village requests unlock more preparation choices. The sanctuary recovers everyone freely.
+- **A starter apprenticeship:** fourteen short lessons, with eight wins before the first new habitat; young spirits begin with one art.
+- **An in-game design notebook:** F7 pauses play, records feedback and attaches location/encounter context. Notes survive new journeys.
 - **Eight optional Lantern Walks:** branching eight-room expeditions, campfires, persistent condition and a final relay. Save between rooms or return home with earned rewards.
 - **A complete story route and two endings**, followed by free exploration and collection.
 - **1,280 authored animation frames:** four directions × eight poses × forty species. The title screen's Sprite Studio exposes every frame and the wider small/large size range.
@@ -54,17 +56,17 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 | Navigation | B companions; Tab travel atlas; J journal; Escape help |
 | Combat | M manual/pilot; WASD movement; mouse aim; 1–4 arts; Space dodge |
 | Combat tools | P pause; R remedy; Z/X wind strength; H exact geometry; Escape retreat |
-| Everywhere | F8 music; F5 save outside combat |
+| Everywhere | F7 design notebook; F8 music; F5 save outside combat |
 
 Saves live in SDL's per-user application-data directory, separate from the checkout and app bundle. New journeys archive the existing slot. Writes are checksummed and keep a validated backup. Combat resumes from its pre-encounter checkpoint. [Save details](docs/alpha/journey.md#saves).
 
 ## Combat and learned pilots
 
-The engine runs at 30 fixed integer ticks per second, with three-tick decisions. Forty species share a 100-energy pool across four arts and dodge. Forward travel remains free; sustained hard strafing suppresses regeneration, drains energy and loses lateral drive at low reserves. Finite cornering acceleration prevents instantaneous high-speed changes of travel direction. Planted casts, facing, turn rate, terrain reactions, wind and the central control objective provide counterplay.
+The engine runs at 30 fixed integer ticks per second, with three-tick decisions. Fully developed species share a 100-energy pool across four arts and dodge. Campaign companions start with one art, a 60-energy cap and a slower pace; bond growth expands their kit. Forward travel remains free; sustained hard strafing suppresses regeneration, drains energy and loses lateral drive at low reserves. Finite cornering acceleration prevents instantaneous high-speed changes of travel direction. Planted casts, facing, turn rate, terrain reactions, wind and the central control objective provide counterplay.
 
-The native recurrent controller has **89,959 parameters** and separate memory per actor. Species embeddings, ability-conditioned movement/aim and three temperament inputs support steady, aggressive, skittish, patient and territorial pilots. Campaign companions have reproducible individual trait variations. Gameplay does not silently train or change weights.
+The native recurrent controller has **90,727 parameters** and separate memory per actor. Species embeddings, ability-conditioned movement/aim and three temperament inputs support steady, aggressive, skittish, patient and territorial pilots. Campaign companions have reproducible individual trait variations. Gameplay does not silently train or change weights.
 
-Rules are **v8**, observations **v7** (3,620 values), model format **v3**. Incompatible rules-v7 models and replays are rejected. Explicit warm-start migration and training provenance are included. [Movement and training results](docs/alpha/footwork.md), [integration contract](docs/integration.md), [model manifest](models/README.md).
+Rules are **v9**, observations **v8** (3,628 values), model format **v3**. Older models and replays are rejected. The shipped weights are explicitly expanded from v0.10; they have not been retrained on the new development curriculum. Explicit warm-start migration and training provenance are included. [Movement and training results](docs/alpha/footwork.md), [integration contract](docs/integration.md), [model manifest](models/README.md).
 
 ## Develop and verify
 
@@ -82,6 +84,8 @@ sh scripts/package-macos.sh
 ```
 
 Edit `content/roster.json` and run `make content` for combat data. Edit `content/campaign.json` and run `python3 scripts/compile_campaign.py` for story and authored geography. The renderer and campaign layer are separate from duel physics and the RL ABI. Offline art import requires Pillow, NumPy and SciPy; runtime loads the committed raw atlases directly.
+
+See [apprenticeship, bond progression and design notes](docs/alpha/development.md).
 
 Further design references: [40 species and kits](docs/alpha/species.md), [passives](docs/alpha/passives.md), [wind](docs/alpha/terrain.md), [water/ice/fuel](docs/alpha/elements.md), [garden readability](docs/alpha/gardens.md), [historical temperament work](docs/alpha/temperament.md). Older reports remain historical evidence, not current balance certification.
 

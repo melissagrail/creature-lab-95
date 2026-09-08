@@ -25,7 +25,7 @@ $(BUILD)/sim_tests: $(CORE) tests/sim_tests.cpp include/creature/sim.hpp | $(BUI
 $(BUILD)/benchmark: $(CORE) tests/benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/benchmark.cpp -o $@
 viewer: $(BUILD)/creature_lab
-$(BUILD)/creature_lab: $(CORE) client/main.cpp agents/brain.cpp include/creature/brain.hpp include/creature/brain_api.h client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp client/journey.hpp client/journey_audio.hpp include/creature/campaign.hpp src/campaign.cpp src/campaign_content.cpp include/creature/sim.hpp | $(BUILD)
+$(BUILD)/creature_lab: $(CORE) client/main.cpp agents/brain.cpp include/creature/brain.hpp include/creature/brain_api.h client/font.hpp client/tinikami.hpp client/garden.hpp client/spirit_rects.hpp client/journey.hpp client/journey_audio.hpp client/design_notebook.hpp include/creature/campaign.hpp src/campaign.cpp src/campaign_content.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp client/main.cpp $$(sdl2-config --cflags --libs) -o $@
 test: core $(BUILD)/environment_tests $(BUILD)/brain_tests $(BUILD)/campaign_tests
 	python3 scripts/compile_content.py --check
@@ -74,3 +74,6 @@ $(BUILD)/campaign_playthrough: $(CORE) src/campaign.cpp src/campaign_content.cpp
 
 $(BUILD)/footwork_benchmark: $(CORE) tests/footwork_benchmark.cpp include/creature/sim.hpp | $(BUILD)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) tests/footwork_benchmark.cpp -o $@
+
+$(BUILD)/apprenticeship_playthrough: $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp include/creature/campaign.hpp include/creature/brain.hpp | $(BUILD)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE) src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp -o $@

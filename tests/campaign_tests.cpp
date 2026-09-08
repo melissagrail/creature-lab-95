@@ -16,6 +16,107 @@ static int checks = 0;
         }                                                                                          \
     } while (0)
 int main() {
+    for (int starter : {0, 6, 35}) {
+        auto s = c::new_journey(91, starter);
+        CHECK(c::collection_count(s) == 1);
+        for (int site : {2, 5, 7, 10, 13})
+            if (c::Regions[0].sites[site].species != starter)
+                CHECK(!c::available(s, 0, site));
+        CHECK(c::finish_story(s, 1));
+        for (int site : {3, 6}) {
+            for (int j = 0; j < 4; ++j) {
+                CHECK(c::available(s, 0, site));
+                auto e = c::encounter(s, site);
+                CHECK(e.rounds == 1);
+                World w;
+                c::initialize_round(w, s, e, 0, 0, 1000, 1000);
+                CHECK(w.bodies[0].arts == 1);
+                CHECK(w.bodies[1].arts == 1);
+                CHECK(w.bodies[0].capacity == 600);
+                CHECK(w.objective == 0);
+                CHECK(!w.vane_enabled);
+                CHECK(c::resolve(s, e, true, {400, 0, 0}));
+                CHECK(c::collection_count(s) == 1);
+                CHECK(s.companions[starter].vitality == 1000);
+                CHECK(bool(s.cleared[site]) == (j == 3));
+                CHECK(c::validate(s));
+                if (s.victories < 8)
+                    for (int wild : {2, 5, 7, 10, 13})
+                        if (c::Regions[0].sites[wild].species != starter)
+                            CHECK(!c::available(s, 0, wild));
+            }
+            if (site == 3)
+                CHECK(c::finish_story(s, 4));
+        }
+        CHECK(s.victories == 8);
+        CHECK(c::rank(s.companions[starter]) == 2);
+        CHECK(c::available(s, 0, 2));
+        auto e = c::encounter(s, 6);
+        World w;
+        c::initialize_round(w, s, e, 0, 0, 1000, 1000);
+        CHECK(w.bodies[0].arts == 19);
+        CHECK(w.bodies[0].capacity == 700);
+        int xp = s.companions[starter].experience;
+        CHECK(c::resolve(s, e, false, {0, 0, 0}, true));
+        CHECK(s.companions[starter].experience == xp);
+        // Upgrade a legacy V2 save without losing companions or completed lessons.
+        auto old = c::serialize(s);
+        old.erase(old.end() - 20, old.end() - 4);
+        old[7] = '2';
+        // Old relays awarded less XP than the newly credited lesson sequence.
+        for(int n=0;n<4;++n) old[68+starter*24+n]=uint8_t(30u>>(n*8));
+        uint32_t hash = 2166136261u;
+        for (size_t n = 0; n < old.size() - 4; ++n)
+            hash = (hash ^ old[n]) * 16777619u;
+        for (int n = 0; n < 4; ++n)
+            old[old.size() - 4 + n] = uint8_t(hash >> (n * 8));
+        c::State restored;
+        CHECK(c::deserialize(restored, old.data(), old.size()));
+        CHECK(restored.lessons[0] == 4 && restored.lessons[1] == 4);
+        CHECK(restored.companions[starter].experience == xp);
+    }
+    for (int species = 0; species < 40; ++species)
+        for (int rank = 1; rank <= 5; ++rank) {
+            World w;
+            reset(w, 77, 0, species, 0);
+            auto d = c::development(rank);
+            CHECK(configure_development(w, 0, d.arts, d.pace, d.capacity, d.recovery));
+            auto obs = observe(w, 0);
+            CHECK(obs.global[32] == float(d.arts) / 31);
+            CHECK(obs.global[34] == float(d.capacity) / 1000);
+            CHECK(travel_speed(w.bodies[0]) == Roster[species].speed * d.pace / 100);
+            auto bytes = snapshot(w);
+            World copy;
+            CHECK(restore(copy, bytes.data(), bytes.size()));
+            CHECK(hash(copy) == hash(w));
+            for (int j = 0; j < 5; ++j)
+                if (!(d.arts & (1 << j))) {
+                    CHECK(!action_mask(w, 0)[j + 1]);
+                    auto cpy = w;
+                    step(cpy, {Action{0, 0, Q, 0, j + 1}, Action{}}, 1);
+                    CHECK(cpy.bodies[0].move < 0);
+                }
+            for (int n = 0; n < 300; ++n)
+                step(w, {Action{}, Action{}}, 1);
+            CHECK(w.bodies[0].energy <= d.capacity);
+            CHECK(!configure_development(w, 0, 31, 100, 1000, 100));
+            for (int field = 0; field < 4; ++field) {
+                auto bad = copy;
+                auto &body = bad.bodies[0];
+                if (field == 0)
+                    body.arts = 32;
+                if (field == 1)
+                    body.pace = 49;
+                if (field == 2)
+                    body.capacity = 499;
+                if (field == 3)
+                    body.recovery_rate = 101;
+                auto invalid = snapshot(bad);
+                auto before = hash(copy);
+                CHECK(!restore(copy, invalid.data(), invalid.size()));
+                CHECK(hash(copy) == before);
+            }
+        }
     for (int region = 0; region < c::RegionCount; region++) {
         std::array<bool, c::MapWidth * c::MapHeight> visited{};
         std::queue<Vec> q;
@@ -60,15 +161,6 @@ int main() {
             for (int rr = 0; rr < 8; ++rr) {
                 CHECK(state.region == rr);
                 CHECK(c::accessible(state, rr));
-                for (int site : {2, 5, 7, 10, 13}) {
-                    auto e = c::encounter(state, site);
-                    int sp = c::Regions[rr].sites[site].species;
-                    CHECK(!c::offer_thread(state, sp) || c::befriended(state, sp));
-                    for (int count = 0; count < c::trust_needed(sp); count++)
-                        CHECK(c::resolve(state, e, true, {750, 600, 500}));
-                    CHECK(c::befriended(state, sp));
-                    CHECK(c::validate(state));
-                }
                 auto e = c::encounter(state, 3);
                 CHECK(!c::resolve(state, e, true, {1000, 1000, 1000}));
                 CHECK(!c::solve_puzzle(state, 15, {-1, 0, 1}));
@@ -83,9 +175,21 @@ int main() {
                         CHECK(c::finish_story(state, site));
                     else {
                         e = c::encounter(state, site);
-                        CHECK(e.rounds == (k == c::Keeper ? 3 : 2));
-                        CHECK(c::resolve(state, e, true, {420, 0, 650}));
+                        CHECK(e.rounds == (k == c::Keeper ? 3 : rr == 0 ? 1 : 2));
+                        do {
+                            CHECK(c::resolve(state, e, true, {420, 0, 650}));
+                        } while (!state.cleared[rr * 20 + site]);
                     }
+                    CHECK(c::validate(state));
+                }
+                for (int site : {2, 5, 7, 10, 13}) {
+                    auto e = c::encounter(state, site);
+                    int sp = c::Regions[rr].sites[site].species;
+                    CHECK(!c::offer_thread(state, sp) || c::befriended(state, sp));
+                    for (int count = 0; count < c::trust_needed(sp); count++)
+                        CHECK(c::resolve(state, e, true, {750, 600, 500}));
+                    CHECK(c::befriended(state, sp));
+                    CHECK(c::rank(state.companions[sp]) >= 1 + rr / 2);
                     CHECK(c::validate(state));
                 }
                 CHECK(c::restored_count(state) == rr + 1);
@@ -124,6 +228,7 @@ int main() {
     // First-contact recognition is awarded for a completed challenge, never retreat.
     {
         auto s = c::new_journey(31, 0);
+        s.cleared[1] = s.cleared[3] = s.cleared[4] = s.cleared[6] = s.cleared[9] = 1;
         auto e = c::encounter(s, 5);
         int sp = c::Regions[0].sites[5].species;
         CHECK(c::resolve(s, e, false, {0, 0, 0}, true));
@@ -163,6 +268,18 @@ int main() {
         CHECK(s.threads == cash);
         s.companions[0].experience = 120;
         CHECK(c::charm_unlocked(s, 0, 5));
+        auto encounter = c::encounter(s, 2);
+        World charm_world;
+        for (int charm = 0; charm < 6; ++charm) {
+            s.companions[0].charm = charm;
+            c::initialize_round(charm_world, s, encounter, 0, 0, 1000, 1000);
+            const int energy[] = {700, 595, 595, 595, 560, 455};
+            CHECK(charm_world.bodies[0].energy == energy[charm]);
+            auto snap = snapshot(charm_world);
+            World copy;
+            CHECK(restore(copy, snap.data(), snap.size()));
+        }
+        s.companions[0].charm = 0;
         CHECK(!c::charm_unlocked(s, 0, 3));
         s.companions[0].charm = 5;
         CHECK(c::validate(s));
