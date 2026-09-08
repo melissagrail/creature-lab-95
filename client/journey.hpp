@@ -169,7 +169,7 @@ class Game {
     SDL_Window *window;
     Brain &brain;
     Options options;
-    tinikami::Atlas props, cover, biomes, interior;
+    tinikami::Atlas props, cover, biomes, interior, wayfarer;
     journey_audio::Sound sound;
     camp::State state;
     camp::Encounter match;
@@ -182,6 +182,7 @@ class Game {
     int battle_round = 0, battle_slot = 0, enemy_hp = 1000, pending_ability = 0, wind_power = 100;
     int toast_age = 0, outcome_age = 0, present = 0, walk_pose = 0, facing = 0, bell_count = 0;
     double camera_x = 0, camera_y = 0, accumulator = 0, save_clock = 0, played_clock = 0;
+    double walked = 0;
     std::array<int, 3> vitality{}, bells{};
     std::array<BrainMemory, 2> memories{};
     World duel;
@@ -203,7 +204,7 @@ class Game {
             std::ostringstream out;
             auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             out << "Recorded (UTC): " << std::put_time(std::gmtime(&now), "%Y-%m-%d %H:%M:%S")
-                << "\nBuild: 0.11 / rules " << RulesVersion << " / observations "
+                << "\nBuild: 0.12 / rules " << RulesVersion << " / observations "
                 << ObservationVersion << " / brain checksum " << brain.checksum() << " / content "
                 << ContentHash << "\nJourney seed: " << state.seed
                 << "\nRegion: " << camp::Regions[state.region].name << " / tile " << state.x / 256
@@ -218,8 +219,9 @@ class Game {
             note_snapshot.clear();
             if (screen == Battle || screen == Result) {
                 out << "\nEncounter: " << camp::Regions[match.region].sites[match.site].name
-                    << " / seed " << match.seed << " / round " << std::min(battle_round + 1, match.rounds) << " / tick "
-                    << duel.tick << " / manual " << manual << " / paused " << paused;
+                    << " / seed " << match.seed << " / round "
+                    << std::min(battle_round + 1, match.rounds) << " / tick " << duel.tick
+                    << " / manual " << manual << " / paused " << paused;
                 for (int i = 0; i < 2; ++i) {
                     const auto &b = duel.bodies[i];
                     out << "\nActor " << i << ": " << Roster[b.species].name << " HP " << b.hp
@@ -456,21 +458,30 @@ class Game {
                 tell(node.speaker, camp::lesson_brief(state, id), 1);
                 return;
             }
-            tell(node.speaker,
-                 std::string(node.text) +
-                     (node.kind == camp::Wild
-                          ? "|Your next encounter is with " +
-                                std::string(Roster[node.species].name) +
-                                ". Trust: " + num(state.companions[node.species].trust) + " / " +
-                                num(camp::trust_needed(node.species)) + "."
-                          : "|This is a " +
-                                num(node.kind == camp::Keeper       ? 3
-                                    : node.kind == camp::Expedition ? 5
-                                                                    : 2) +
-                                "-spirit relay. The party keeps its condition between rounds. "
-                                "Three remedies are available after resting. M switches between "
-                                "your spirit's pilot and direct control. Retreat with Escape."),
-                 1);
+            tell(
+                node.speaker,
+                std::string(node.text) +
+                    (node.kind == camp::Wild
+                         ? "|Your next encounter is with " +
+                               std::string(Roster[node.species].name) +
+                               ". Trust: " + num(state.companions[node.species].trust) + " / " +
+                               num(camp::trust_needed(node.species)) + "." +
+                               (camp::befriended(state, node.species)
+                                    ? "|You already travel with this species. Practising here "
+                                      "builds bond. Visit another habitat to find a different "
+                                      "companion."
+                                    : "") +
+                               (camp::friendship_ready(state)
+                                    ? ""
+                                    : "|FRIENDLY PRACTICE / Every habitat is open. After six "
+                                      "completed challenges, wild spirits begin to join you. "
+                                      "Challenges so far: " +
+                                          num(state.victories + state.defeats) + " / 6.")
+                         : "|This is a " + num(camp::encounter(state, id).rounds) +
+                               "-opponent challenge. The party keeps its condition between rounds. "
+                               "Three remedies are available after resting. M switches between "
+                               "your spirit's pilot and direct control. Retreat with Escape."),
+                1);
             return;
         }
         bool fresh = !done;
@@ -584,11 +595,15 @@ class Game {
             return;
         }
         std::array<Action, 2> actions;
+        if (duel.bodies[0].guidance != Free && duel.bodies[0].guidance_age >= 90)
+            command(duel, 0, Free);
         actions[0] =
-            brain.ready()
+            brain.ready() && !camp::beginner_assistance(duel.bodies[0])
                 ? brain.action(observe(duel, 0), memories[0],
                                companion_personality(state.companions[state.party[battle_slot]]))
                 : scripted(duel, 0);
+        if (!manual)
+            actions[0] = camp::companion_action(duel, actions[0]);
         actions[1] = brain.ready() && camp::trained_opponent(state, match)
                          ? brain.action(observe(duel, 1), memories[1],
                                         personality_preset((match.region + battle_round) % 5))
@@ -599,8 +614,8 @@ class Game {
             float lx, ly;
             SDL_GetMouseState(&mx, &my);
             SDL_RenderWindowToLogical(r, mx, my, &lx, &ly);
-            Vec aim{int((lx - AX) * Q / S) - duel.bodies[0].pos.x,
-                    int((ly - AY) * Q / S) - duel.bodies[0].pos.y};
+            Vec aim{int((lx - JourneyAX) * Q / JourneyScale) - duel.bodies[0].pos.x,
+                    int((ly - JourneyAY) * Q / JourneyScale) - duel.bodies[0].pos.y};
             int strength = Q;
             if (pending_ability >= 1 && pending_ability <= 4) {
                 auto &m = move_for(duel.bodies[0], pending_ability - 1);
@@ -675,6 +690,7 @@ class Game {
         }
     }
     void world(double dt) {
+        int old_x = state.x, old_y = state.y;
         const auto *keys = SDL_GetKeyboardState(nullptr);
         int dx = keys[SDL_SCANCODE_D] + keys[SDL_SCANCODE_RIGHT] - keys[SDL_SCANCODE_A] -
                  keys[SDL_SCANCODE_LEFT];
@@ -713,7 +729,9 @@ class Game {
             if (!guided && camp::passable(state.region, state.x / 256, ny / 256))
                 state.y = ny;
             facing = std::abs(dx) > 0 ? (dx > 0 ? 1 : 3) : (dy > 0 ? 0 : 2);
-            walk_pose = 1 + (present / 9) % 2;
+            int travelled = length({state.x - old_x, state.y - old_y});
+            walked += travelled;
+            walk_pose = travelled ? 1 + int(walked / 112) % 2 : 0;
         } else
             walk_pose = 0;
         double target_x = state.x * Tile / 256. - 550, target_y = state.y * Tile / 256. - 300;
@@ -873,8 +891,10 @@ class Game {
                 place_prop(item.id, item.x, item.y, item.size);
             } else if (item.kind == 2) {
                 circle(item.x, item.y + 1, 12, {25, 38, 39, 70}, true);
-                int id = 16 + facing * 2 + (walk_pose ? present / 9 % 2 : 0);
-                place_prop(id, item.x, item.y, 76);
+                // Stable torso registration; contacts alternate through a neutral passing pose.
+                static const int gait[] = {1, 0, 2, 0};
+                int pose = walk_pose ? gait[int(walked / 112) % 4] : 0;
+                wayfarer.draw(facing * 4 + pose, item.x - 38, item.y - 70, 76, 76);
             } else {
                 int pose = item.kind == 3 ? walk_pose : (present / 45 + item.id) % 4 == 0 ? 1 : 0;
                 Vec look = item.kind == 3 ? (facing == 0   ? Vec{0, Q}
@@ -992,9 +1012,9 @@ class Game {
             label(88, yy, l, moss, 2);
             yy += 22;
         }
-        const int ids[3] = {0, 6, 35};
-        const char *text[3] = {"A BOLD FLAME / BURN AND BURST", "QUICK FOOTWORK / ICE AND SPACE",
-                               "A GENTLE CURRENT / CLEANSE AND RETURN"};
+        const auto &ids = camp::Starters;
+        const char *text[3] = {"HEARTH / CLOSE PRESSURE", "WISHES / ROOTED DEFENDER",
+                               "WIND / RANGED FOOTWORK"};
         for (int i = 0; i < 3; i++) {
             int x = 86 + i * 313;
             frame(x, 272, 295, 352, pale);
@@ -1184,7 +1204,8 @@ class Game {
                               brain.ready(),
                               personas,
                               {false, false},
-                              outcome_age});
+                              outcome_age,
+                              true});
         buttons.clear();
         if (duel.terminal || duel.truncated) {
             frame(255, 163, 270, 33, night);
@@ -1200,9 +1221,10 @@ class Game {
                   std::string(Roster[state.party[battle_slot]].name) + " WALKS WITH YOU",
               moss, 1);
         tag(700, 28, 98, 175,
-            manual          ? "YOU PILOT [M]"
-            : brain.ready() ? "SPIRIT PILOTS [M]"
-                            : "BASIC PILOT [M]",
+            manual                                      ? "YOU PILOT [M]"
+            : camp::beginner_assistance(duel.bodies[0]) ? "GUIDED SPIRIT [M]"
+            : brain.ready()                             ? "SPIRIT PILOTS [M]"
+                                                        : "BASIC PILOT [M]",
             !manual);
         tag(701, 213, 98, 150, paused ? "RESUME [P]" : "PAUSE [P]");
         tag(702, 373, 98, 205, "REMEDY [R] / " + num(state.herbs), !used_remedy && state.herbs > 0);
@@ -1243,15 +1265,10 @@ class Game {
         rect(724, 10, 14, 681, night);
         rect(738, 683, 330, 47, night);
         frame(738, 598, 330, 85, paper);
-        label(752, 612,
-              duel.bodies[0].arts == 1 ? "1 FIRST ART / MOUSE AIM"
-                                       : "1-4 ARTS / SPACE DODGE / MOUSE AIM",
-              ink, 1);
-        label(752, 635,
-              state.region < 2 ? "WASD MOVE / RELEASE TO PLANT"
-                               : "WASD MOVE / Z-X WIND CAST STRENGTH",
-              moss, 1);
-        label(752, 657, "F7 DESIGN NOTE / H GEOMETRY", moss, 1);
+        tag(704, 747, 606, 98, "ATTACK [F]", duel.bodies[0].guidance == Attack);
+        tag(705, 849, 606, 210, "FALL BACK [G]", duel.bodies[0].guidance == Retreat);
+        tag(706, 747, 642, 98, "REST [C]", duel.bodies[0].guidance == Conserve);
+        tag(707, 849, 642, 210, "TRUST SPIRIT [V]", duel.bodies[0].guidance == Free);
         frame(20, 691, 1048, 67, paper);
         if (duel.objective) {
             label(34, 702, "LOTUS CONTROL", ink, 1);
@@ -1267,13 +1284,22 @@ class Game {
                   "A ROUND.",
                   moss, 1);
         } else {
-            label(35, 706,
-                  "FACE YOUR PARTNER. USE YOUR FIRST ART. STEP CLEAR OF THE BRIGHT WINDUP. BREATHE "
-                  "BETWEEN EXCHANGES.",
-                  ink, 1);
-            label(35, 735, "ONE ART / NO TERRITORY CONTEST YET / MORE CHOICES AWAKEN AT BOND 2",
+            const auto &foe = duel.bodies[1];
+            std::string lesson =
+                foe.move >= 0 && phase(foe) == Startup && Moves[foe.move].kind == Nova
+                    ? "BIG BURST CHARGING / FALL BACK [G] BEFORE THE CIRCLE FLASHES"
+                : foe.move >= 0 && phase(foe) == Recovery
+                    ? "THEIR RECOVERY / AN OPENING TO CALL ATTACK [F]"
+                    : "YOUR SPIRIT PILOTS / F ATTACK / G FALL BACK / C REST / V TRUST";
+            label(35, 706, lesson, ink, 1);
+            label(35, 735,
+                  "CALLS LAST 3 COMBAT SECONDS. COMMITTED ARTS MUST FINISH. M FOR DIRECT CONTROL.",
                   moss, 1);
         }
+        label(32, 135,
+              "TIME LEFT " + num((MaxTicks - duel.tick + Hz - 1) / Hz) +
+                  " / 90 COMBAT SECONDS  |  CALM PACE",
+              moss, 1);
         for (int j = 0; j < 5; ++j)
             if (!(duel.bodies[0].arts & (1 << j))) {
                 frame(747, 399 + j * 36, 312, 33, night);
@@ -1282,7 +1308,7 @@ class Game {
         for (int j = 0; j < 5; j++)
             buttons.push_back({{747, 399 + j * 36, 312, 33}, "CAST", 710 + j});
         if (paused) {
-            rect(AX, AY, 24 * S, 18 * S, {19, 35, 39, 110});
+            rect(24, 158, 696, 522, {19, 35, 39, 110});
             frame(194, 332, 340, 111, paper);
             label(222, 353, "A MOMENT TO THINK", ink, 2);
             tag(701, 221, 394, 284, "RESUME [P]");
@@ -1322,8 +1348,13 @@ class Game {
                           num(camp::trust_needed(sp)),
                       jade, 2);
                 if (camp::befriended(state, sp))
-                    label(340, 430, "A NEW FRIEND / AVAILABLE IN YOUR SPIRIT BOOK", moss, 1);
-                else
+                    label(340, 430, "A FRIEND / AVAILABLE IN YOUR SPIRIT BOOK", moss, 1);
+                else if (!camp::friendship_ready(state))
+                    label(340, 430,
+                          "FRIENDLY PRACTICE / " + num(state.victories + state.defeats) +
+                              " OF 6 CHALLENGES",
+                          moss, 1);
+                else if (state.companions[sp].trust > 0)
                     tag(223, 340, 426, 518, "OFFER 3 THREADS TO GROW TRUST");
             } else {
                 auto lines = wrap(
@@ -1632,13 +1663,15 @@ class Game {
         frame(70, 92, 960, 620, paper);
         label(104, 122, "A KEEPER'S FIELD GUIDE", ink, 3);
         const char *lines[] = {"WASD / ARROWS WALK. CLICK A PLACE TO WALK THERE. SHIFT HURRIES.",
+                               "F CALLS ATTACK. G FALLS BACK. C RESTS. V TRUSTS THE SPIRIT.",
+                               "CALLS LAST 3 COMBAT SECONDS; COMMITTED ARTS MUST FINISH.",
                                "E / ENTER INTERACTS WITH THE NEAREST MARKED PLACE.",
                                "GOLD MARKERS AND THE JOURNAL FOLLOW THE MAIN STORY.",
                                "B OPENS YOUR SPIRITS. TAB OPENS THE TRAVEL ATLAS.",
-                               "FIRST MEETINGS BUILD TRUST EVEN IN DEFEAT. NO CAPTURE DICE.",
+                               "AFTER 6 CHALLENGES, MEETINGS BUILD TRUST, EVEN IN DEFEAT.",
                                "OFFER 3 THREADS AFTER FIRST CONTACT TO DEEPEN TRUST.",
                                "SANCTUARIES RECOVER EVERYONE AND REFILL 3 REMEDIES.",
-                               "IN BATTLE, YOUR SPIRIT CAN PILOT ITSELF WITH ITS LEARNED BRAIN.",
+                               "BONDS 1-2 USE BEGINNER ASSISTANCE; 3+ USE THE LEARNED PILOT.",
                                "M TAKES DIRECT CONTROL. WASD MOVE, MOUSE AIM, 1-4 ARTS.",
                                "SPACE DODGES. P PAUSES. R USES ONE REMEDY PER ROUND.",
                                "Z / X SET WIND CAST STRENGTH. H SHOWS EXACT GEOMETRY.",
@@ -1649,7 +1682,7 @@ class Game {
         int y = 179;
         for (auto &l : lines) {
             label(105, y, l, ink, 1);
-            y += 28;
+            y += 25;
         }
         tag(104, 724, 642, 265, "BACK");
     }
@@ -1784,7 +1817,7 @@ class Game {
             return;
         }
         if (id >= 10 && id <= 12) {
-            const int ids[] = {0, 6, 35};
+            const auto &ids = camp::Starters;
             begin(ids[id - 10]);
             return;
         }
@@ -1966,6 +1999,18 @@ class Game {
             }
             return;
         }
+        if (id >= 704 && id <= 707) {
+            if (screen != Battle || duel.terminal || duel.truncated)
+                return;
+            manual = false;
+            pending_ability = 0;
+            command(duel, 0,
+                    id == 704   ? Attack
+                    : id == 705 ? Retreat
+                    : id == 706 ? Conserve
+                                : Free);
+            return;
+        }
         if (id >= 710 && id < 715) {
             if (!(duel.bodies[0].arts & (1 << (id - 710)))) {
                 message = "THIS ART AWAKENS AT BOND " + num(id == 714 ? 2 : id - 709);
@@ -2031,7 +2076,8 @@ class Game {
     Game(SDL_Window *w, Brain &b, const std::filesystem::path &art, Options opts)
         : window(w), brain(b), options(std::move(opts)) {
         preview = options.scene != 0;
-        art_ready = interior.load(art / "journey-inn.rgba", 1, 1) &&
+        art_ready = wayfarer.load(art / "wayfarer-atlas.rgba", 4, 4) &&
+                    interior.load(art / "journey-inn.rgba", 1, 1) &&
                     biomes.load(art / "journey-biomes-atlas.rgba", 4, 8, false, false, true) &&
                     props.load(art / "journey-props-atlas.rgba", 8, 4) &&
                     cover.load(art / "journey-atlas.rgba", 1, 1);
@@ -2083,8 +2129,11 @@ class Game {
             else if (options.scene == 3)
                 screen = Party;
             else if (options.scene == 4) {
-                if(options.region==0) { state=camp::new_journey(options.seed,0);state.cleared[1]=1; }
-                site = 3;
+                if (options.region == 0) {
+                    state = camp::new_journey(options.seed, 0);
+                    state.cleared[1] = 1;
+                }
+                site = options.focus_site >= 0 ? options.focus_site : 3;
                 start_match();
                 for (int t = 0; t < 12; ++t)
                     advance_battle();
@@ -2131,6 +2180,22 @@ class Game {
                 add_note_text("The first lesson is easy to read.\n\nThe attack flashes clearly, "
                               "but I would like a longer pause before the next exchange.\n\nTry "
                               "making the recovery animation hold its final frame for a beat.");
+            } else if (options.scene == 20) {
+                state.region = 0;
+                state.party = {5, 0, -1};
+                site = 3;
+                start_match();
+                duel.bodies[0].pos = {duel.bodies[0].radius, duel.bodies[0].radius};
+                duel.bodies[1].pos = {24 * Q - duel.bodies[1].radius,
+                                      18 * Q - duel.bodies[1].radius};
+            } else if (options.scene == 21) {
+                state.region = 0;
+                site = 6;
+                start_match();
+                duel.bodies[0].pos = {14 * Q, 9 * Q};
+                duel.bodies[1].pos = {12 * Q, 9 * Q};
+                for (int tick = 0; tick < 30; tick += DecisionTicks)
+                    step(duel, {Action{}, Action{0, 0, Q, 0, tick == 0 ? 4 : 0}});
             } else if (options.scene == 17 || options.scene == 18) {
                 for (int j : {1, 3, 4, 6, 9, 11, 12, 16})
                     state.cleared[state.region * 20 + j] = 1;
@@ -2151,6 +2216,7 @@ class Game {
         std::cout << "Journey save: " << options.save_path << "\n";
     }
     ~Game() {
+        wayfarer.free();
         props.free();
         cover.free();
         biomes.free();
@@ -2200,6 +2266,29 @@ class Game {
             while (screen == Dialogue)
                 choose(110);
             check(screen == Battle, "lesson encounter starts");
+            choose(705);
+            check(duel.bodies[0].guidance == Retreat && !manual, "keeper retreat call starts");
+            choose(701);
+            int call_age = duel.bodies[0].guidance_age;
+            choose(1100);
+            close_notebook();
+            check(duel.bodies[0].guidance_age == call_age && paused,
+                  "notebook preserves paused call");
+            choose(701);
+            choose(704);
+            check(duel.bodies[0].guidance == Attack, "attack replaces retreat call");
+            duel.bodies[0].guidance_age = 90;
+            advance_battle();
+            check(duel.bodies[0].guidance == Free, "call expires after three combat seconds");
+            for (int species = 0; species < SpeciesCount; ++species) {
+                int radius = Roster[species].radius, size = tinikami::sprite_size(species);
+                int left = JourneyAX + radius * JourneyScale / Q - size / 2;
+                int top = JourneyAY + radius * JourneyScale / Q - size * 88 / 96 - 10;
+                int right = JourneyAX + (24 * Q - radius) * JourneyScale / Q + size / 2;
+                int bottom = JourneyAY + (18 * Q - radius) * JourneyScale / Q + size * 8 / 96;
+                check(left >= 24 && right <= 720 && top >= 158 && bottom <= 680,
+                      "species sprite and health fit at all arena corners");
+            }
             int note_tick = duel.tick;
             bool note_paused = paused;
             choose(1100);
@@ -2295,7 +2384,7 @@ class Game {
             std::error_code ignored;
             std::filesystem::remove_all(options.save_path.parent_path(), ignored);
             std::cout << checks
-                      << " campaign controller checks passed, including a real learned-pilot "
+                      << " campaign controller checks passed, including a real campaign-pilot "
                          "encounter.\n";
             return 0;
         } catch (const std::exception &e) {
@@ -2448,6 +2537,14 @@ class Game {
                             choose(701);
                         else if (k == SDLK_r)
                             choose(702);
+                        else if (k == SDLK_f)
+                            choose(704);
+                        else if (k == SDLK_g)
+                            choose(705);
+                        else if (k == SDLK_c)
+                            choose(706);
+                        else if (k == SDLK_v)
+                            choose(707);
                         else if (k == SDLK_h)
                             show_hitboxes = !show_hitboxes;
                         else if (k >= SDLK_1 && k <= SDLK_4)
@@ -2519,7 +2616,7 @@ class Game {
                 }
             }
             if (screen == Battle && !paused && !preview) {
-                accumulator += dt * (duel.bodies[0].pace < 80 ? .8 : 1.0);
+                accumulator += dt * .75;
                 while (accumulator >= .1 && screen == Battle) {
                     advance_battle();
                     accumulator -= .1;

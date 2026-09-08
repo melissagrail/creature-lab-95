@@ -55,7 +55,8 @@ void circle(int x, int y, int radius, SDL_Color c, bool fill = false) {
                            x + int(std::cos(b) * radius), y + int(std::sin(b) * radius));
     }
 }
-constexpr int AX = 24, AY = 158, S = 29;
+int AX = 24, AY = 158, S = 29;
+constexpr int JourneyAX = 120, JourneyAY = 266, JourneyScale = 21;
 int sx(int x) {
     return AX + x * S / Q;
 }
@@ -218,7 +219,7 @@ int main(int argc, char **argv) {
         else if (a == "--save-path" && i + 1 < argc)
             journey_options.save_path = argv[++i];
         else if (a == "--journey-scene" && i + 1 < argc)
-            journey_options.scene = std::clamp(std::stoi(argv[++i]), 0, 19);
+            journey_options.scene = std::clamp(std::stoi(argv[++i]), 0, 21);
         else if (a == "--journey-site" && i + 1 < argc)
             journey_options.focus_site = std::clamp(std::stoi(argv[++i]), 0, 19);
         else if (a == "--journey-species" && i + 1 < argc)
@@ -831,7 +832,7 @@ int main(int argc, char **argv) {
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / JOURNEY ALPHA 0.11", white, 1);
+            label(720, 23, "F2 TINIKAMI / JOURNEY ALPHA 0.12", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);

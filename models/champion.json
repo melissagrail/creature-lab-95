@@ -3,7 +3,7 @@
     "format": 3,
     "rules": 9,
     "observations": 8,
-    "content": 574261014,
+    "content": 1437084325,
     "observation_size": 3628,
     "hidden": 96,
     "action_codec": "opponent-local-conditional-tanh-v2",
@@ -15,7 +15,7 @@
   },
   "parameters": 90727,
   "bytes": 362948,
-  "checksum": "a6a76794",
+  "checksum": "187a9a2f",
   "parameter_order": [
     {
       "name": "log_std",
@@ -188,13 +188,13 @@
     }
   ],
   "metadata": {
-    "source": "models/baselines/rules8/release-v10/apprentice.pt",
+    "source": "models/baselines/rules9/release-v11/apprentice.pt",
     "source_identity": {
       "format": 3,
-      "rules": 8,
-      "observations": 7,
+      "rules": 9,
+      "observations": 8,
       "content": 574261014,
-      "observation_size": 3620,
+      "observation_size": 3628,
       "hidden": 96,
       "action_codec": "opponent-local-conditional-tanh-v2",
       "personality": [
@@ -203,6 +203,6 @@
         "territory"
       ]
     },
-    "migration": "Eight zero-initialized development inputs; old weights retained. Campaign curriculum not retrained."
+    "migration": "Weights unchanged. Explicit warm start after Quillrat burst tuning; no training on keeper calls."
   }
 }

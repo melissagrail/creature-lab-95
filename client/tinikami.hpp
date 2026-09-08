@@ -258,6 +258,17 @@ void warning(const World &w, int owner, bool debug) {
         }
     } else if (m.kind == Nova) {
         disk(b.pos, m.radius);
+        if (starting) {
+            int segments = b.age * 96 / std::max(1, m.startup);
+            for (int n = 0; n < segments; ++n) {
+                double a = n * 6.283185307 / 96 - 1.570796327;
+                double z = (n + 1) * 6.283185307 / 96 - 1.570796327;
+                for (int edge : {55, 100})
+                    worldline(b.pos + Vec{int(std::cos(a) * (m.radius + edge)), int(std::sin(a) * (m.radius + edge))},
+                              b.pos + Vec{int(std::cos(z) * (m.radius + edge)), int(std::sin(z) * (m.radius + edge))},
+                              {255, 227, 145, 255});
+            }
+        }
         if (m.min_range)
             worldcircle(b.pos, m.min_range, ink);
         if (!starting)
@@ -293,8 +304,14 @@ struct View {
     std::array<int, 2> personality_ids;
     std::array<bool, 2> baseline;
     int finish_age = 0;
+    bool padded = false;
 };
 void draw(const World &w, const View &v) {
+    struct CameraScope {
+        int x = AX, y = AY, scale = S;
+        ~CameraScope() { AX = x; AY = y; S = scale; }
+    } camera;
+    if (v.padded) { AX = JourneyAX; AY = JourneyAY; S = JourneyScale; }
     rect(0, 0, 1100, 780, night);
     frame(10, 10, 1080, 760);
     label(28, 25, "TINIKAMI", ink, 4);
@@ -314,7 +331,7 @@ void draw(const World &w, const View &v) {
         : v.learned_b ? "B: SPIRIT [V]"
                       : "B: SCRIPT [V]",
         v.learned_b);
-    label(934, 68, "ALPHA 0.11", moss, 1);
+    label(934, 68, "ALPHA 0.12", moss, 1);
     tag(1, 24, 93, 88, v.paused ? "RESUME [P]" : "PAUSE [P]", v.paused);
     tag(3, 118, 93, 82, "RESET [R]");
     tag(4, 206, 93, 118, v.manual ? "YOU + SPIRIT" : "WATCH SPIRITS", v.manual);
@@ -328,9 +345,15 @@ void draw(const World &w, const View &v) {
                      : "M TO TAKE CONTROL",
           moss, 1);
     frame(20, 154, 704, 530, ink);
-    SDL_Rect clip{AX, AY, 24 * S, 18 * S};
+    SDL_Rect clip{24, 158, 696, 522};
     SDL_RenderSetClipRect(r, &clip);
+    if (v.padded) rect(24, 158, 696, 522, Gardens[w.arena].floor);
     background(w);
+    if (v.padded) {
+        SDL_Rect bounds{AX, AY, 24 * S, 18 * S};
+        color({167, 169, 141, 180});
+        SDL_RenderDrawRect(r, &bounds);
+    }
     for (const auto &g : w.surfaces)
         if (g.life)
             ground(g, w.tick, v.hitboxes);
@@ -447,8 +470,10 @@ void draw(const World &w, const View &v) {
             std::string name = ph == Startup ? m.name : ph == Recovery ? "RECOVER" : "";
             if (!name.empty()) {
                 int tw = int(name.size()) * 6 + 8;
-                rect(x - tw / 2, y + 36, tw, 13, night);
-                label(x - tw / 2 + 4, y + 39, name, ph == Startup ? paper : muted, 1);
+                int tx = std::clamp(x - tw / 2, clip.x, clip.x + clip.w - tw);
+                int ty = std::min(y + 36, clip.y + clip.h - 14);
+                rect(tx, ty, tw, 13, night);
+                label(tx + 4, ty + 3, name, ph == Startup ? paper : muted, 1);
             }
         }
     }

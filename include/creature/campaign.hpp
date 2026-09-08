@@ -7,6 +7,7 @@
 #include <vector>
 namespace creature::campaign {
 constexpr int RegionCount = 8, SiteCount = 20, MapWidth = 64, MapHeight = 48;
+constexpr std::array<int, 3> Starters{0, 1, 16};
 enum SiteKind {
     Sanctuary,
     Conversation,
@@ -96,6 +97,11 @@ Encounter walk_encounter(const State &, int choice);
 int encounter_reward(const State &, const Encounter &);
 bool trained_opponent(const State &, const Encounter &);
 Action opponent_action(const World &, const Encounter &, int round);
+// Short, deterministic keeper calls layered over the pilot's legal action.
+// This controller can later be replaced by a learned response to the same guidance input.
+Action companion_action(const World &, Action pilot);
+bool beginner_assistance(const Body &);
+bool friendship_ready(const State &);
 void prepare_garden(World &, const Encounter &, int round);
 void initialize_round(World &, const State &, const Encounter &, int round, int slot, int vitality,
                       int enemy_vitality);

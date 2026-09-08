@@ -20,6 +20,23 @@ uint32_t mix(uint32_t x) {
 }
 int index(int r, int s) { return r * SiteCount + s; }
 bool valid_species(int s) { return s >= 0 && s < SpeciesCount; }
+bool clear_path(const World &w, Vec start, Vec end, int padding) {
+    Vec delta = end - start;
+    int64_t squared = int64_t(delta.x) * delta.x + int64_t(delta.y) * delta.y;
+    for (const auto &o : w.obstacles) {
+        if (!o.radius)
+            continue;
+        Vec to = o.pos - start;
+        int64_t along =
+            std::clamp(int64_t(to.x) * delta.x + int64_t(to.y) * delta.y, int64_t(0), squared);
+        Vec closest =
+            squared ? start + Vec{int(delta.x * along / squared), int(delta.y * along / squared)}
+                    : start;
+        if (length(o.pos - closest) < o.radius + padding)
+            return false;
+    }
+    return true;
+}
 void fill_party(State &s, int species) {
     if (!befriended(s, species))
         return;
@@ -82,7 +99,7 @@ template <class F> void fields(State &s, F f, bool legacy = false) {
 State new_journey(uint32_t seed, int starter) {
     State s;
     s.seed = seed ? seed : 1;
-    if (starter != 0 && starter != 6 && starter != 35)
+    if (starter != 0 && starter != 1 && starter != 16 && starter != 6 && starter != 35)
         starter = 0;
     s.party = {starter, -1, -1};
     for (int i = 0; i < SpeciesCount; ++i) {
@@ -121,11 +138,18 @@ bool accessible(const State &s, int region) {
 bool available(const State &s, int region, int site) {
     if (!accessible(s, region) || site < 0 || site >= SiteCount)
         return false;
+    // Hearthmere is an open teaching village. The journal suggests an order; only
+    // the keeper and the road beyond still require the story to be completed.
+    if (region == 0 && site != 16 && site != 17 && site != 18)
+        return true;
     if (Regions[region].sites[site].kind == Wild &&
         s.companions[Regions[region].sites[site].species].trust > 0)
         return true;
     int prior = Regions[region].sites[site].prerequisite;
     return prior < 0 || s.cleared[index(region, prior)];
+}
+bool friendship_ready(const State &s) {
+    return s.victories + s.defeats >= 6 || collection_count(s) > 1;
 }
 int objective(const State &s) {
     for (int site : {1, 3, 4, 6, 9, 11, 12, 16, 17})
@@ -201,8 +225,8 @@ bool solve_puzzle(State &s, int site, const std::array<int, 3> &bells) {
     return true;
 }
 bool offer_thread(State &s, int species) {
-    if (!valid_species(species) || befriended(s, species) || s.threads < 3 ||
-        s.companions[species].trust < 1)
+    if (!friendship_ready(s) || !valid_species(species) || befriended(s, species) ||
+        s.threads < 3 || s.companions[species].trust < 1)
         return false;
     s.threads -= 3;
     ++s.companions[species].trust;
@@ -258,9 +282,12 @@ Encounter encounter(const State &s, int site) {
     if (s.region == 0 && n.kind == Trial) {
         e.rounds = 1;
         int step = s.lessons[lesson_index(site)];
-        static const int practice[] = {6, 35, 6, 35};
-        e.enemies[0] = site <= 6 ? (step % 2 ? 6 : 35) : practice[(step + lesson_index(site)) % 4];
+        e.enemies[0] = site == 6 || site == 12 ? 10 : 35;
         e.styles[0] = step % 2;
+    }
+    if (s.region == 0 && n.kind == Keeper) {
+        e.rounds = 1;
+        e.enemies[0] = 10;
     }
     return e;
 }
@@ -272,8 +299,38 @@ bool trained_opponent(const State &s, const Encounter &e) {
 }
 Action opponent_action(const World &w, const Encounter &e, int round) {
     auto action = scripted(w, 1, e.styles[std::clamp(round, 0, 4)]);
-    if (e.region == 0 && !e.walk && e.site >= 0 && e.site < SiteCount &&
-        Regions[0].sites[e.site].kind == Trial) {
+    if (e.region == 0 && !e.walk && e.site >= 0 && e.site < SiteCount) {
+        bool lesson = Regions[0].sites[e.site].kind == Trial;
+        const auto &b = w.bodies[1];
+        // Quillrat teaches one unmistakable burst: approach, plant, charge, recover.
+        // The keeper adds its ordinary ranged art between bursts.
+        if (b.species == 10 && (lesson || e.site == 16)) {
+            Vec toward = w.bodies[0].pos - b.pos;
+            int distance = length(toward);
+            Vec direction = unit(toward);
+            action = {direction.x, direction.y, direction.x, direction.y, 0};
+            if (distance < 3000 || b.move >= 0 || w.tick % 210 >= 150)
+                action.mx = action.my = 0;
+            Vec from_centre = b.pos - Vec{12 * Q, 9 * Q};
+            bool yield_lotus = lesson && w.objective && length(from_centre) < 3000;
+            if (yield_lotus && b.move < 0) {
+                Vec away = length(from_centre) ? unit(from_centre) : Vec{Q, 0};
+                action.mx = away.x;
+                action.my = away.y;
+            }
+            auto mask = action_mask(w, 1);
+            if (!yield_lotus && distance < 3900 && mask[4])
+                action.ability = 4;
+            else if (!lesson && distance >= 3900 && w.tick % 120 < DecisionTicks && mask[1])
+                action.ability = 1;
+            return action;
+        }
+        if (!lesson) {
+            // Local wild partners leave a readable gap between commitments, too.
+            if (w.tick % 75 >= DecisionTicks)
+                action.ability = 0;
+            return action;
+        }
         // These are teaching partners. An attack opportunity every three seconds leaves
         // a clear observation-response-recovery rhythm; the actual art uses normal physics.
         if (action.ability == 5) {
@@ -295,6 +352,97 @@ Action opponent_action(const World &w, const Encounter &e, int round) {
         }
     }
     return action;
+}
+bool beginner_assistance(const Body &b) { return b.pace <= 75; }
+Action companion_action(const World &w, Action pilot) {
+    const auto &b = w.bodies[0];
+    // Beginners approach, face and plant for an affordable attack. They do not
+    // automatically read the slow burst: learning when to call retreat is the lesson.
+    int directive = b.guidance_age < 90 ? b.guidance : Free;
+    if (directive == Free && beginner_assistance(b))
+        directive = Attack;
+    if (directive == Free)
+        return pilot;
+    if (b.move >= 0)
+        return {0, 0, b.locked.x, b.locked.y, 0};
+    Vec delta = w.bodies[1].pos - b.pos;
+    Vec aim = unit(delta);
+    if (directive == Retreat) {
+        // Turn and run forward: backing away at reverse speed is deliberately slower.
+        // At an edge choose the safest reachable heading, rather than pushing into it.
+        Vec best{};
+        int best_score = -100000000;
+        for (Vec candidate : {Vec{Q, 0}, Vec{-Q, 0}, Vec{0, Q}, Vec{0, -Q}, Vec{724, 724},
+                              Vec{-724, 724}, Vec{724, -724}, Vec{-724, -724}}) {
+            Vec end = b.pos + scale(candidate, 2200);
+            if (end.x < b.radius || end.x > 24 * Q - b.radius || end.y < b.radius ||
+                end.y > 18 * Q - b.radius)
+                continue;
+            bool blocked = false;
+            for (const auto &o : w.obstacles)
+                for (int sample = 1; sample <= 3; ++sample)
+                    if (o.radius && length(b.pos + scale(end - b.pos, sample, 3) - o.pos) <
+                                        o.radius + b.radius + 250)
+                        blocked = true;
+            if (blocked)
+                continue;
+            int score = length(end - w.bodies[1].pos);
+            if (score > best_score) {
+                best_score = score;
+                best = candidate;
+            }
+        }
+        return {best.x, best.y, best.x, best.y, 0};
+    }
+    if (directive == Conserve)
+        return {0, 0, aim.x, aim.y, 0};
+    auto mask = action_mask(w, 0);
+    int choice = 0, reach = 1000;
+    bool obstructed = !clear_path(w, b.pos, w.bodies[1].pos, 150);
+    // Request the first affordable offensive art whose actual reach covers the target.
+    for (int slot = 0; slot < 4; ++slot) {
+        const auto &m = move_for(b, slot);
+        if (!(b.arts & (1 << slot)) || m.damage <= 0)
+            continue;
+        int range = m.kind == Nova ? m.radius : m.kind == Melee ? m.range / 2 + m.radius : m.range;
+        if (m.kind == Field || m.kind == Trap)
+            range += m.radius;
+        if (m.kind == Lunge)
+            range += m.speed * m.active;
+        reach = std::max(reach, range + w.bodies[1].radius - 200);
+        if (!choice && !obstructed && mask[slot + 1] &&
+            length(delta) >= m.min_range + (m.min_range ? w.bodies[1].radius : 0) &&
+            length(delta) <= range + w.bodies[1].radius - 100) {
+            choice = slot + 1;
+            int lead = m.startup + (m.kind == Bolt && m.speed ? length(delta) / m.speed : 0);
+            aim = unit(delta + scale(w.bodies[1].vel, std::min(45, lead), 1));
+            if (m.kind == Field || m.kind == Trap || m.kind == Turret)
+                aim = scale(aim, std::min(Q, length(delta) * Q / std::max(1, m.range)));
+        }
+    }
+    if (choice)
+        return {0, 0, aim.x, aim.y,
+                int64_t(unit(aim).x) * b.aim.x + int64_t(unit(aim).y) * b.aim.y >= Q * Q * 97 / 100
+                    ? choice
+                    : 0};
+    if (length(delta) > reach || obstructed) {
+        Vec best{};
+        int score = -100000000;
+        for (Vec candidate : {unit(delta), Vec{Q, 0}, Vec{-Q, 0}, Vec{0, Q}, Vec{0, -Q},
+                              Vec{724, 724}, Vec{-724, 724}, Vec{724, -724}, Vec{-724, -724}}) {
+            Vec end = b.pos + scale(candidate, 900);
+            if (end.x < b.radius || end.x > 24 * Q - b.radius || end.y < b.radius ||
+                end.y > 18 * Q - b.radius || !clear_path(w, b.pos, end, b.radius + 50))
+                continue;
+            int merit = -length(w.bodies[1].pos - end);
+            if (merit > score) {
+                score = merit;
+                best = candidate;
+            }
+        }
+        return {best.x, best.y, best.x, best.y, 0};
+    }
+    return {0, 0, aim.x, aim.y, 0};
 }
 int encounter_reward(const State &s, const Encounter &e) {
     return e.rounds * (e.walk && s.walk_choice == 1 ? 3 : 2);
@@ -336,7 +484,7 @@ bool resolve(State &s, const Encounter &e, bool won, const std::array<int, 3> &v
             rest(s);
         } else
             s.cleared[index(e.region, e.site)] = 1;
-        if (n.kind == Wild) {
+        if (n.kind == Wild && friendship_ready(s)) {
             auto &c = s.companions[n.species];
             c.trust = std::min(trust_needed(n.species), c.trust + 1);
             fill_party(s, n.species);
@@ -344,13 +492,15 @@ bool resolve(State &s, const Encounter &e, bool won, const std::array<int, 3> &v
         if (n.kind == Keeper)
             rest(s);
     } else {
+        if (!withdrew)
+            ++s.defeats;
         // A first completed friendly challenge builds recognition even in defeat.
         // Retreat is not a completed meeting; it never grants acquisition progress.
-        if (!withdrew && n.kind == Wild && s.companions[n.species].trust == 0) {
+        if (!withdrew && n.kind == Wild && friendship_ready(s) &&
+            s.companions[n.species].trust == 0) {
             s.companions[n.species].trust = 1;
             fill_party(s, n.species);
         }
-        ++s.defeats;
         s.walk_region = -1;
         s.walk_depth = 0;
         rest(s);
@@ -428,28 +578,62 @@ void initialize_round(World &w, const State &s, const Encounter &e, int round, i
     if (e.walk)
         foe_rank = std::max(3, foe_rank);
     auto foe_growth = development(foe_rank);
+    if (e.region == 0 && !e.walk && e.enemies[round] == 10 &&
+        (Regions[0].sites[e.site].kind == Trial || e.site == 16))
+        foe_growth = {e.site == 16 ? 9 : 8, 65, 700, 70};
     configure_development(w, 0, own_growth.arts, own_growth.pace, own_growth.capacity,
                           own_growth.recovery);
     configure_development(w, 1, foe_growth.arts, foe_growth.pace, foe_growth.capacity,
                           foe_growth.recovery);
     if (e.region == 0 && !e.walk) {
-        // Teach the basic attack/recovery loop before wind, surfaces and territory contests.
+        // One spatial idea per garden, without early weather or layered hazards.
         w.surfaces = {};
         w.wind_base = {};
         w.winds = {};
         w.rain = w.wetness = 0;
         w.vane_enabled = 0;
-        if (e.site <= 6) {
-            w.objective = 0;
-            w.obstacles = {};
-            w.bodies[0].pos = {9 * Q, 9 * Q};
-            w.bodies[1].pos = {15 * Q, 9 * Q};
+        w.objective = e.site == 9 || e.site == 12;
+        for (auto &o : w.obstacles)
+            o.radius = 0;
+        w.bodies[0].pos = {8 * Q, 9 * Q};
+        w.bodies[1].pos = {16 * Q, 9 * Q};
+        int teacher = lesson_index(e.site);
+        if (teacher >= 0) {
+            int lesson = s.lessons[teacher] % lesson_count(e.site);
+            // Same spatial vocabulary, different approach angles within each lesson set.
+            int offset = lesson == 1 ? -2 : lesson == 2 ? 2 : 0;
+            w.bodies[0].pos.y += offset * Q;
+            w.bodies[1].pos.y -= offset * Q;
         }
-        if (Regions[0].sites[e.site].kind == Trial) {
-            w.obstacles = {};
-            w.bodies[0].pos = {9 * Q, 9 * Q};
-            w.bodies[1].pos = {15 * Q, 9 * Q};
-            w.bodies[1].hp = std::max(1, w.bodies[1].hp * (e.site == 3 ? 45 : 60) / 100);
+        if (e.site == 3) {
+            // Two stepping stones leave an open central lane and distinct flanks.
+            w.obstacles[0] = {{12 * Q, 5 * Q}, 900};
+            w.obstacles[1] = {{12 * Q, 13 * Q}, 900};
+        } else if (e.site == 6) {
+            // Charge lesson: generous escape space, with a stone behind each start.
+            w.obstacles[0] = {{4 * Q, 9 * Q}, 900};
+            w.obstacles[1] = {{20 * Q, 9 * Q}, 900};
+        } else if (e.site == 9) {
+            // A fork around two rocks leads to the lotus; each flank has soft ground.
+            w.obstacles[0] = {{12 * Q, 5 * Q}, 1100};
+            w.obstacles[1] = {{12 * Q, 13 * Q}, 1100};
+            w.surfaces[0] = {{8 * Q, 13 * Q}, 1500, Mud, MaxTicks, -1, Mud, 0, {}};
+            w.surfaces[1] = {{16 * Q, 5 * Q}, 1500, Mud, MaxTicks, -1, Mud, 0, {}};
+        } else if (e.site == 12 || e.site == 16) {
+            // Broad wet corners leave a dry cross through the charge arena.
+            for (int j = 0; j < 4; ++j)
+                w.surfaces[j] = {{(j % 2 ? 18 : 6) * Q, (j / 2 ? 14 : 4) * Q},
+                                 1800,
+                                 Water,
+                                 MaxTicks,
+                                 -1,
+                                 Water,
+                                 0,
+                                 {}};
+        } else {
+            int offset = e.site % 3 - 1;
+            w.obstacles[0] = {{12 * Q, (5 + offset) * Q}, 1000};
+            w.obstacles[1] = {{12 * Q, (13 + offset) * Q}, 1000};
         }
     }
     int charm = s.companions[own].charm;
@@ -525,16 +709,18 @@ std::string lesson_brief(const State &s, int site) {
     if (s.region != 0 || i < 0)
         return "";
     static const char *tips[] = {
-        "ONE ART, ONE OPPONENT. Your teacher attacks, then pauses to let you answer. Face your "
-        "partner, plant your feet to attack, then let your energy return. Watch the bright windup "
-        "before stepping clear.",
-        "FIND YOUR RHYTHM. Approach facing forward. Backing away is slower. Pause between attacks "
-        "to recover breath. Eight successful lessons open the first wild habitat.",
-        "A SECOND CHOICE. Your teacher leaves the lotus for you to claim. Keepers will contest it "
-        "later. At bond 2, your second art and a paid dodge awaken. They share energy. The lotus "
-        "in the centre now offers another way to win.",
-        "PUT IT TOGETHER. Choose when to attack, dodge, or hold the centre. Your first companion "
-        "can join you. The keeper ahead is your first three-opponent relay."};
+        "CALL AND ANSWER. Your spirit pilots itself. Press F to ask for an attack, G to fall "
+        "back, or C to rest. Calls last three combat seconds. They never cancel an art already "
+        "committed. The two stones offer cover; the middle lane is open.",
+        "READ THE BIG CIRCLE. Quillrat plants its feet and charges a wide burst for two combat "
+        "seconds. Call FALL BACK [G] while the gold circle fills. When the burst ends, call "
+        "ATTACK [F] during its long recovery. Start your retreat before it flashes.",
+        "CHOOSE A ROUTE. Two stones split the approach to the lotus. Mud slows a flank. Your "
+        "second art and dodge awaken at bond 2, after eight wins. You can win this lesson by "
+        "holding the lotus or by outlasting your partner.",
+        "PUT IT TOGETHER. Quillrat's burst threatens the dry crossing. Wet corners offer another "
+        "route. Call a retreat before the burst, then return. The keeper ahead uses one full "
+        "health spirit, combining this burst with a ranged attack."};
     return "LESSON " + std::to_string(std::min(s.lessons[i] + 1, lesson_count(site))) + " / " +
            std::to_string(lesson_count(site)) + "|" + tips[i] +
            "|Each lesson is one short duel, followed by free recovery. Return here for the next "
@@ -635,13 +821,16 @@ bool deserialize(State &s, const uint8_t *p, size_t n) {
         legacy);
     if (legacy) {
         int sites[] = {3, 6, 9, 12};
-        int credited=0;
+        int credited = 0;
         for (int j = 0; j < 4; ++j) {
-            if (candidate.cleared[sites[j]]) candidate.lessons[j] = lesson_count(sites[j]);
-            credited+=candidate.lessons[j];
+            if (candidate.cleared[sites[j]])
+                candidate.lessons[j] = lesson_count(sites[j]);
+            credited += candidate.lessons[j];
         }
-        for(int id:candidate.party) if(id>=0 && id<SpeciesCount)
-            candidate.companions[id].experience=std::max(candidate.companions[id].experience,credited*15);
+        for (int id : candidate.party)
+            if (id >= 0 && id < SpeciesCount)
+                candidate.companions[id].experience =
+                    std::max(candidate.companions[id].experience, credited * 15);
     }
     if (!validate(candidate))
         return false;

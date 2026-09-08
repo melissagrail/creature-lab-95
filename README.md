@@ -1,4 +1,4 @@
-# Tinikami: The Unwritten Road — journey alpha 0.11
+# Tinikami: The Unwritten Road — journey alpha 0.12
 
 A creature-collector campaign built around deterministic, real-time C++ combat and lightweight learned spirit pilots. Walk an eight-region road, meet forty original spirits, restore the sanctuary bells, and decide what happens to the broken Crown.
 
@@ -38,9 +38,9 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 ## The journey
 
 - **Eight distinct overworlds and 160 marked locations:** visible spirit habitats, conversations, road trials, memory markers, riddles, sanctuaries and keepers.
-- **Forty obtainable companions:** a completed first friendly challenge earns recognition even in defeat. Further victories or thread offerings deepen trust. There are no capture dice, random encounters or permanent losses.
+- **Forty obtainable companions:** after the opening six completed challenges, a completed first friendly challenge earns recognition even in defeat. Further victories or thread offerings deepen trust. There are no capture dice, random encounters or permanent losses.
 - **Three-companion parties:** condition carries across combat relays. Bond experience gradually opens arts, dodge, speed, energy and charms; village requests unlock more preparation choices. The sanctuary recovers everyone freely.
-- **A starter apprenticeship:** fourteen short lessons, with eight wins before the first new habitat; young spirits begin with one art.
+- **An open starter apprenticeship:** explore every Hearthmere habitat immediately; friendship starts after six completed challenges. Fourteen lessons teach keeper calls, cover, a slow charged burst and the lotus. Young spirits begin with one art.
 - **An in-game design notebook:** F7 pauses play, records feedback and attaches location/encounter context. Notes survive new journeys.
 - **Eight optional Lantern Walks:** branching eight-room expeditions, campfires, persistent condition and a final relay. Save between rooms or return home with earned rewards.
 - **A complete story route and two endings**, followed by free exploration and collection.
@@ -55,6 +55,7 @@ ctest --test-dir build-cmake -C Release --output-on-failure
 | World | WASD/arrows or click to walk; Shift to hurry; E/Enter to interact |
 | Navigation | B companions; Tab travel atlas; J journal; Escape help |
 | Combat | M manual/pilot; WASD movement; mouse aim; 1–4 arts; Space dodge |
+| Keeper calls | F attack; G fall back; C rest; V trust the spirit. Calls last three combat seconds. |
 | Combat tools | P pause; R remedy; Z/X wind strength; H exact geometry; Escape retreat |
 | Everywhere | F7 design notebook; F8 music; F5 save outside combat |
 
@@ -64,9 +65,11 @@ Saves live in SDL's per-user application-data directory, separate from the check
 
 The engine runs at 30 fixed integer ticks per second, with three-tick decisions. Fully developed species share a 100-energy pool across four arts and dodge. Campaign companions start with one art, a 60-energy cap and a slower pace; bond growth expands their kit. Forward travel remains free; sustained hard strafing suppresses regeneration, drains energy and loses lateral drive at low reserves. Finite cornering acceleration prevents instantaneous high-speed changes of travel direction. Planted casts, facing, turn rate, terrain reactions, wind and the central control objective provide counterplay.
 
+Bond 1–2 companions use clearly labeled beginner assistance to approach, face and plant for attacks; bond 3+ uses the learned pilot. Keeper calls are deterministic three-second controller instructions, not newly trained behavior. All campaign fights run at 75% presentation speed: the 90-combat-second limit allows about two real minutes, with pause and the notebook stopping the clock.
+
 The native recurrent controller has **90,727 parameters** and separate memory per actor. Species embeddings, ability-conditioned movement/aim and three temperament inputs support steady, aggressive, skittish, patient and territorial pilots. Campaign companions have reproducible individual trait variations. Gameplay does not silently train or change weights.
 
-Rules are **v9**, observations **v8** (3,628 values), model format **v3**. Older models and replays are rejected. The shipped weights are explicitly expanded from v0.10; they have not been retrained on the new development curriculum. Explicit warm-start migration and training provenance are included. [Movement and training results](docs/alpha/footwork.md), [integration contract](docs/integration.md), [model manifest](models/README.md).
+Rules are **v9**, observations **v8** (3,628 values), model format **v3**. Older models and replays are rejected. The shipped weights are explicitly expanded from v0.10, then carried forward unchanged after Quillrat burst tuning; they have not been retrained on the development curriculum or keeper calls. Explicit warm-start migration and training provenance are included. [Movement and training results](docs/alpha/footwork.md), [integration contract](docs/integration.md), [model manifest](models/README.md).
 
 ## Develop and verify
 

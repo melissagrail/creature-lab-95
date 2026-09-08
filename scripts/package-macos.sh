@@ -2,7 +2,8 @@
 set -eu
 cd "$(dirname "$0")/.."
 make viewer
-bundle="build/Tinikami.app"
+staging="$(mktemp -d build/package.XXXXXX)"
+bundle="$staging/Tinikami.app"
 mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Frameworks" "$bundle/Contents/Resources/tinikami/animations" "$bundle/Contents/Resources/models"
 cp build/creature_lab "$bundle/Contents/MacOS/creature_lab"
 cp assets/tinikami/*.rgba "$bundle/Contents/Resources/tinikami/"
@@ -27,8 +28,8 @@ cat > "$bundle/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>Tinikami</string>
 <key>CFBundleIconFile</key><string>Tinikami.icns</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>11</string>
-<key>CFBundleShortVersionString</key><string>0.11.0</string>
+<key>CFBundleVersion</key><string>12</string>
+<key>CFBundleShortVersionString</key><string>0.12.0</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
@@ -38,4 +39,10 @@ codesign --force --sign - "$bundle"
 codesign --verify --deep --strict "$bundle"
 archive="build/Tinikami-macOS-$(uname -m).zip"
 ditto -c -k --sequesterRsrc --keepParent "$bundle" "$archive"
+if [ -d build/Tinikami.app ]; then
+    mv build/Tinikami.app "build/Tinikami-previous-$(date +%Y%m%d-%H%M%S).app"
+fi
+mv "$bundle" build/Tinikami.app
+rmdir "$staging"
+bundle="build/Tinikami.app"
 printf '%s\n' "Created $bundle and $archive (SDL2 and native models included; ad hoc signed)."

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(CreatureLab VERSION 0.11.0 LANGUAGES CXX)
+project(CreatureLab VERSION 0.12.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(creature SHARED src/sim.cpp src/content.cpp src/api.cpp)
@@ -56,3 +56,5 @@ target_include_directories(footwork_benchmark PRIVATE include)
 
 add_executable(apprenticeship_playthrough src/sim.cpp src/content.cpp src/campaign.cpp src/campaign_content.cpp agents/brain.cpp tests/apprenticeship_playthrough.cpp)
 target_include_directories(apprenticeship_playthrough PRIVATE include)
+add_test(NAME opening COMMAND apprenticeship_playthrough "${CMAKE_CURRENT_SOURCE_DIR}/models/apprentice.tbrain" "${CMAKE_CURRENT_BINARY_DIR}/opening.csv")
+add_test(NAME keeper_calls COMMAND apprenticeship_playthrough "${CMAKE_CURRENT_SOURCE_DIR}/models/apprentice.tbrain" "${CMAKE_CURRENT_BINARY_DIR}/keeper-calls.csv" calls)

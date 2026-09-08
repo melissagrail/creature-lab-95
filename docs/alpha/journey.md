@@ -1,4 +1,4 @@
-# The Unwritten Road — campaign alpha 0.11
+# The Unwritten Road — campaign alpha 0.12
 
 The combat laboratory now has a complete campaign route around it: an opening, eight regions, forty obtainable companions, persistent progression, a final decision and postgame exploration. This is a playable campaign alpha. **Twenty hours remains the intended release-length experience; it is not a measured duration of the current content.**
 
@@ -17,15 +17,15 @@ The sanctuary bells once carried names between villages. Keeper Nara tried to re
 | Inkshore | Diagonal coastline, piers and islands | Concealment, returns and delayed effects |
 | Hush Crown | Broken islands joined by narrow paths | Mixed terrain, wind and party adaptation |
 
-Each region contains twenty authored sites: a sanctuary, five species habitats, four road trials (two-spirit relays after Hearthmere; fourteen separate introductory lessons in Hearthmere), three main conversations, a village request, a memory, a cache, a bell riddle, a three-spirit keeper, an onward gate and an optional Lantern Walk. Roads and sites have different arrangements in every region. All 160 locations are checked for reachability. The world has visible encounters; walking through grass never launches a random battle.
+Each region contains twenty authored sites: a sanctuary, five species habitats, four road trials (two-spirit relays after Hearthmere; fourteen separate introductory lessons in Hearthmere), three main conversations, a village request, a memory, a cache, a bell riddle, a keeper (one spirit in Hearthmere, three thereafter), an onward gate and an optional Lantern Walk. Roads and sites have different arrangements in every region. All 160 locations are checked for reachability. The world has visible encounters; walking through grass never launches a random battle.
 
 The two final choices lead to different epilogues: shared keepership through an open circle, or an unbound road without a permanent keeper. Both leave the world available for collection and optional play.
 
 ## Companions and preparation
 
-Choose Cinderfox, Rimehare or Dewotter. Every species is available later regardless of the starter. A new journey creates a stored seed for individual temperaments; `--seed N` reproduces one deliberately.
+Choose Cinderfox, Brambleback or Galecrest. Existing Rimehare and Dewotter starter saves remain valid. Every species is available later regardless of the starter. A new journey creates a stored seed for individual temperaments; `--seed N` reproduces one deliberately.
 
-A completed first friendly encounter earns one trust mark even in defeat. Retreating does not. Further victories earn additional marks, or three memory threads buy one mark after recognition. Species need one, two or three marks according to their habitat tier. There are no capture probabilities. The spirit book holds every acquired species; three travel in the active party.
+After six opening challenges, a completed first friendly encounter earns one trust mark even in defeat. Retreating does not. Further victories earn additional marks, or three memory threads buy one mark after recognition. Species need one, two or three marks according to their habitat tier. There are no capture probabilities. The spirit book holds every acquired species; three travel in the active party.
 
 Bond experience is shared by the party after encounters. It records familiarity without increasing base HP or damage: the forty combat kits keep their common power budget. Bond ranks 2–4 unlock additional arts; rank 2 adds dodge and starting charms. Pace, capacity and recovery gradually increase through rank 5. [Full thresholds and opening sequence](development.md). Village requests add three further options. Temperaments can be changed in the spirit book, and each companion retains a small reproducible individual variation. This changes controller input; it does not retrain or edit the species' physics.
 
@@ -54,7 +54,7 @@ Walk with WASD/arrows or click a destination. Clicking the local map can plan a 
 
 B opens companions, Tab the travel atlas, J the journal, Escape the field guide. The companion book exposes exact move costs, timings, effects and physical characteristics under **Arts and Field Notes**. The title screen's **Sprite Studio** displays all thirty-two frames of any species and compares its world scale.
 
-In combat, M toggles learned pilot/manual control; WASD moves, mouse aims, 1–4 request arts, Space dodges. P pauses, R uses a remedy, H shows collision geometry, Z/X change wind strength, Escape retreats. The central garden's control bars provide an alternative win route. F8 toggles the original procedural soundtrack. The music accelerates for battle and varies its root by region.
+In combat, F calls attack, G falls back, C rests, and V returns to autonomy. Calls last three combat seconds. Bond 1–2 uses beginner assistance, bond 3+ the learned controller. M toggles pilot/manual control; WASD moves, mouse aims, 1–4 request arts, Space dodges. P pauses, R uses a remedy, H shows collision geometry, Z/X change wind strength, Escape retreats. The central garden's control bars provide an alternative win route. F8 toggles the original procedural soundtrack. The music accelerates for battle and varies its root by region.
 
 `Combat Lab.command` or `--workbench` opens the original debugging/research environment, including both skins, arbitrary matchups, snapshots and hash-checked replays. Campaign remedies and progression are external scenario interventions, so campaign play is not silently presented as an ordinary replay or PPO dataset.
 

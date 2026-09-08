@@ -38,7 +38,7 @@
           "species": 1,
           "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "I once kept the road between eight sanctuaries. Their bells carried names through the valley. When one bell fell silent, I tied its note to another. Then another. I thought I was helping.|Now every sound leads toward the Crown. First, learn to listen to the friend already beside you. The keeper at the First Breathing Space offers four quiet lessons. One art. One partner. Time to breathe.|Then practise at A Place to Stand. After eight successful lessons, the Ember Footbridge opens. Other habitats follow as you learn. Your companion awakens more arts through bond, not through collecting a crowd.",
+          "text": "I once kept the road between eight sanctuaries. Their bells carried names through the valley. When one bell fell silent, I tied its note to another. Then another. I thought I was helping.|The village is open to you. Meet the wild spirits, explore, or choose a teacher in any order. The gold marker is a suggestion. First, practise with the friend beside you: after six completed challenges, wild spirits begin to join your journey.|Your spirit pilots itself. F calls for an attack, G calls it back, and C asks it to rest. A call lasts three combat seconds. It cannot undo an attack already begun. Watch, listen, and answer.",
           "after": "The conversation has changed what you know. The next marked place on the road is now open."
         },
         {
@@ -47,7 +47,7 @@
           "y": 27,
           "kind": "Wild",
           "species": 0,
-          "prerequisite": 6,
+          "prerequisite": -1,
           "speaker": "Cinderfox / FIELD ENCOUNTER",
           "text": "It has arranged fallen twigs into a tiny hearth. Whenever the flame gutters, it offers another bright tail-spark. Nara says it follows travellers who know when to stop running.|FIELD NOTE / Move through its first flame, then give yourself room to recover. Its short reach makes chasing and retreating very different decisions.",
           "after": "The fox leaves one coal beside your boot. It stays warm even after the rain.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -58,9 +58,9 @@
           "y": 24,
           "kind": "Trial",
           "species": 35,
-          "prerequisite": 1,
+          "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "Four short lessons introduce facing, the first art, telegraphs, and recovery. Each is a separate duel. The teacher restores your companion after every success. Return here until all four lessons are complete.",
+          "text": "Four duels teach attack and retreat calls, with stepping stones for cover and an open lane. Partners begin at full health and leave long pauses between attacks. You recover freely after every lesson.",
           "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
@@ -69,7 +69,7 @@
           "y": 17,
           "kind": "Conversation",
           "species": 31,
-          "prerequisite": 3,
+          "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "The baker has been leaving bowls of milk for a creature made of embers. It cannot drink them. It comes anyway, to keep the bowls warm.|A name is not a description. It is a promise to notice someone again. Write that down before you go.",
           "after": "The conversation has changed what you know. The next marked place on the road is now open."
@@ -80,7 +80,7 @@
           "y": 13,
           "kind": "Wild",
           "species": 1,
-          "prerequisite": 9,
+          "prerequisite": -1,
           "speaker": "Brambleback / FIELD ENCOUNTER",
           "text": "A walking shrine blocks the path. Paper wishes flutter among its thorns. It will not move until somebody reads the smallest wish, written by a child who simply wanted a friend.|FIELD NOTE / Its rooted defense is strongest when you hurry into it. Draw out a commitment, then approach from another angle.",
           "after": "A fresh paper wish appears beneath the shrine roof. There is no name on it yet.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -91,9 +91,9 @@
           "y": 18,
           "kind": "Trial",
           "species": 1,
-          "prerequisite": 4,
+          "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "Four more one-on-one lessons practise approach, retreat, and the rhythm of spending breath. Your starter reaches bond 2 after eight lesson wins: a second art and a paid dodge awaken. The first wild habitat then opens.",
+          "text": "Quillrat offers four lessons in reading a large, slow burst. Call FALL BACK with G while its circle fills, then ATTACK with F in the recovery. A call cannot cancel a committed art.",
           "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
@@ -102,7 +102,7 @@
           "y": 23,
           "kind": "Wild",
           "species": 10,
-          "prerequisite": 16,
+          "prerequisite": -1,
           "speaker": "Quillrat / FIELD ENCOUNTER",
           "text": "Quillrat has collected every discarded shopping list in the village. It sorts them by the things people forgot. At the top of the pile is a note that says only: come home early.|FIELD NOTE / A prickly defender invites wasteful attacks. Wait for its resources to fall, then use an opening rather than a constant barrage.",
           "after": "A folded scrap appears in your field book. It is a list of places the two of you have not visited.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -124,9 +124,9 @@
           "y": 28,
           "kind": "Trial",
           "species": 31,
-          "prerequisite": 6,
+          "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "Three lessons introduce your second art, dodging, and holding the lotus. More choices draw on the same small energy pool. A deliberate pause can be the best move.",
+          "text": "Three lessons around a forked path and a lotus. Rocks block shots; muddy flanks slow movement. One simple art can still find several different answers.",
           "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
@@ -135,7 +135,7 @@
           "y": 35,
           "kind": "Wild",
           "species": 35,
-          "prerequisite": 16,
+          "prerequisite": -1,
           "speaker": "Dewotter / FIELD ENCOUNTER",
           "text": "Dewotter has tied a ribbon around every raindrop it could catch. By noon the ribbons are empty. It keeps them anyway, because the rain was here.|FIELD NOTE / Cleansing and return paths can reverse an exchange. Commit after the protective answer, and watch where the water will travel back.",
           "after": "An empty blue ribbon joins your book. It smells faintly of the river.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -146,7 +146,7 @@
           "y": 37,
           "kind": "Conversation",
           "species": 1,
-          "prerequisite": 9,
+          "prerequisite": -1,
           "speaker": "Sable",
           "text": "Sable is repairing the bridge alone. They wear the badge of the Census, the order that numbered every spirit in the valley.|If we could make them predictable, nobody would lose a home to a wandering storm, they say. You cannot dismiss that wish. But a number is a poor substitute for a conversation.",
           "after": "The conversation has changed what you know. The next marked place on the road is now open."
@@ -157,9 +157,9 @@
           "y": 35,
           "kind": "Trial",
           "species": 10,
-          "prerequisite": 11,
+          "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "Three final lessons put your new choices together. Start and stop on purpose; keep enough energy for an answer. The Hearth Bell ahead is the first three-opponent relay.",
+          "text": "Three lessons combine the big burst with a dry crossing and broad wet corners. Choose when to approach, when to leave, and when to reclaim the lotus.",
           "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
@@ -168,7 +168,7 @@
           "y": 13,
           "kind": "Wild",
           "species": 31,
-          "prerequisite": 16,
+          "prerequisite": -1,
           "speaker": "Orchardboar / FIELD ENCOUNTER",
           "text": "Orchardboar plants crooked saplings where the gardener wanted a straight fence. Every sapling has survived the storms. The fence has been replaced three times.|FIELD NOTE / A broad body can control a narrow lane. Use committed forward pressure thoughtfully; reversing out of every exchange gives away too much ground.",
           "after": "The gardener leaves a gap in the new fence.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
@@ -203,7 +203,7 @@
           "species": 1,
           "prerequisite": 12,
           "speaker": "The Hearth Bell",
-          "text": "The Hearth Bell contains one of Nara's memories: a village burning, a young keeper promising that nothing would ever surprise her again.|The bell challenges your companions. Do not rush every opening. Let them breathe. A road cannot begin with an exhausted traveller.",
+          "text": "The Hearth Bell waits beside a quiet courtyard. Nara brings one rested Quillrat. It will alternate a ranged quill with the wide burst you practised. Read the charge, call your companion back, and answer during recovery.|This is one full-health opponent. Bring a friend if you like: every Hearthmere habitat is open. Rest freely at the inn and use R for one remedy during the round. There is time to think.",
           "after": "The Hearth Bell rings without asking another bell to answer for it. The baker's dough rises. The child points at the inn and says home.|Nara remembers the fire. This time, she also remembers the people who helped rebuild. Sable takes the eastern road before dawn, leaving a repaired bridge behind."
         },
         {

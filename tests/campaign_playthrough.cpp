@@ -49,7 +49,11 @@ bool fight(c::State &s, const c::Encounter &e, Brain &brain, Stats &stats) {
                                 ? brain.action(observe(w, 1), enemy_memory,
                                                personality_preset((e.region + round) % 5))
                                 : c::opponent_action(w, e, round);
-            auto result = step(w, {brain.action(observe(w, 0), memory, personality), opponent});
+            auto result = step(
+                w, {c::companion_action(w, c::beginner_assistance(w.bodies[0])
+                                               ? Action{}
+                                               : brain.action(observe(w, 0), memory, personality)),
+                    opponent});
             stats.ticks += result.ticks;
             if (w.overflow) {
                 std::cerr << "Engine capacity overflow\n";
@@ -103,7 +107,7 @@ int main(int argc, char **argv) {
     uint32_t seed = argc > 3 ? uint32_t(std::stoul(argv[3])) : 20260907;
     bool blocked = false;
     bool restless = argc > 4 && std::string(argv[4]) == "restless";
-    for (int starter : {0, 6, 35}) {
+    for (int starter : {0, 1, 16, 6, 35}) {
         if (restless && starter != 0)
             continue;
         auto s = c::new_journey(seed + starter, starter);

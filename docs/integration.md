@@ -98,3 +98,12 @@ Keep a separate recurrent state for each fresh duel. Campaign personality input 
 Global 32–35 are own art-mask /31, pace /100, energy capacity /1000, recovery multiplier /100; 36–39 repeat these for the opponent. Default full-development values are 31,100,1000,100. Self 39 and 41 use the effective speed and base regeneration. Snapshot fields include all four limits per actor. `cr_development(handle, actor, arts, pace, capacity, recovery)` returns zero on success and -1 for invalid values or a world past tick zero. Accepted ranges: mask 1–31, pace 50–100, cap 500–1000, recovery 40–100. Python exposes `Batch.development`; `ArenaBatch` and the trainer expose an optional development-scenario mixture.
 
 The expanded controller encoder has eight new zero-weight columns, preserving the prior learned function in default full-kit scenarios. The loader requires the new identity and dimensions. Original weights, an explicit migration script, native parity, and campaign trials accompany the change. Campaign saves now use `TINISAV3`, with validated V2 migration. Design notes use independent Markdown files and optional world snapshots. See [development and notebook contract](alpha/development.md).
+
+
+## Campaign keeper calls and v0.12 content tuning
+
+The duel ABI remains rules 9 / observations 8. The content fingerprint is now `55a82aa5` after Quillrat's slower planted Panic Quills startup/recovery, cooldown and radius. The old v0.11 snapshot/model identity remains in its historical release; campaign `TINISAV3` saves are independent and still load. Native weights were explicitly carried forward, not retrained.
+
+Campaign calls use `command(world, 0, Attack/Retreat/Conserve/Free)`. The campaign expires calls at 90 ticks before observing the next action; the laboratory's original 900-tick guidance lifetime remains unchanged. `campaign::companion_action` applies the requested control through ordinary `Action` values, with obstacle checks and facing alignment. It neither grants stats nor changes the physics tick. At bond 1–2 a basic motor controller replaces the untrained restricted-kit learned policy; at bond 3+ the learned policy pilots by default. This assistance currently shares its basic behavior across temperaments. A future learned command response can replace that layer while keeping the existing guidance observations and action mask.
+
+All campaign presentation runs at 0.75 speed. A 90-second engine match has about 120 seconds of wall-clock time, excluding pauses. Simulation results and training clocks still use fixed 30 Hz ticks.

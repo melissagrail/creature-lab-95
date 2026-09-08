@@ -16,12 +16,70 @@ static int checks = 0;
         }                                                                                          \
     } while (0)
 int main() {
-    for (int starter : {0, 6, 35}) {
+    // A keeper call is a legal controller action, not invulnerability or a forced hit.
+    for (int starter : {0, 1, 16, 6, 35}) {
+        auto state = c::new_journey(87, starter);
+        auto encounter = c::encounter(state, 6);
+        World retreat, still;
+        c::initialize_round(retreat, state, encounter, 0, 0, 1000, 1000);
+        for (auto &obstacle : retreat.obstacles)
+            obstacle.radius = 0;
+        retreat.bodies[0].pos = {13 * Q, 9 * Q};
+        retreat.bodies[1].pos = {12 * Q, 9 * Q};
+        still = retreat;
+        int contact = 0;
+        command(retreat, 0, Retreat);
+        for (int tick = 0; tick < 72; tick += DecisionTicks) {
+            Action burst{0, 0, Q, 0, tick == 0 ? 4 : 0};
+            step(retreat, {c::companion_action(retreat, {}), burst});
+            auto result = step(still, {Action{}, burst});
+            contact += result.features[0].taken + result.features[0].shielded;
+        }
+        CHECK(retreat.bodies[0].hp == Roster[starter].hp);
+        CHECK(contact > 0);
+        command(retreat, 0, Conserve);
+        auto action = c::companion_action(retreat, {Q, Q, Q, 0, 1});
+        CHECK(action.mx == 0 && action.my == 0 && action.ability == 0);
+        command(retreat, 0, Free);
+        retreat.bodies[0].pace = 85;
+        CHECK(c::companion_action(retreat, {Q, 0, Q, 0, 0}).mx == Q);
+    }
+    {
+        auto state = c::new_journey(99, 0);
+        for (int n = 0; n < 6; ++n) {
+            auto e = c::encounter(state, 5);
+            CHECK(c::resolve(state, e, true, {900, 0, 0}));
+            if (n < 5)
+                CHECK(c::collection_count(state) == 1);
+        }
+        CHECK(state.companions[1].trust == 1);
+        CHECK(c::offer_thread(state, 1));
+        CHECK(c::befriended(state, 1));
+        CHECK(state.party[1] == 1);
+        CHECK(c::validate(state));
+    }
+    {
+        auto state = c::new_journey(44, 0);
+        for (int n = 0; n < 6; ++n) {
+            auto e = c::encounter(state, 5);
+            CHECK(c::resolve(state, e, false, {0, 0, 0}, true));
+            CHECK(!c::friendship_ready(state));
+        }
+        CHECK(state.defeats == 0);
+        for (int n = 0; n < 6; ++n) {
+            auto e = c::encounter(state, 5);
+            CHECK(c::resolve(state, e, false, {0, 0, 0}));
+        }
+        CHECK(c::friendship_ready(state));
+        CHECK(state.companions[1].trust == 1);
+    }
+    for (int starter : {0, 1, 16, 6, 35}) {
         auto s = c::new_journey(91, starter);
         CHECK(c::collection_count(s) == 1);
         for (int site : {2, 5, 7, 10, 13})
             if (c::Regions[0].sites[site].species != starter)
-                CHECK(!c::available(s, 0, site));
+                CHECK(c::available(s, 0, site));
+        CHECK(!c::friendship_ready(s));
         CHECK(c::finish_story(s, 1));
         for (int site : {3, 6}) {
             for (int j = 0; j < 4; ++j) {
@@ -31,7 +89,8 @@ int main() {
                 World w;
                 c::initialize_round(w, s, e, 0, 0, 1000, 1000);
                 CHECK(w.bodies[0].arts == 1);
-                CHECK(w.bodies[1].arts == 1);
+                CHECK(w.bodies[1].arts == (site == 6 ? 8 : 1));
+                CHECK(w.bodies[1].hp == Roster[w.bodies[1].species].hp);
                 CHECK(w.bodies[0].capacity == 600);
                 CHECK(w.objective == 0);
                 CHECK(!w.vane_enabled);
@@ -43,12 +102,13 @@ int main() {
                 if (s.victories < 8)
                     for (int wild : {2, 5, 7, 10, 13})
                         if (c::Regions[0].sites[wild].species != starter)
-                            CHECK(!c::available(s, 0, wild));
+                            CHECK(c::available(s, 0, wild));
             }
             if (site == 3)
                 CHECK(c::finish_story(s, 4));
         }
         CHECK(s.victories == 8);
+        CHECK(c::friendship_ready(s));
         CHECK(c::rank(s.companions[starter]) == 2);
         CHECK(c::available(s, 0, 2));
         auto e = c::encounter(s, 6);
@@ -64,7 +124,8 @@ int main() {
         old.erase(old.end() - 20, old.end() - 4);
         old[7] = '2';
         // Old relays awarded less XP than the newly credited lesson sequence.
-        for(int n=0;n<4;++n) old[68+starter*24+n]=uint8_t(30u>>(n*8));
+        for (int n = 0; n < 4; ++n)
+            old[68 + starter * 24 + n] = uint8_t(30u >> (n * 8));
         uint32_t hash = 2166136261u;
         for (size_t n = 0; n < old.size() - 4; ++n)
             hash = (hash ^ old[n]) * 16777619u;
@@ -139,7 +200,7 @@ int main() {
         for (const auto &s : c::Regions[region].sites)
             CHECK(visited[s.y * c::MapWidth + s.x]);
     }
-    for (int starter : {0, 6, 35})
+    for (int starter : {0, 1, 16, 6, 35})
         for (uint32_t seed : {1u, 42u, 0xffffffffu}) {
             auto state = c::new_journey(seed, starter);
             CHECK(c::validate(state));
@@ -161,7 +222,7 @@ int main() {
             for (int rr = 0; rr < 8; ++rr) {
                 CHECK(state.region == rr);
                 CHECK(c::accessible(state, rr));
-                auto e = c::encounter(state, 3);
+                auto e = c::encounter(state, 16);
                 CHECK(!c::resolve(state, e, true, {1000, 1000, 1000}));
                 CHECK(!c::solve_puzzle(state, 15, {-1, 0, 1}));
                 CHECK(c::solve_puzzle(state, 15, c::puzzle_solution(rr)));
@@ -175,7 +236,7 @@ int main() {
                         CHECK(c::finish_story(state, site));
                     else {
                         e = c::encounter(state, site);
-                        CHECK(e.rounds == (k == c::Keeper ? 3 : rr == 0 ? 1 : 2));
+                        CHECK(e.rounds == (rr == 0 ? 1 : k == c::Keeper ? 3 : 2));
                         do {
                             CHECK(c::resolve(state, e, true, {420, 0, 650}));
                         } while (!state.cleared[rr * 20 + site]);
@@ -228,6 +289,7 @@ int main() {
     // First-contact recognition is awarded for a completed challenge, never retreat.
     {
         auto s = c::new_journey(31, 0);
+        s.victories = 6;
         s.cleared[1] = s.cleared[3] = s.cleared[4] = s.cleared[6] = s.cleared[9] = 1;
         auto e = c::encounter(s, 5);
         int sp = c::Regions[0].sites[5].species;

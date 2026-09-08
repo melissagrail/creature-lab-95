@@ -17,10 +17,20 @@ for species in range(40):
             assert not any(frame[3:96*4:4]),f'No top padding {species}/{row}/{col}'
             frames.append(frame)
         assert len(set(frames))>=4,f'Insufficient distinct poses {species}/{row}'
+data=(root/'assets/tinikami/wayfarer-atlas.rgba').read_bytes()
+assert data[:4]==b'TINI' and struct.unpack('<II',data[4:12])==(384,384)
+assert len(data)==12+384*384*4
+for row in range(4):
+    poses=[]
+    for col in range(3):
+        pose=b''.join(data[12+((row*96+y)*384+col*96)*4:12+((row*96+y)*384+col*96+96)*4] for y in range(96))
+        assert any(pose[3::4]) and not any(pose[3:96*4:4])
+        poses.append(pose)
+    assert len(set(poses))==3,'Wayfarer needs both distinct foot contacts and a passing pose'
 with tempfile.TemporaryDirectory(prefix='tinikami-journey-test-') as tmp:
     save=Path(tmp)/'never-written.tini'
-    screens=[0,2,5,4,7,11,1,12,13,14,3,8,9,10,6,16,15,8,8,17]
-    for scene in range(20):
+    screens=[0,2,5,4,7,11,1,12,13,14,3,8,9,10,6,16,15,8,8,17,7,7]
+    for scene in range(22):
         capture=Path(tmp)/str(scene)
         result=subprocess.run([str(exe),'--campaign','--journey-scene',str(scene),'--journey-region','4',
             '--frames','2','--save-path',str(save),'--captures',str(capture)],cwd=root,env=env,text=True,capture_output=True,check=True)
@@ -31,4 +41,4 @@ with tempfile.TemporaryDirectory(prefix='tinikami-journey-test-') as tmp:
     result=subprocess.run([str(exe),'--journey-test'],cwd=root,env=env,text=True,capture_output=True,check=True)
     assert 'campaign controller checks passed' in result.stdout,result.stderr
     print(result.stdout.strip())
-print('Campaign: 20 rendered fixtures, isolated save behavior, all 1,280 animation cells and native controller flow passed.')
+print('Campaign: 22 rendered fixtures, isolated save behavior, all 1,280 animation cells and native controller flow passed.')

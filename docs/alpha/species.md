@@ -296,7 +296,7 @@ A small rodent paid for convincing enemies to take a route.
 | 1. Barb Shot | Bolt | 16 | 14 / 1 / 14 | 45t / 170 | 11.23 / 0.20 | speed=331, move_start=60, move_active=60, move_recovery=60 |
 | 2. Caltrop | Trap | 27 | 14 / 1 / 13 | 102t / 190 | 4.88 / 1.07 | lifetime=270, root=21, move_recovery=30, pulse every 15t |
 | 3. Needle Fence | Field | 4 | 21 / 1 / 18 | 132t / 270 | 4.69 / 1.37 | lifetime=150, slow=30, move_recovery=30, pulse every 24t |
-| 4. Panic Quills | Nova | 16 | 19 / 2 / 19 | 96t / 220 | 0.00 / 2.73 | impulse=550, move_recovery=30 |
+| 4. Panic Quills | Nova | 16 | 60 / 2 / 54 | 180t / 220 | 0.00 / 3.12 | impulse=550 |
 
 ## Sunstag
 

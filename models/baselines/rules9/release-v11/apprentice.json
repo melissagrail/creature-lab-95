@@ -1,16 +1,21 @@
 {
   "identity": {
-    "format": 2,
+    "format": 3,
     "rules": 9,
     "observations": 8,
-    "content": 1437084325,
+    "content": 574261014,
     "observation_size": 3628,
     "hidden": 96,
-    "action_codec": "opponent-local-tanh-v1"
+    "action_codec": "opponent-local-conditional-tanh-v2",
+    "personality": [
+      "aggression",
+      "reserve",
+      "territory"
+    ]
   },
-  "parameters": 87523,
-  "bytes": 350132,
-  "checksum": "783fa680",
+  "parameters": 90727,
+  "bytes": 362948,
+  "checksum": "a6a76794",
   "parameter_order": [
     {
       "name": "log_std",
@@ -61,7 +66,7 @@
       "name": "encoder.0.weight",
       "shape": [
         96,
-        253
+        280
       ]
     },
     {
@@ -160,19 +165,44 @@
       "shape": [
         1
       ]
+    },
+    {
+      "name": "species.weight",
+      "shape": [
+        40,
+        12
+      ]
+    },
+    {
+      "name": "slot_motion.weight",
+      "shape": [
+        4,
+        32
+      ]
+    },
+    {
+      "name": "slot_motion.bias",
+      "shape": [
+        4
+      ]
     }
   ],
   "metadata": {
-    "source": "models/baselines/rules9/release-v11/legacy-development.pt",
+    "source": "models/baselines/rules8/release-v10/apprentice.pt",
     "source_identity": {
-      "format": 2,
-      "rules": 9,
-      "observations": 8,
+      "format": 3,
+      "rules": 8,
+      "observations": 7,
       "content": 574261014,
-      "observation_size": 3628,
+      "observation_size": 3620,
       "hidden": 96,
-      "action_codec": "opponent-local-tanh-v1"
+      "action_codec": "opponent-local-conditional-tanh-v2",
+      "personality": [
+        "aggression",
+        "reserve",
+        "territory"
+      ]
     },
-    "migration": "Weights unchanged. Explicit warm start after Quillrat burst tuning; no training on keeper calls."
+    "migration": "Eight zero-initialized development inputs; old weights retained. Campaign curriculum not retrained."
   }
 }
