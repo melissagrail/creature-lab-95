@@ -21,7 +21,7 @@ def library():
     suffix = 'dylib' if sys.platform == 'darwin' else 'dll' if sys.platform == 'win32' else 'so'
     path = Path(os.environ.get('CREATURE_LIB', ROOT / 'build' / f'libcreature.{suffix}'))
     lib = C.CDLL(str(path))
-    if lib.cr_version() != 9 or lib.cr_observation_version() != 8:
+    if lib.cr_version() != 10 or lib.cr_observation_version() != 8:
         raise RuntimeError("Incompatible simulation / observation schema")
     signatures = {
         'cr_development': ([P,I,I,I,I,I], I),
@@ -45,7 +45,7 @@ def library():
     for name, (args, result) in signatures.items():
         fn = getattr(lib, name)
         fn.argtypes, fn.restype = args, result
-    if lib.cr_version() != 9 or lib.cr_observation_version() != 8 or lib.cr_observation_size() != OBS_SIZE:
+    if lib.cr_version() != 10 or lib.cr_observation_version() != 8 or lib.cr_observation_size() != OBS_SIZE:
         raise RuntimeError('Incompatible simulation / observation schema')
     return lib
 

@@ -1,16 +1,16 @@
 {
   "identity": {
     "format": 2,
-    "rules": 9,
+    "rules": 10,
     "observations": 8,
-    "content": 1437084325,
+    "content": 2318222893,
     "observation_size": 3628,
     "hidden": 96,
     "action_codec": "opponent-local-tanh-v1"
   },
   "parameters": 87523,
   "bytes": 350132,
-  "checksum": "783fa680",
+  "checksum": "5a9c3aa3",
   "parameter_order": [
     {
       "name": "log_std",
@@ -163,16 +163,16 @@
     }
   ],
   "metadata": {
-    "source": "models/baselines/rules9/release-v11/legacy-development.pt",
+    "source": "models/baselines/rules9/release-v12.1/legacy-development.pt",
     "source_identity": {
       "format": 2,
       "rules": 9,
       "observations": 8,
-      "content": 574261014,
+      "content": 1437084325,
       "observation_size": 3628,
       "hidden": 96,
       "action_codec": "opponent-local-tanh-v1"
     },
-    "migration": "Weights unchanged. Explicit warm start after Quillrat burst tuning; no training on keeper calls."
+    "migration": "Rules 10 movement/ability resource separation. Weights unchanged; explicit warm start, not retrained."
   }
 }

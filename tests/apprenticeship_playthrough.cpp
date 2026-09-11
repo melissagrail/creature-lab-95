@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
                         auto a = c::companion_action(
                             w, c::beginner_assistance(w.bodies[0])
                                    ? Action{}
-                                   : brain.action(observe(w, 0), memory, personality));
+                                   : brain.action(observe(w, 0), memory, personality), comp.temperament);
                         illegal += a.ability && !(w.bodies[0].arts & (1 << (a.ability - 1)));
                         int head = w.event_head;
                         auto result = step(w, {a, c::opponent_action(w, e, 0)});

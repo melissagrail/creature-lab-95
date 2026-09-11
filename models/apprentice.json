@@ -1,9 +1,9 @@
 {
   "identity": {
     "format": 3,
-    "rules": 9,
+    "rules": 10,
     "observations": 8,
-    "content": 1437084325,
+    "content": 2318222893,
     "observation_size": 3628,
     "hidden": 96,
     "action_codec": "opponent-local-conditional-tanh-v2",
@@ -15,7 +15,7 @@
   },
   "parameters": 90727,
   "bytes": 362948,
-  "checksum": "187a9a2f",
+  "checksum": "795e5e98",
   "parameter_order": [
     {
       "name": "log_std",
@@ -188,12 +188,12 @@
     }
   ],
   "metadata": {
-    "source": "models/baselines/rules9/release-v11/apprentice.pt",
+    "source": "models/baselines/rules9/release-v12.1/apprentice.pt",
     "source_identity": {
       "format": 3,
       "rules": 9,
       "observations": 8,
-      "content": 574261014,
+      "content": 1437084325,
       "observation_size": 3628,
       "hidden": 96,
       "action_codec": "opponent-local-conditional-tanh-v2",
@@ -203,6 +203,6 @@
         "territory"
       ]
     },
-    "migration": "Weights unchanged. Explicit warm start after Quillrat burst tuning; no training on keeper calls."
+    "migration": "Rules 10 movement/ability resource separation. Weights unchanged; explicit warm start, not retrained."
   }
 }

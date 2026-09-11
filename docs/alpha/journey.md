@@ -1,4 +1,4 @@
-# The Unwritten Road — campaign alpha 0.12
+# The Unwritten Road — campaign alpha 0.13
 
 The combat laboratory now has a complete campaign route around it: an opening, eight regions, forty obtainable companions, persistent progression, a final decision and postgame exploration. This is a playable campaign alpha. **Twenty hours remains the intended release-length experience; it is not a measured duration of the current content.**
 

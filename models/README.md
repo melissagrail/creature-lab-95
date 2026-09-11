@@ -1,8 +1,10 @@
-# Tinikami controllers — alpha 0.12
+# Tinikami controllers — alpha 0.13
 
-`apprentice.tbrain` and `champion.tbrain` contain the same explicitly expanded v0.10 learned weights: **90,727 parameters, 362,948 bytes, checksum `187a9a2f`**. Rules **9**, observations **8** (3,628 floats), content `55a82aa5`, model format **3**, recurrent memory **96 floats** per actor. The new simulation golden is `4deb7e7e3423a32b`.
+`apprentice.tbrain` and `champion.tbrain` contain the same explicitly expanded v0.10 learned weights: **90,727 parameters, 362,948 bytes, checksum `795e5e98`**. Rules **10**, observations **8** (3,628 floats), content `8a2d462d`, model format **3**, recurrent memory **96 floats** per actor. The new simulation golden is `998dc4f56283125f`.
 
-v0.12 changes only Quillrat's charged burst tuning. The v0.11 weights are retained exactly, with an explicit content compatibility migration in `scripts/migrate-quill-tuning.py`; the original v0.11 checkpoint and manifest remain in `baselines/rules9/release-v11/`. This is not training. Beginner assistance pilots bond 1–2 in the campaign, because the full-kit learned model performs poorly on several restricted opening matchups. Keeper calls are a deterministic controller layer, not learned compliance.
+v0.13 explicitly carries the same tensors into rules 10 using `scripts/migrate-movement-energy.py`. Previous release files are retained in `baselines/rules9/release-v12.1/`. This is a warm start after movement-resource separation, not retraining. Early temperament steering is authored; the native learned policy remains unchanged.
+
+v0.12 changed only Quillrat's charged burst tuning. The v0.11 weights are retained exactly, with an explicit content compatibility migration in `scripts/migrate-quill-tuning.py`; the original v0.11 checkpoint and manifest remain in `baselines/rules9/release-v11/`. This is not training. Beginner assistance pilots bond 1–2 in the campaign, because the full-kit learned model performs poorly on several restricted opening matchups. Keeper calls are a deterministic controller layer, not learned compliance.
 
 Eight new encoder inputs expose developmental limits. Their weights initialize to zero; every previous weight is retained. This is a schema migration, not new training. The `.pt` files are weights-only warm starts; optimizer moments from the old-shaped encoder are not silently reused. The original full checkpoint and manifest are retained in `baselines/rules8/release-v10/`. The historical `scripts/migrate-development.py SOURCE.pt TARGET` reproduces that expansion with the v0.11 checkout. In the current checkout, migrate the retained v0.11 checkpoint with `scripts/migrate-quill-tuning.py SOURCE.pt TARGET`. Older models remain deliberately incompatible.
 

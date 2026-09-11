@@ -832,7 +832,7 @@ int main(int argc, char **argv) {
             panel(10, 10, 1080, 760);
             rect(14, 14, 1072, 26, {0, 0, 128, 255});
             label(22, 20, "CREATURE LAB 95", white, 2);
-            label(720, 23, "F2 TINIKAMI / JOURNEY ALPHA 0.12.1", white, 1);
+            label(720, 23, "F2 TINIKAMI / JOURNEY ALPHA 0.13.0", white, 1);
             panel(1058, 18, 22, 18);
             buttons.push_back({{1058, 18, 22, 18}, "X", 0});
             label(1064, 22, "X", black, 1);

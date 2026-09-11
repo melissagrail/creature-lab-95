@@ -460,7 +460,7 @@ void draw(const World &w, const View &v) {
         bar(x - 25, y - size * 88 / 96 - 10, 50, b.hp, Roster[b.species].hp, moss);
         if (footwork_load(b) >= 70 && b.hp) {
             line(x - 14, y + 15, x + 14, y + 15, gold);
-            label(x - 21, y + 19, "STRAIN", gold, 1);
+            label(x - 21, y + 19, "STRAFE", gold, 1);
         }
         if (b.move >= 0) {
             auto ph = phase(b);
@@ -546,7 +546,7 @@ void draw(const World &w, const View &v) {
         label(833, y + 70, "ENERGY " + num(b.energy / 10) + "/100", jade, 1);
         bar(833, y + 84, 218, b.energy, 1000, jade, true);
         std::string state = energy_regen(b) ? "+" + num(energy_regen(b) * 3) + "/S RECHARGING"
-                            : footwork_load(b) >= 70 ? "FOOTWORK / REGEN LIMITED"
+
                             : b.move >= 0            ? "CASTING / REGEN PAUSED"
                                                      : "BREATH " + seconds(b.energy_delay) + "S";
         label(753, y + 108, state, moss, 1);
@@ -572,7 +572,7 @@ void draw(const World &w, const View &v) {
         std::string status = b.cooldown[j] ? "COOLDOWN " + seconds(b.cooldown[j]) + "S"
                              : b.energy < m.cost
                                  ? "NEED " + num((m.cost - b.energy + 9) / 10) + " ENERGY"
-                             : b.move >= 0  ? "COMMITTED"
+                             : b.move >= 0  ? "CAST IN PROGRESS"
                              : b.stun       ? "STUNNED"
                              : !mask[j + 1] ? "UNAVAILABLE"
                                             : "READY";

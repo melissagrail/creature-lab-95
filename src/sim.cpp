@@ -458,7 +458,8 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             }
             b.hp -= m.health_cost;
             b.energy -= m.cost;
-            b.energy_delay = 24;
+            if (m.cost > 0)
+                b.energy_delay = 24;
             result.features[i].spent += m.cost;
             b.cooldown[slot] = m.cooldown;
             if (s.passive == Cadence && b.last_slot >= 0 && slot != b.last_slot)
@@ -500,11 +501,10 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
             int alignment = int(dot(unit(input), b.aim) / Q);
             int ratio = alignment >= 0 ? s.strafe + (100 - s.strafe) * alignment / Q
                                        : s.strafe + (s.strafe - s.backward) * alignment / Q;
-            // A spent spirit can still pursue and disengage. Sustained combat-facing
-            // sidesteps lose drive below 25 energy; a paid dodge keeps its full burst.
-            int lateral = Q - std::abs(alignment);
-            int reserve = 55 + std::min(250, b.energy) * 45 / 250;
-            ratio = ratio * (100 - (100 - reserve) * lateral / Q) / 100;
+            // Footwork has its own geometric constraint: lateral drive is limited
+            // independently of the ability resource. Turning to travel restores speed.
+            int lateral = Q - std::max(0, alignment);
+            ratio = ratio * (100 - 30 * lateral / Q) / 100;
             speed = speed * std::clamp(ratio, 1, 100) / 100;
         }
         int ground = surface_flags(w, b.pos);
@@ -1069,10 +1069,7 @@ static StepResult tick(World &w, const std::array<Action, 2> &actions, bool trig
         for (auto &c : b.cooldown)
             if (c)
                 c--;
-        int footwork_cost = b.move < 0 && !b.stun && !b.root && footwork_load(b) >= 70 ? 1 : 0;
-        footwork_cost = std::min(footwork_cost, b.energy);
-        result.features[i].spent += footwork_cost;
-        b.energy = std::clamp(b.energy + energy_regen(b) - footwork_cost, 0, b.capacity);
+        b.energy = std::clamp(b.energy + energy_regen(b), 0, b.capacity);
         if (b.energy_delay)
             --b.energy_delay;
         auto dec = [](int32_t &t) {
@@ -1434,8 +1431,7 @@ int footwork_load(const Body &b) {
     int side_budget = std::max(1, travel_speed(b) * s.strafe / 100);
     int back_budget = std::max(1, travel_speed(b) * s.backward / 100);
     int effort = std::max(side * 100 / side_budget, back * 85 / back_budget);
-    // Slow adjustments are free. Full strafing suppresses base recovery, including
-    // very agile species; their advantage is distance covered for the same exertion.
+    // Diagnostic of lateral/reverse travel, not an ability-energy charge.
     return std::clamp((effort - 25) * 100 / 65, 0, 100);
 }
 // Internal energy units are tenths of a displayed point.
@@ -1454,8 +1450,8 @@ bool configure_development(World &w, int actor, int arts, int pace, int capacity
 }
 int energy_regen(const Body &b) {
     const auto &s = Roster[b.species];
-    int base = !b.energy_delay && (b.move < 0 || phase(b) == Recovery) ? s.regen : 0;
-    base = base * (100 - footwork_load(b)) / 100;
+    int base = !b.energy_delay && (b.move < 0 || b.slot == 4 || phase(b) == Recovery)
+                   ? s.regen : 0;
     return (base + (s.passive == Reservoir && b.guard ? 7 : 0)) * b.recovery_rate / 100;
 }
 Observation observe(const World &w, int i) {

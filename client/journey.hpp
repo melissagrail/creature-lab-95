@@ -204,7 +204,7 @@ class Game {
             std::ostringstream out;
             auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             out << "Recorded (UTC): " << std::put_time(std::gmtime(&now), "%Y-%m-%d %H:%M:%S")
-                << "\nBuild: 0.12.1 / rules " << RulesVersion << " / observations "
+                << "\nBuild: 0.13.0 / rules " << RulesVersion << " / observations "
                 << ObservationVersion << " / brain checksum " << brain.checksum() << " / content "
                 << ContentHash << "\nJourney seed: " << state.seed
                 << "\nRegion: " << camp::Regions[state.region].name << " / tile " << state.x / 256
@@ -469,7 +469,7 @@ class Game {
                                (camp::befriended(state, node.species)
                                     ? "|You already travel with this species. Practising here "
                                       "builds bond. Visit another habitat to find a different "
-                                      "companion."
+                                      "kami."
                                     : "") +
                                (camp::friendship_ready(state)
                                     ? ""
@@ -521,7 +521,7 @@ class Game {
         }
         if (vitality[battle_slot] <= 0) {
             tell("A QUIET MOMENT",
-                 "Your companions need to rest. Return to the sanctuary; recovery is always free.");
+                 "Your tinikami need to rest. Return to the sanctuary; recovery is always free.");
             return;
         }
         persist();
@@ -603,7 +603,8 @@ class Game {
                                companion_personality(state.companions[state.party[battle_slot]]))
                 : scripted(duel, 0);
         if (!manual)
-            actions[0] = camp::companion_action(duel, actions[0]);
+            actions[0] = camp::companion_action(duel, actions[0],
+                state.companions[state.party[battle_slot]].temperament);
         actions[1] = brain.ready() && camp::trained_opponent(state, match)
                          ? brain.action(observe(duel, 1), memories[1],
                                         personality_preset((match.region + battle_round) % 5))
@@ -1004,7 +1005,7 @@ class Game {
         frame(55, 92, 990, 614, paper);
         label(88, 125, "WHO WILL WALK WITH YOU?", ink, 3);
         auto intro =
-            wrap("A spirit joins because it wants to. Your first companion is a beginning, not a "
+            wrap("A spirit joins because it wants to. Your first kami is a beginning, not a "
                  "class restriction. Every species can be befriended along the road.",
                  76);
         int yy = 174;
@@ -1058,7 +1059,7 @@ class Game {
         buttons.clear();
         shade();
         frame(34, 92, 1032, 616, paper);
-        label(60, 112, "COMPANIONS", ink, 3);
+        label(60, 112, "TINIKAMI", ink, 3);
         label(62, 153, "SELECT A SPIRIT, THEN CHOOSE ITS PLACE. ALL FORTY HAVE A HOME HERE.", moss,
               1);
         for (int j = 0; j < 3; j++) {
@@ -1102,6 +1103,7 @@ class Game {
               moss, 1);
         label(x, 431, "TEMPERAMENT / " + std::string(personality_name(c.temperament)), moss, 1);
         tag(220, x, 452, 270, "CHANGE TEMPERAMENT", owned);
+        label(x, 482, "BOND 1-2: GUIDED HABITS / 3+: LEARNED", moss, 1);
         static const char *charms[] = {"OPEN HAND / FULL ENERGY",
                                        "STONE / 12 SHIELD, 85% ENERGY",
                                        "WIND / HASTE, 85% ENERGY",
@@ -1210,7 +1212,7 @@ class Game {
         if (duel.terminal || duel.truncated) {
             frame(255, 163, 270, 33, night);
             label(267, 174,
-                  duel.winner == 0 ? "YOUR COMPANION PREVAILS" : "THE NEXT COMPANION STEPS FORWARD",
+                  duel.winner == 0 ? "YOUR KAMI PREVAILS" : "THE NEXT KAMI STEPS FORWARD",
                   pale, 1);
         }
         frame(12, 10, 712, 142, paper);
@@ -1254,8 +1256,8 @@ class Game {
             bar(833, yy + 86, 218, body.energy, body.capacity, jade, true);
             std::string status = energy_regen(body)
                                      ? "+" + num(energy_regen(body) * 3) + " ENERGY / SEC"
-                                 : footwork_load(body) >= 70 ? "FOOTWORK / REGEN LIMITED"
-                                                             : "COMMITTED / REGEN PAUSED";
+
+                                                             : "CAST IN PROGRESS / REGEN PAUSED";
             int arts = 0;
             for (int j = 0; j < 4; ++j)
                 arts += (body.arts >> j) & 1;
@@ -1293,7 +1295,7 @@ class Game {
                     : "YOUR SPIRIT PILOTS / F ATTACK / G FALL BACK / C REST / V TRUST";
             label(35, 706, lesson, ink, 1);
             label(35, 735,
-                  "CALLS LAST 3 COMBAT SECONDS. COMMITTED ARTS MUST FINISH. M FOR DIRECT CONTROL.",
+                  "CALLS LAST 3 COMBAT SECONDS. CAST IN PROGRESS ARTS MUST FINISH. M FOR DIRECT CONTROL.",
                   moss, 1);
         }
         label(32, 135,
@@ -1333,7 +1335,7 @@ class Game {
                       ink, 2);
                 label(143, 387,
                       walk_complete ? "EIGHT ROOMS COMPLETE / YOUR PARTY IS RESTED"
-                                    : "YOUR COMPANIONS KEEP THEIR CONDITION BETWEEN ROOMS",
+                                    : "YOUR TINIKAMI KEEP THEIR CONDITION BETWEEN ROOMS",
                       moss, 1);
                 for (int slot = 0; slot < 3; ++slot)
                     if (state.party[slot] >= 0)
@@ -1358,7 +1360,7 @@ class Game {
                     tag(223, 340, 426, 518, "OFFER 3 THREADS TO GROW TRUST");
             } else {
                 auto lines = wrap(
-                    "Your companions learned from the encounter. A restored keeper opens the next "
+                    "Your tinikami learned from the encounter. A restored keeper opens the next "
                     "road and recovers the whole party. The journal records what changed.",
                     63);
                 int y = 348;
@@ -1495,7 +1497,7 @@ class Game {
         if (state.walk_depth == 2 || state.walk_depth == 5)
             tag(902, 92, 559, 438, "CAMPFIRE / 2 THREADS / RECOVER 35%, +1 REMEDY");
         else
-            tag(100, 92, 559, 438, "ARRANGE COMPANIONS AND CHARMS");
+            tag(100, 92, 559, 438, "ARRANGE TINIKAMI AND CHARMS");
         tag(903, 552, 559, 438, "RETURN HOME / KEEP WHAT YOU HAVE EARNED");
         label(92, 628,
               "THE FINAL ROOM HOLDS THREE SPIRITS. FINISH TO EARN A SEAL AND 12 EXTRA THREADS.",
@@ -1545,7 +1547,7 @@ class Game {
         interior.draw(0, 0, 0, 1100, 780);
         frame(22, 19, 700, 87, paper);
         label(44, 38, camp::Regions[state.region].sites[0].name, ink, 3);
-        label(45, 80, "ALL COMPANIONS RESTED / AT LEAST THREE REMEDIES READY", moss, 1);
+        label(45, 80, "ALL TINIKAMI RESTED / AT LEAST THREE REMEDIES READY", moss, 1);
         for (int j = 0; j < 3; ++j)
             if (state.party[j] >= 0) {
                 int id = state.party[j], xx = 309 + j * 134, yy = 578 + (j % 2) * 38;
@@ -1555,7 +1557,7 @@ class Game {
             }
         frame(737, 324, 333, 409, paper);
         label(758, 349, "A PLACE TO REST", ink, 2);
-        tag(100, 757, 392, 291, "COMPANIONS AND CHARMS");
+        tag(100, 757, 392, 291, "TINIKAMI AND CHARMS");
         tag(960, 757, 434, 291, "CRAFT REMEDY / 2 THREADS");
         tag(961, 757, 476, 291, "TALK WITH THE KEEPER");
         tag(962, 757, 518, 291,
@@ -1564,7 +1566,7 @@ class Game {
         tag(104, 757, 576, 291, "RETURN TO THE ROAD");
         label(759, 636, num(state.threads) + " THREADS / " + num(state.herbs) + " REMEDIES", jade,
               1);
-        label(759, 668, "FREE RECOVERY. NO COMPANION IS LOST.", moss, 1);
+        label(759, 668, "FREE RECOVERY. NO KAMI IS LOST.", moss, 1);
         frame(24, 671, 678, 73, paper);
         int seals = 0, requests = 0;
         for (int n = 0; n < 8; ++n) {
@@ -1649,7 +1651,7 @@ class Game {
                                   : effects.substr(0, 95),
                   jade, 1);
         }
-        tag(225, 58, 684, 260, "BACK TO COMPANIONS");
+        tag(225, 58, 684, 260, "BACK TO TINIKAMI");
         label(348, 694, "BOND 1: ART 1 / 2: ART 2 + DODGE / 3: ART 3 / 4: ART 4 / 5: FULL PACE",
               moss, 1);
     }
@@ -1664,7 +1666,7 @@ class Game {
         label(104, 122, "A KEEPER'S FIELD GUIDE", ink, 3);
         const char *lines[] = {"WASD / ARROWS WALK. CLICK A PLACE TO WALK THERE. SHIFT HURRIES.",
                                "F CALLS ATTACK. G FALLS BACK. C RESTS. V TRUSTS THE SPIRIT.",
-                               "CALLS LAST 3 COMBAT SECONDS; COMMITTED ARTS MUST FINISH.",
+                               "CALLS LAST 3 COMBAT SECONDS; CAST IN PROGRESS ARTS MUST FINISH.",
                                "E / ENTER INTERACTS WITH THE NEAREST MARKED PLACE.",
                                "GOLD MARKERS AND THE JOURNAL FOLLOW THE MAIN STORY.",
                                "B OPENS YOUR SPIRITS. TAB OPENS THE TRAVEL ATLAS.",
@@ -2028,7 +2030,7 @@ class Game {
             }
             if (won) {
                 if (state.region == 0 && camp::lesson_index(site) >= 0 && !state.cleared[site]) {
-                    tell("THE NEXT LESSON", "Your companion is rested. Return to this teacher when "
+                    tell("THE NEXT LESSON", "Your kami is rested. Return to this teacher when "
                                             "you are ready for the next short lesson.");
                     return;
                 }

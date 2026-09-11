@@ -1,3 +1,15 @@
+# Current integration — rules 10 / observations 8
+
+The C ABI and tensor shape are unchanged: 3,628 floats, content `8a2d462d`, golden `998dc4f56283125f`, current model checksum `795e5e98`. Ordinary locomotion no longer consumes ability energy, modifies energy regeneration or depends on energy reserve. Universal dodge costs zero energy and sets no regeneration lock; its 48-tick cooldown and cast commitments remain. Authored movement arts still have their individual art costs. Existing casting locks continue to expire during travel/dodge. `Features.spent` now measures art costs only.
+
+Historical rules-9 models are rejected unless explicitly warm-started by `scripts/migrate-movement-energy.py`. Weights and observation layout are unchanged, but physics and outcomes differ. The previous binaries/checkpoints remain in `models/baselines/rules9/release-v12.1/`. Historical replay snapshots need their matching engine; campaign `TINISAV3` files remain compatible.
+
+[Proposed overworld integration](alpha/overworld-direction.md) describes the additional render-frame API and host-state work needed; neither MZ nor Godot integration is implemented yet.
+
+The following sections retain the previous contracts and migration history. Where they describe shared movement/ability energy, rules 10 above supersedes them.
+
+---
+
 # Alpha integration contract — rules v9 / observations v8
 
 The core is C++17 with no renderer, model runtime or network dependency. `include/creature/api.h` exports opaque handles, registry queries, match reset, batched stepping, structured actor observations, commands, snapshots and hashes. `cr_reset_match` selects both species, weather and arena. Arena IDs are 0–5; `cr_arena_count()` and `cr_arena_name(id)` expose the registry (`nullptr` for an invalid ID). Python exposes `Batch.arena_names`. Invalid C API resets reject atomically. `cr_version`, `cr_observation_version` and `cr_content_hash` identify the contract. Rules-v1–v7 saves, replays and policies are deliberately incompatible. The rules-8 warm-start utility is explicit and does not imply retraining.

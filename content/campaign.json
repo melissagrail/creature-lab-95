@@ -27,7 +27,7 @@
           "species": 0,
           "prerequisite": -1,
           "speaker": "Keeper Nara",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -61,7 +61,7 @@
           "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "Four duels teach attack and retreat calls, with stepping stones for cover and an open lane. Partners begin at full health and leave long pauses between attacks. You recover freely after every lesson.",
-          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
+          "after": "This set of lessons is complete. Your kami is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "The Baker's Bowl",
@@ -94,7 +94,7 @@
           "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "Quillrat offers four lessons in reading a large, slow burst. Call FALL BACK with G while its circle fills, then ATTACK with F in the recovery. A call cannot cancel a committed art.",
-          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
+          "after": "This set of lessons is complete. Your kami is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Paper Lantern Path",
@@ -116,7 +116,7 @@
           "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "The gardener has been pruning the orchard into perfect circles. The Orchardboar keep planting crooked saplings in the gaps.|Let one corner grow however it likes, you suggest. The gardener considers this a much more frightening experiment than any duel.|REQUEST / Bring three different spirit friends to the sapling. A crooked garden needs more than one kind of root.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "Between Thorn and Flame",
@@ -127,7 +127,7 @@
           "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "Three lessons around a forked path and a lotus. Rocks block shots; muddy flanks slow movement. One simple art can still find several different answers.",
-          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
+          "after": "This set of lessons is complete. Your kami is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Dewpool",
@@ -160,7 +160,7 @@
           "prerequisite": -1,
           "speaker": "Keeper Nara",
           "text": "Three lessons combine the big burst with a dry crossing and broad wet corners. Choose when to approach, when to leave, and when to reclaim the lotus.",
-          "after": "This set of lessons is complete. Your companion is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
+          "after": "This set of lessons is complete. Your kami is rested. The next gold marker is open; the field journal keeps track of your progress. You may return here to practise."
         },
         {
           "name": "Orchard Hollow",
@@ -203,7 +203,7 @@
           "species": 1,
           "prerequisite": 12,
           "speaker": "The Hearth Bell",
-          "text": "The Hearth Bell waits beside a quiet courtyard. Nara brings one rested Quillrat. It will alternate a ranged quill with the wide burst you practised. Read the charge, call your companion back, and answer during recovery.|This is one full-health opponent. Bring a friend if you like: every Hearthmere habitat is open. Rest freely at the inn and use R for one remedy during the round. There is time to think.",
+          "text": "The Hearth Bell waits beside a quiet courtyard. Nara brings one rested Quillrat. It will alternate a ranged quill with the wide burst you practised. Read the charge, call your kami back, and answer during recovery.|This is one full-health opponent. Bring a friend if you like: every Hearthmere habitat is open. Rest freely at the inn and use R for one remedy during the round. There is time to think.",
           "after": "The Hearth Bell rings without asking another bell to answer for it. The baker's dough rises. The child points at the inn and says home.|Nara remembers the fire. This time, she also remembers the people who helped rebuild. Sable takes the eastern road before dawn, leaving a repaired bridge behind."
         },
         {
@@ -278,7 +278,7 @@
           "species": 4,
           "prerequisite": -1,
           "speaker": "Ferryman Ivo",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -312,7 +312,7 @@
           "prerequisite": 1,
           "speaker": "Ferryman Ivo",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Glass Reed",
@@ -345,7 +345,7 @@
           "prerequisite": 4,
           "speaker": "Ferryman Ivo",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Widow's Weir",
@@ -367,7 +367,7 @@
           "prerequisite": -1,
           "speaker": "Ferryman Ivo",
           "text": "The net maker believes a Kelpwidow has stolen her best thread. The spirit has woven it into a cradle for river eggs.|The net maker asks for a drawing, then makes a second cradle. The first lesson in collection is knowing when to leave something where it belongs.|REQUEST / Befriend a spirit from the Fen and read the memory at the old river marker. The ferryman needs a witness from each bank.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "The Narrow Crossing",
@@ -378,7 +378,7 @@
           "prerequisite": 6,
           "speaker": "Ferryman Ivo",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Salt Landing",
@@ -411,7 +411,7 @@
           "prerequisite": 11,
           "speaker": "Ferryman Ivo",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Spindle Marsh",
@@ -487,7 +487,7 @@
           "species": 37,
           "prerequisite": -1,
           "speaker": "Ferryman Ivo",
-          "text": "A ferry ticket, never used: Passage for one person, three companions, and anything too important to name. The fare was paid by someone who did not leave their address.",
+          "text": "A ferry ticket, never used: Passage for one person, three tinikami, and anything too important to name. The fare was paid by someone who did not leave their address.",
           "after": "This memory is now recorded in your field book."
         }
       ],
@@ -529,7 +529,7 @@
           "species": 16,
           "prerequisite": -1,
           "speaker": "Weatherwright Min",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -563,7 +563,7 @@
           "prerequisite": 1,
           "speaker": "Weatherwright Min",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Storm Drawing",
@@ -596,7 +596,7 @@
           "prerequisite": 4,
           "speaker": "Weatherwright Min",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Ribbon Meadow",
@@ -618,7 +618,7 @@
           "prerequisite": -1,
           "speaker": "Weatherwright Min",
           "text": "A Ribbonape has tied every laundry line into one enormous knot. The villagers call it sabotage. The youngest washer calls it a climbing frame.|You help move the knot to an empty meadow. The Ribbonape follows, delighted that someone finally understood the invitation.|REQUEST / Ring the local bell puzzle and befriend a spirit of the Rise. The mill needs a new song and someone who can carry it.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "A Door for the Wind",
@@ -629,7 +629,7 @@
           "prerequisite": 6,
           "speaker": "Weatherwright Min",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Nectar Orchard",
@@ -662,7 +662,7 @@
           "prerequisite": 11,
           "speaker": "Weatherwright Min",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Flint Roost",
@@ -673,7 +673,7 @@
           "prerequisite": -1,
           "speaker": "Flintroc / FIELD ENCOUNTER",
           "text": "Flintroc strikes sparks from the highest stone on the Rise. Each spark becomes a brief imitation of a star. On cloudy nights, the village climbs the hill to watch.|FIELD NOTE / A flying entry has to choose where it finishes. Threaten that destination, and use wind to change the approach rather than merely following it.",
-          "after": "It leaves one piece of flint in the circle of your companions.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
+          "after": "It leaves one piece of flint in the circle of your tinikami.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
         },
         {
           "name": "Roofmender's Chest",
@@ -780,7 +780,7 @@
           "species": 11,
           "prerequisite": -1,
           "speaker": "Orchard Keeper Elin",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -814,7 +814,7 @@
           "prerequisite": 1,
           "speaker": "Orchard Keeper Elin",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Erased Name",
@@ -847,7 +847,7 @@
           "prerequisite": 4,
           "speaker": "Orchard Keeper Elin",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Moss Court",
@@ -869,7 +869,7 @@
           "prerequisite": -1,
           "speaker": "Orchard Keeper Elin",
           "text": "A Gravemole keeps burying fallen fruit under unmarked stones. Elin wants the fruit back. The mole wants the forgotten to have somewhere quiet.|You mark a corner of the orchard as a garden of names that no longer need an owner. Nothing there is for sale.|REQUEST / Meet all five orchard spirits at least once. The names on these ribbons should belong to neighbours, not an inventory.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "Roots and Room",
@@ -880,7 +880,7 @@
           "prerequisite": 6,
           "speaker": "Orchard Keeper Elin",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Burial Garden",
@@ -913,7 +913,7 @@
           "prerequisite": 11,
           "speaker": "Orchard Keeper Elin",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Hookthorn Bower",
@@ -1031,7 +1031,7 @@
           "species": 3,
           "prerequisite": -1,
           "speaker": "Kilnmaster Rua",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -1065,7 +1065,7 @@
           "prerequisite": 1,
           "speaker": "Kilnmaster Rua",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Crooked Bell",
@@ -1098,7 +1098,7 @@
           "prerequisite": 4,
           "speaker": "Kilnmaster Rua",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Anvil Yard",
@@ -1120,7 +1120,7 @@
           "prerequisite": -1,
           "speaker": "Kilnmaster Rua",
           "text": "A Slagjaw is swallowing discarded metal and coughing up nails. The apprentices have begun leaving it lunch in a bucket marked recycling.|Rua asks you to find out whether it likes the work. The spirit tips over the bucket and takes a nap. That seems like a useful answer.|REQUEST / Complete the first two Emberkiln road trials and befriend a local spirit. The smith needs a partner who knows when to set the hammer down.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "A Cool Place",
@@ -1131,7 +1131,7 @@
           "prerequisite": 6,
           "speaker": "Kilnmaster Rua",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Smoke Walk",
@@ -1164,7 +1164,7 @@
           "prerequisite": 11,
           "speaker": "Kilnmaster Rua",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Crucible",
@@ -1282,7 +1282,7 @@
           "species": 6,
           "prerequisite": -1,
           "speaker": "Archivist Sen",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -1316,7 +1316,7 @@
           "prerequisite": 1,
           "speaker": "Archivist Sen",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Blank Book",
@@ -1349,7 +1349,7 @@
           "prerequisite": 4,
           "speaker": "Archivist Sen",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Clockwork Pool",
@@ -1371,7 +1371,7 @@
           "prerequisite": -1,
           "speaker": "Archivist Sen",
           "text": "A Clockfin has been returning the same overdue book every morning. The librarian keeps lending it back because the ending changes.|You sit together and read the new ending. It is ordinary and happy. The Clockfin finally lets the book stay on the shelf.|REQUEST / Read four memory markers anywhere along the road. The missing page was scattered into the stories people kept telling.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "The Thin Ice",
@@ -1382,7 +1382,7 @@
           "prerequisite": 6,
           "speaker": "Archivist Sen",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Bell Stacks",
@@ -1415,7 +1415,7 @@
           "prerequisite": 11,
           "speaker": "Archivist Sen",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Copper Gallery",
@@ -1533,7 +1533,7 @@
           "species": 7,
           "prerequisite": -1,
           "speaker": "Postkeeper Oru",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -1556,7 +1556,7 @@
           "prerequisite": -1,
           "speaker": "Gloamcat / FIELD ENCOUNTER",
           "text": "Something has stolen all the shadows from the pier. Gloamcat has tucked them under its tail to keep them warm. It will return them when the lamps stop pretending it is still afternoon.|FIELD NOTE / Watch facing and commitment rather than the prettiest effect. A patient defense can catch its return from an entry.",
-          "after": "Your shadow comes back with a small, companionable curl at its edge.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
+          "after": "Your shadow comes back with a small, kamiable curl at its edge.|Trust grows through shared challenges. You may offer three memory threads after the first meeting, or return for another friendly encounter."
         },
         {
           "name": "An Echo Left Behind",
@@ -1567,7 +1567,7 @@
           "prerequisite": 1,
           "speaker": "Postkeeper Oru",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The First Letter",
@@ -1600,7 +1600,7 @@
           "prerequisite": 4,
           "speaker": "Postkeeper Oru",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Candle Cove",
@@ -1622,7 +1622,7 @@
           "prerequisite": -1,
           "speaker": "Postkeeper Oru",
           "text": "An Echofin repeats the last laugh it heard. Its owner died years ago. The neighbours want it silenced because the sound hurts.|You help them listen together. By evening, the spirit has learned a second laugh. It keeps the first one too.|REQUEST / Restore six sanctuary bells. The lighthouse cannot answer a valley that has forgotten how to call.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "Between Two Tides",
@@ -1633,7 +1633,7 @@
           "prerequisite": 6,
           "speaker": "Postkeeper Oru",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Dune Walk",
@@ -1666,7 +1666,7 @@
           "prerequisite": 11,
           "speaker": "Postkeeper Oru",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Echo Inlet",
@@ -1774,7 +1774,7 @@
         39
       ],
       "arrival": "The Crown is smaller than it looked from the valley. There is no throne. There are shelves, kettles, unfinished letters, and eight ropes passing through the ceiling.|Hush has been living here for a very long time. It has kept a place at the table for Nara.",
-      "epilogue": "The ropes fall quiet. Hush leaves the room through an ordinary door. Outside, it asks the name of a bird.|Nara answers. Sable writes it down, then leaves the rest of the page blank. Your companions wait at the bend in the road. There are places you have not visited together.",
+      "epilogue": "The ropes fall quiet. Hush leaves the room through an ordinary door. Outside, it asks the name of a bird.|Nara answers. Sable writes it down, then leaves the rest of the page blank. Your tinikami wait at the bend in the road. There are places you have not visited together.",
       "sites": [
         {
           "name": "The Waiting Room",
@@ -1784,7 +1784,7 @@
           "species": 5,
           "prerequisite": -1,
           "speaker": "Sable",
-          "text": "A warm light marks a place where nobody has to earn their rest. All your companions recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a companion's temperament in the spirit book. Bond ranks unlock additional starting charms. No companion is lost when a challenge goes badly.",
+          "text": "A warm light marks a place where nobody has to earn their rest. All your tinikami recover here. Three field remedies are replenished freely.|You can arrange your party, choose a lead, and tune a kami's temperament in the spirit book. Bond ranks unlock additional starting charms. No kami is lost when a challenge goes badly.",
           "after": "This memory is now recorded in your field book."
         },
         {
@@ -1818,7 +1818,7 @@
           "prerequisite": 1,
           "speaker": "Sable",
           "text": "A keeper has prepared a two-spirit relay. Your party shares its condition across the rounds. Observe a telegraph, make a deliberate move, and leave energy for the answer.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Nara's Return",
@@ -1851,7 +1851,7 @@
           "prerequisite": 4,
           "speaker": "Sable",
           "text": "The second relay asks you to read the whole garden: obstacles, the central sanctuary, and the direction of the wind. Winning by holding ground is as valid as a knockout.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Moonlit Rest",
@@ -1873,7 +1873,7 @@
           "prerequisite": -1,
           "speaker": "Sable",
           "text": "A Mooncalf has been sleeping in the tower's shadow. It dreams the dreams Hush no longer has room to dream.|You leave a blanket beside it. Saving the valley has not made its nights warm. There is still ordinary work to do.|REQUEST / Befriend all forty species. This final page should make room for every way a spirit can choose to be.",
-          "after": "Some problems become smaller when someone takes time to ask the right question.|Your companions gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
+          "after": "Some problems become smaller when someone takes time to ask the right question.|Your tinikami gain 60 bond experience. You receive 12 memory threads and a keepsake recorded in the journal."
         },
         {
           "name": "The Last Census",
@@ -1884,7 +1884,7 @@
           "prerequisite": 6,
           "speaker": "Sable",
           "text": "The third relay changes the opposing species. A strategy that chased the first spirit may exhaust itself against the next. Choose your lead before entering.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "Ink Gallery",
@@ -1917,7 +1917,7 @@
           "prerequisite": 11,
           "speaker": "Sable",
           "text": "The last road trial asks you to bring everything together. Stop when an art requires planting. A short dodge creates an opening; endless sideways travel spends your recovery.",
-          "after": "The road trial is complete. Your companions carry the experience together. A new chapter marker is waiting ahead."
+          "after": "The road trial is complete. Your tinikami carry the experience together. A new chapter marker is waiting ahead."
         },
         {
           "name": "The Oath Gate",
@@ -1960,8 +1960,8 @@
           "species": 19,
           "prerequisite": 12,
           "speaker": "Hush, Keeper of Every Name",
-          "text": "Hush steps into the garden wearing every promise it has ever made. It does not want to defeat you. It wants to know whether you will notice when it needs to stop.|This is a relay, not a sacrifice. Let your companions share the work. The road was never meant to be carried by one small spirit.",
-          "after": "The ropes fall quiet. Hush leaves the room through an ordinary door. Outside, it asks the name of a bird.|Nara answers. Sable writes it down, then leaves the rest of the page blank. Your companions wait at the bend in the road. There are places you have not visited together."
+          "text": "Hush steps into the garden wearing every promise it has ever made. It does not want to defeat you. It wants to know whether you will notice when it needs to stop.|This is a relay, not a sacrifice. Let your tinikami share the work. The road was never meant to be carried by one small spirit.",
+          "after": "The ropes fall quiet. Hush leaves the room through an ordinary door. Outside, it asks the name of a bird.|Nara answers. Sable writes it down, then leaves the rest of the page blank. Your tinikami wait at the bend in the road. There are places you have not visited together."
         },
         {
           "name": "The Unwritten Road",

@@ -16,6 +16,24 @@ static int checks = 0;
         }                                                                                          \
     } while (0)
 int main() {
+    // Party temperament steers the beginner helper, not just the neural pilot.
+    {
+        auto state = c::new_journey(91, 16);
+        auto match = c::encounter(state, 2);
+        World w;
+        c::initialize_round(w, state, match, 0, 0, 1000, 1000);
+        for (auto &o : w.obstacles) o.radius = 0;
+        w.bodies[0].pos = {8*Q, 9*Q};
+        w.bodies[1].pos = {10*Q, 9*Q};
+        w.bodies[0].cooldown[0] = 20;
+        auto timid = c::companion_action(w, {}, 2);
+        auto bold = c::companion_action(w, {}, 1);
+        CHECK(timid.mx < 0);
+        CHECK(timid.mx != bold.mx || timid.my != bold.my);
+        command(w, 0, Conserve);
+        CHECK(c::companion_action(w, {}, 2).mx == 0);
+        CHECK(c::companion_action(w, {}, 1).mx == 0);
+    }
     // A keeper call is a legal controller action, not invulnerability or a forced hit.
     for (int starter : {0, 1, 16, 6, 35}) {
         auto state = c::new_journey(87, starter);

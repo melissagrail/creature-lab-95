@@ -1,0 +1,13 @@
+{
+  "version": "0.13.0",
+  "bytes": 37493780,
+  "sha256": "889d9e580c19b5440c0c8bd2b773b07ac805fe6cca85726b1438281663ea17e7",
+  "minimum_macos": "14.0",
+  "architecture": "arm64",
+  "rules": 10,
+  "observations": 8,
+  "content": "8a2d462d",
+  "model_checksum": "795e5e98",
+  "codesign": "ad hoc / deep strict verified",
+  "relocated_controller_test": "80 campaign controller checks passed"
+}

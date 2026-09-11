@@ -99,7 +99,7 @@ bool trained_opponent(const State &, const Encounter &);
 Action opponent_action(const World &, const Encounter &, int round);
 // Short, deterministic keeper calls layered over the pilot's legal action.
 // This controller can later be replaced by a learned response to the same guidance input.
-Action companion_action(const World &, Action pilot);
+Action companion_action(const World &, Action pilot, int temperament = 0);
 bool beginner_assistance(const Body &);
 bool friendship_ready(const State &);
 void prepare_garden(World &, const Encounter &, int round);

@@ -1,5 +1,5 @@
 {
-  "rules_version": 5,
+  "rules_version": 10,
   "observation_version": 5,
   "axes": [
     "reach",
@@ -9260,7 +9260,7 @@
     "active": 6,
     "recovery": 12,
     "cooldown": 48,
-    "cost": 200,
+    "cost": 0,
     "damage": 0,
     "range": 0,
     "radius": 0,

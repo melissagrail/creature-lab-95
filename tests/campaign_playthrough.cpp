@@ -52,7 +52,7 @@ bool fight(c::State &s, const c::Encounter &e, Brain &brain, Stats &stats) {
             auto result = step(
                 w, {c::companion_action(w, c::beginner_assistance(w.bodies[0])
                                                ? Action{}
-                                               : brain.action(observe(w, 0), memory, personality)),
+                                               : brain.action(observe(w, 0), memory, personality), comp.temperament),
                     opponent});
             stats.ticks += result.ticks;
             if (w.overflow) {

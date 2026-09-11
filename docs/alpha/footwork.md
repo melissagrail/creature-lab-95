@@ -1,3 +1,15 @@
+# Current movement constraints — rules 10
+
+Ability energy is now independent of ordinary movement. Walking, strafing and reversing neither spend it nor suppress its regeneration. The universal dodge costs zero energy, uses its own 48-tick cooldown, and does not introduce an energy recovery delay. An existing delay from casting an art still expires normally during movement/dodge. Authored movement arts such as lunges retain their art costs.
+
+Forward speed, species-specific strafe/reverse ratios, turning, braking and finite lateral acceleration remain. Lateral and reverse drive receive a 70% multiplier, smoothly returning to full drive when facing forward. Empty and full ability-energy reserves produce identical travel. This is a geometric movement constraint, not another hidden resource bar. `footwork_load` is diagnostic only.
+
+Rules 10 / observations 8, content `8a2d462d`, golden `998dc4f56283125f`. Model weights are explicitly warm-started, not retrained, via `scripts/migrate-movement-energy.py`. Energy no longer appears as a movement charge in `Features.spent`.
+
+The following is retained historical evidence for the superseded shared-energy experiment; it does not describe the current game.
+
+---
+
 # Footwork and animated spirits — rules 8
 
 The new constraint is on sustained combat movement. It keeps repositioning useful while attaching an opportunity cost to endlessly circling with your face aimed at an opponent.

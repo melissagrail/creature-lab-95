@@ -360,13 +360,21 @@ Action opponent_action(const World &w, const Encounter &e, int round) {
 bool beginner_assistance(const Body &b) {
     return b.pace <= 75;
 }
-Action companion_action(const World &w, Action pilot) {
+Action companion_action(const World &w, Action pilot, int temperament) {
     const auto &b = w.bodies[0];
     // Beginners approach, face and plant for an affordable attack. They do not
     // automatically read the slow burst: learning when to call retreat is the lesson.
     int directive = b.guidance_age < 90 ? b.guidance : Free;
-    if (directive == Free && beginner_assistance(b))
+    const bool autonomous = directive == Free && beginner_assistance(b);
+    if (autonomous) {
         directive = Attack;
+        // Timid young kami create space when crowded; this is steering, not a
+        // different damage/energy budget. Explicit keeper calls take precedence.
+        const auto &art = move_for(b, 0);
+        const int distance = length(w.bodies[1].pos - b.pos);
+        if (temperament == 2 && art.kind != Melee && art.kind != Lunge && distance < 3 * Q)
+            directive = Retreat;
+    }
     if (directive == Free)
         return pilot;
     if (b.move >= 0)
@@ -437,16 +445,28 @@ Action companion_action(const World &w, Action pilot) {
                 int64_t(unit(aim).x) * b.aim.x + int64_t(unit(aim).y) * b.aim.y >= Q * Q * 97 / 100
                     ? choice
                     : 0};
-    if (length(delta) > reach || obstructed) {
+    // Between attacks, use a preferred position rather than circling forever.
+    // Aggressive closes pressure distance; patient keeps a longer firing lane;
+    // territorial returns to the lotus while a ranged target remains reachable.
+    Vec destination = w.bodies[1].pos;
+    int preferred = reach;
+    if (autonomous && move_for(b, 0).kind != Melee) {
+        preferred = reach * (temperament == 1 ? 55 : temperament == 3 ? 90 : 75) / 100;
+        if (temperament == 4 && length(delta) <= reach) {
+            destination = {12 * Q, 9 * Q};
+            preferred = 500;
+        }
+    }
+    if (length(destination - b.pos) > preferred || obstructed) {
         Vec best{};
         int score = -100000000;
-        for (Vec candidate : {unit(delta), Vec{Q, 0}, Vec{-Q, 0}, Vec{0, Q}, Vec{0, -Q},
+        for (Vec candidate : {unit(destination - b.pos), Vec{Q, 0}, Vec{-Q, 0}, Vec{0, Q}, Vec{0, -Q},
                               Vec{724, 724}, Vec{-724, 724}, Vec{724, -724}, Vec{-724, -724}}) {
             Vec end = b.pos + scale(candidate, 900);
             if (end.x < b.radius || end.x > 24 * Q - b.radius || end.y < b.radius ||
                 end.y > 18 * Q - b.radius || !clear_path(w, b.pos, end, b.radius + 50))
                 continue;
-            int merit = -length(w.bodies[1].pos - end);
+            int merit = -length(destination - end);
             if (merit > score) {
                 score = merit;
                 best = candidate;

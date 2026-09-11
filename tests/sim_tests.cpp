@@ -93,8 +93,8 @@ int main() {
             CHECK(length(w.bodies[0].vel) == 0);
         }
         CHECK(speeds[0] >= speeds[1] && speeds[1] > speeds[2]);
-        CHECK(std::abs(speeds[1] - spec.speed * spec.strafe / 100) < 8);
-        CHECK(std::abs(speeds[2] - spec.speed * spec.backward / 100) < 8);
+        CHECK(std::abs(speeds[1] - spec.speed * (spec.strafe * 70 / 100) / 100) < 8);
+        CHECK(std::abs(speeds[2] - spec.speed * (spec.backward * 70 / 100) / 100) < 8);
         for (int slot = 0; slot < 4; slot++) {
             const auto &m = Moves[sp * 4 + slot];
             World w = locomotion_world(sp);
@@ -135,7 +135,7 @@ int main() {
                 CHECK(length(wet.bodies[0].pos - origin) == 0);
             }
     }
-    // Rules 8: strafing is a burst/positioning choice, not free sustained defense.
+    // Rules 10: movement uses geometry and cooldowns, never ability energy.
     for (int sp = 0; sp < SpeciesCount; ++sp) {
         const auto &spec = Roster[sp];
         Body b;
@@ -145,7 +145,7 @@ int main() {
         b.vel = {spec.speed, 0};
         CHECK(footwork_load(b) == 0 && energy_regen(b) == spec.regen);
         b.vel = {0, spec.speed * spec.strafe / 100};
-        CHECK(footwork_load(b) == 100 && energy_regen(b) == 0);
+        CHECK(footwork_load(b) == 100 && energy_regen(b) == spec.regen);
         b.vel = {0, spec.speed * spec.strafe / 500};
         CHECK(footwork_load(b) == 0);
         World rich = locomotion_world(sp), spent = rich;
@@ -154,8 +154,9 @@ int main() {
             step(rich, {{{0, Q, Q, 0, 0}, {}}}, 1);
             step(spent, {{{0, Q, Q, 0, 0}, {}}}, 1);
         }
-        CHECK(length(spent.bodies[0].vel) < length(rich.bodies[0].vel));
-        CHECK(rich.bodies[0].energy < 1000);
+        CHECK(length(spent.bodies[0].vel) == length(rich.bodies[0].vel));
+        CHECK(rich.bodies[0].energy == 1000);
+        CHECK(spent.bodies[0].energy == 18 * spec.regen);
         CHECK(observe(rich, 0).global[30] == float(energy_regen(rich.bodies[0])) / 12);
         World curve = locomotion_world(sp);
         curve.bodies[0].vel = {spec.speed, 0};
@@ -166,7 +167,7 @@ int main() {
         burst.bodies[0].vel = {spec.speed, 0};
         step(burst, {{{0, Q, Q, 0, 5}, {}}}, 1);
         step(burst, {{{0, Q, Q, 0, 0}, {}}}, 1);
-        CHECK(burst.bodies[0].energy < 1000 && burst.bodies[0].vel.y > curve.bodies[0].vel.y);
+        CHECK(burst.bodies[0].energy == 1000 && burst.bodies[0].vel.y > curve.bodies[0].vel.y);
         auto bytes = snapshot(rich);
         World copy;
         CHECK(restore(copy, bytes.data(), bytes.size()));
@@ -194,7 +195,15 @@ int main() {
         CHECK(action_mask(energy, 0)[1]);
         cast(energy, 0);
         CHECK(body.energy == 0 && body.energy_delay == 23);
-        CHECK(!action_mask(energy, 0)[5]); // Same pool pays for emergency dodge.
+        CHECK(!action_mask(energy, 0)[5]); // Current cast commitment blocks dodge.
+        World empty = locomotion_world(sp);
+        empty.bodies[0].energy = 0;
+        CHECK(action_mask(empty, 0)[5]);
+        auto evade = step(empty, {{{0, Q, Q, 0, 5}, {}}}, 1);
+        CHECK(evade.features[0].spent == 0);
+        CHECK(empty.bodies[0].energy_delay == 0);
+        CHECK(empty.bodies[0].cooldown[4] > 0);
+        CHECK(!action_mask(empty, 0)[5]);
         CHECK(observe(energy, 1).entities[41] == 0);
         CHECK(observe(energy, 0).global[29] == 23.f / 24);
         auto bytes = snapshot(energy);
@@ -636,6 +645,6 @@ int main() {
     for (int k = 0; k < 100; k++)
         step(a, {scripted(a, 0), scripted(a, 1)});
     std::cout << "Measured golden " << std::hex << hash(a) << std::dec << "\n";
-    CHECK(hash(a) == 0x4deb7e7e3423a32bull);
+    CHECK(hash(a) == 0x998dc4f56283125full);
     std::cout << checks << " alpha checks passed; golden " << std::hex << hash(a) << "\n";
 }

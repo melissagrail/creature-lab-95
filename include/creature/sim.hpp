@@ -7,7 +7,7 @@ namespace creature {
 constexpr int Q = 1024, Hz = 30, DecisionTicks = 3, MaxTicks = 2700;
 constexpr int ArenaCount = 6, SpeciesCount = 40, MoveCount = 161, ProjectileCount = 32,
               ZoneCount = 16, HistoryCount = 64;
-constexpr uint32_t RulesVersion = 9, ObservationVersion = 8;
+constexpr uint32_t RulesVersion = 10, ObservationVersion = 8;
 const char *arena_name(int);
 struct Vec {
     int32_t x = 0, y = 0;
